@@ -11,7 +11,7 @@
           <b-col align-self="center" cols="2">
             <MediaControls />
           </b-col> 
-          <b-col align-self="center">
+          <b-col align-self="center mr-2">
             <NowPlaying />
           </b-col>
         </b-row>
