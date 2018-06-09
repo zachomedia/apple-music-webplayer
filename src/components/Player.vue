@@ -1,12 +1,12 @@
 
 <template>
   <b-container fluid>
-    <b-row class="pt-2 header container-fluid">
-      <b-col align-self="center" class="logo">
-        <a href="https://zacharyseguin.ca"><img src="../assets/logo.svg" alt="Zachary Seguin" /></a>
-      </b-col>
+    <div class="header container-fluid">
+      <div align-self="center" class="logo pull-left pl-2">
+        <a href="https://zacharyseguin.ca"><img src="../assets/icon.svg" alt="Zachary Seguin" /></a>
+      </div>
       <!-- Controls -->
-      <b-col align-self="center" cols="9">
+      <div class="controls">
         <b-row>
           <b-col align-self="center" cols="2">
             <MediaControls />
@@ -15,8 +15,8 @@
             <NowPlaying />
           </b-col>
         </b-row>
-      </b-col>
-    </b-row>
+      </div>
+    </div>
     <b-row class="main">
       <!-- Sidebar -->
       <b-col>
@@ -284,15 +284,24 @@ export default {
 
 .logo img {
   height: 100%;
-  max-height: 40px;
+  max-height: 50px;
+  margin-top: 6px;
+}
+
+@media (max-width: 660px) {
+  .logo { display: none; }
 }
 
 .header {
   position: fixed;
+  left: 0;
+  right: 0;
   z-index: 100;
   background: #f8f8f8;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
   padding: 8px 5px;
+  overflow: hidden;
+  height: 80px;
 }
 
 .heading {
@@ -300,5 +309,11 @@ export default {
   font-weight: normal;
   padding-top: 10px;
   color: #666;
+}
+
+.controls {
+  position: absolute;
+  left: 80px;
+  right: 0;
 }
 </style>
