@@ -9,7 +9,7 @@
     <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>. 
       At this time, you can listen to songs, albums and playlists in your library.
       <br>
-      The player current has some issues on small screen sizes.
+      The player currently has some issues on small screen sizes.
     </p>
 
     <div class="border p-2 mb-4 border-warning rounded bg-warning">
