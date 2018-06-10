@@ -1,4 +1,4 @@
-# Apple Music Webplayer
+# Apple Music Web Player
 
 [music.zacharyseguin.ca](https://music.zacharyseguin.ca)
 
