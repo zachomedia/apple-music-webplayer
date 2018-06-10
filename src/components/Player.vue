@@ -57,6 +57,16 @@
       <b-col cols="9" v-else>
       </b-col>
     </b-row>
+    <b-row>
+      <b-col class="text-muted text-center text-sm mb-4 mt-2">
+        <p class="mb-1 pb-0">Copyright &copy; 2018 &mdash; <a href="https://zacharyseguin.ca">Zachary Seguin</a></p>
+        <p>
+          If you encounter any issues, have any feedback or feature requests, 
+          please <a href="https://github.com/zachomedia/apple-music-webplayer/issues">submit an issue on GitHub</a>
+          or send an email to <a href="mailto:contact@zacharyseguin.ca">contact@zacharyseguin.ca</a>.
+         </p>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 
@@ -315,5 +325,9 @@ export default {
   position: absolute;
   left: 80px;
   right: 0;
+}
+
+.text-sm {
+  font-size: 0.9em;
 }
 </style>
