@@ -12,6 +12,10 @@
       The player currently has some issues on small screen sizes.
     </p>
 
+    <p class="mt-5 mb-5 text-center">
+      <b-button variant="primary" v-on:click.prevent="authorize()">Sign in to Apple Music</b-button>
+    </p>
+
     <div class="border p-2 mb-4 border-warning rounded bg-warning">
       <h2 class="h5 text-uppercase">Notice</h2>
       <p class="mb-0">This system is built on an API that is currently in beta. The application may stop working at any time.</p>
@@ -21,8 +25,8 @@
       please <a href="https://github.com/zachomedia/apple-music-webplayer/issues">submit an issue on GitHub</a> 
       or send an email to <a href="mailto:contact@zacharyseguin.ca">contact@zacharyseguin.ca</a>.</p>
 
-    <p class="mt-5 text-center">
-      <b-button variant="primary" v-on:click.prevent="authorize()">Sign in to Apple Music</b-button>
+    <p class="text-muted">
+      Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries
     </p>
   </div>
 </template>
