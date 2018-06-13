@@ -41,7 +41,9 @@ export default {
     queue: function() {
       var map = {
         'library-albums': 'album',
-        'library-playlists': 'playlist'
+        'library-playlists': 'playlist',
+        'playlists': 'playlist',
+        'albums': 'album'
       }
 
       var desc = {};

@@ -11,7 +11,7 @@
           <b-col align-self="center" cols="2">
             <MediaControls />
           </b-col> 
-          <b-col align-self="center mr-2">
+          <b-col align-self="center" class="mr-2">
             <NowPlaying />
           </b-col>
         </b-row>
@@ -21,6 +21,11 @@
       <!-- Sidebar -->
       <b-col>
         <b-button variant="link" v-on:click.prevent="unauthorize()">Sign out of Apple Music</b-button>
+
+        <!-- Apple Music -->
+        <b-list-group class="mb-2">
+          <b-list-group-item href="#" v-on:click.prevent="load('user:recommendations')">Recommendations</b-list-group-item>
+        </b-list-group>
 
         <!-- User library -->
         <b-list-group>
@@ -38,20 +43,23 @@
         <div v-if="results.type === 'albums'">
           <Albums :albums="results.albums" title="Albums" />
         </div>
-        <div v-if="results.type === 'album'">
+        <div v-else-if="results.type === 'album'">
           <SongCollection :collection="results.album" />
         </div>
-        <div v-if="results.type === 'artists'">
+        <div v-else-if="results.type === 'artists'">
           <Artists :artists="results.artists" title="Artists" />
         </div>
-        <div v-if="results.type === 'artist'">
+        <div v-else-if="results.type === 'artist'">
           <Albums :albums="results.artist.relationships.albums.data" :title="results.artist.attributes.name" />
         </div>
-        <div v-if="results.type === 'songs'">
+        <div v-else-if="results.type === 'songs'">
           <Songs :songs="results.songs" title="Songs" />
         </div>
-        <div v-if="results.type === 'playlist'">
+        <div v-else-if="results.type === 'playlist'">
           <SongCollection :collection="results.playlist" />
+        </div>
+        <div v-else-if="results.type === 'recommendations'">
+          <Recommendations :recommendations="results.recommendations" title="Recommendations" />
         </div>
       </b-col>
       <b-col cols="9" v-else>
@@ -80,6 +88,7 @@ import Albums from './Albums.vue';
 import Artists from './Artists.vue';
 import Songs from './Songs.vue';
 import SongCollection from './SongCollection.vue';
+import Recommendations from './Recommendations.vue';
 
 export default {
   name: 'Player',
@@ -105,6 +114,9 @@ export default {
 
         case 'user:songs': req = { songs: null };
                            break;
+
+        case 'user:recommendations': req = { recommendations: null };
+                                     break;
       }
 
       EventBus.$emit('load', req);
@@ -138,12 +150,17 @@ export default {
       window.scrollTo(0, 0);
 
       // We have an explicit result to show
+      var api = this.musicKit.api.library;
+
+      if (description.library === false) {
+        api = this.musicKit.api;
+      }
 
       // User albums
       if ('albums' in description) {
         var albums = [];
         let getAlbums = (start = 0) => {
-          this.musicKit.api.library.albums(description.albums, {
+          api.albums(description.albums, {
             offset: start,
             limit: 100
           }).then((inAlbums) => {
@@ -171,7 +188,7 @@ export default {
       else if ('artists' in description) {
         var artists = [];
         let getArtists = (start = 0) => {
-          this.musicKit.api.library.artists(description.artists, {
+          api.artists(description.artists, {
             offset: start,
             limit: 100
           }).then((inArtists) => {
@@ -200,7 +217,7 @@ export default {
       else if ('songs' in description) {
         var songs = [];
         let getSongs = (start = 0) => {
-          this.musicKit.api.library.songs(description.songs, {
+          api.songs(description.songs, {
             offset: start,
             limit: 100
           }).then((inSongs) => {
@@ -227,7 +244,7 @@ export default {
       }
       // Album
       else if ('album' in description) {
-        this.musicKit.api.library.album(description.album).then(res => {
+        api.album(description.album).then(res => {
           this.results = {
             type: 'album',
             album: res
@@ -235,7 +252,7 @@ export default {
         });
       }
       else if ('artist' in description) {
-        this.musicKit.api.library.artist(description.artist, { include: 'albums' }).then(res => {
+        api.artist(description.artist, { include: 'albums' }).then(res => {
           this.results = {
             type: 'artist',
             artist: res
@@ -244,15 +261,29 @@ export default {
       }
       // Playlist
       else if ('playlist' in description) {
-        this.musicKit.api.library.playlist(description.playlist).then(res => {
+        api.playlist(description.playlist).then(res => {
           this.results = {
             type: 'playlist',
             playlist: res
           };
         });
       }
+      // Recommendations
+      else if ('recommendations' in description) {
+        this.musicKit.api.recommendations(description.playlist).then(res => {
+          this.results = {
+            type: 'recommendations',
+            recommendations: res
+          };
+        });
+      }
     }
     EventBus.$on('load', this.onLoad);
+
+    // Trigger loading recommendations
+    if (!this.results) {
+      EventBus.$emit('load', { recommendations: null });
+    }
 
     // Load user playlists
     let getPlaylists = (start = 0) => {
@@ -281,7 +312,8 @@ export default {
     Songs,
     Albums,
     Artists,
-    SongCollection
+    SongCollection,
+    Recommendations
   }
 }
 </script>
