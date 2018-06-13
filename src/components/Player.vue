@@ -28,13 +28,14 @@
         </b-list-group>
 
         <!-- User library -->
+        <h2 class="text-uppercase heading">Library</h2>
         <b-list-group>
           <b-list-group-item href="#" v-on:click.prevent="load('user:albums')">Albums</b-list-group-item>
           <b-list-group-item href="#" v-on:click.prevent="load('user:artists')">Artists</b-list-group-item>
           <b-list-group-item href="#" v-on:click.prevent="load('user:songs')">Songs</b-list-group-item>
         </b-list-group>
         <!-- User playlists -->
-        <h2 class="text-uppercase heading">Playlists</h2>
+        <h3 class="text-uppercase heading">Playlists</h3>
         <Playlists :playlists="userPlaylists" />
       </b-col>
       
@@ -348,10 +349,17 @@ export default {
 }
 
 .heading {
-  font-size: 18px;
   font-weight: normal;
   padding-top: 10px;
   color: #666;
+}
+
+h2.heading {
+  font-size: 18px;
+}
+
+h3.heading {
+  font-size: 14px;
 }
 
 .controls {
