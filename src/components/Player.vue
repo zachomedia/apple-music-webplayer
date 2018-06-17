@@ -22,28 +22,21 @@
       <b-col>
         <b-button variant="link" v-on:click.prevent="unauthorize()">Sign out of Apple Music</b-button>
 
-        <b-alert variant="info" :show="!hasFullAccess">
-          You are not currently subscribed to <a href="https://applemusic.com">Apple Music</a>.
-          Your library and full songs are not available.
-        </b-alert>
-
         <!-- Apple Music -->
-        <b-list-group class="mb-2" v-if="hasFullAccess">
+        <b-list-group class="mb-2">
           <b-list-group-item href="#" v-on:click.prevent="load('user:recommendations')">Recommendations</b-list-group-item>
         </b-list-group>
 
         <!-- User library -->
-        <div v-if="hasFullAccess">
-          <h2 class="text-uppercase heading">Library</h2>
-          <b-list-group>
-            <b-list-group-item href="#" v-on:click.prevent="load('user:albums')">Albums</b-list-group-item>
-            <b-list-group-item href="#" v-on:click.prevent="load('user:artists')">Artists</b-list-group-item>
-            <b-list-group-item href="#" v-on:click.prevent="load('user:songs')">Songs</b-list-group-item>
-          </b-list-group>
-          <!-- User playlists -->
-          <h3 class="text-uppercase heading">Playlists</h3>
-          <Playlists :playlists="userPlaylists" />
-        </div>
+        <h2 class="text-uppercase heading">Library</h2>
+        <b-list-group>
+          <b-list-group-item href="#" v-on:click.prevent="load('user:albums')">Albums</b-list-group-item>
+          <b-list-group-item href="#" v-on:click.prevent="load('user:artists')">Artists</b-list-group-item>
+          <b-list-group-item href="#" v-on:click.prevent="load('user:songs')">Songs</b-list-group-item>
+        </b-list-group>
+        <!-- User playlists -->
+        <h3 class="text-uppercase heading">Playlists</h3>
+        <Playlists :playlists="userPlaylists" />
       </b-col>
       
       <!-- Main content -->
@@ -108,7 +101,6 @@ export default {
     return {
       userPlaylists: [],
       results: null,
-      hasFullAccess: this.musicKit.isRestricted,
     }
   },
   methods: {
