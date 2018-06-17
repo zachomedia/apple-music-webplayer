@@ -70,6 +70,9 @@
           <Recommendations :recommendations="results.recommendations" title="Recommendations" />
         </div>
       </b-col>
+      <b-col cols="9" v-else>
+        <div v-if="hasFullAccess">Loading results...</div>
+      </b-col>
     </b-row>
     <b-row>
       <b-col class="text-muted text-center text-sm mb-4 mt-2">
