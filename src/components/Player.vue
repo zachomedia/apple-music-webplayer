@@ -24,7 +24,7 @@
 
         <!-- Search -->
         <h2 class="text-uppercase heading">Search</h2>
-        <b-form v-on:submit.prevent="load('search')" class="mb-4">
+        <b-form v-on:submit.prevent="load('search')">
           <b-form-radio-group id="radios2" v-model="search.library" name="radioSubComponent" buttons button-variant="outline-primary" class="mb-1 btn-group-sm w-100">
             <b-form-radio :value="false" class="w-50">Apple Music</b-form-radio>
             <b-form-radio :value="true" class="w-50">Library</b-form-radio>
