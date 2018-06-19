@@ -7,7 +7,8 @@
     <div class="grid">
       <div class="item" v-for="item in items" :key="item.id">
         <a href="#" v-on:click.prevent="clicked(item)">
-          <img :src="formatArtworkURL(item.attributes.artwork)" alt="" />
+          <img :src="formatArtworkURL(item.attributes.artwork)" alt="" v-if="item.attributes.artwork" />
+          <div class="artwork-placeholder" v-else></div>
 
           <span>{{ item.attributes.name }}</span>
           <span class="text-muted">{{ item.attributes.curatorName || item.attributes.artistName }}</span>
@@ -74,12 +75,16 @@ a:hover {
   font-size: 0.9em;
 }
 
-.item img {
+.item img, .artwork-placeholder {
   width: 200px;
   height: 200px;
   border-radius: 4px;
   margin-bottom: 4px;
   box-shadow: 0 0 1px rgba(0, 0, 0, .4);
+}
+
+.artwork-placeholder {
+  background: #ddd;
 }
 
 .item span {

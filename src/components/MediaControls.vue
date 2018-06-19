@@ -4,7 +4,8 @@
   <div>
     <b-button-group>
       <b-button variant="link" v-on:click="prev()"><i class="fa fa-backward" /></b-button>
-      <b-button variant="link" class="main" v-on:click="play()" v-if="state !== states.playing"><i class="fa fa-play" /></b-button>
+      <b-button variant="link" class="main" v-if="state === states.loading || state === states.waiting" disabled><i class="fa fa-circle-o-notch fa-spin" /></b-button>
+      <b-button variant="link" class="main" v-on:click="play()" v-else-if="state !== states.playing"><i class="fa fa-play" /></b-button>
       <b-button variant="link" class="main" v-on:click="pause()" v-else><i class="fa fa-pause" /></b-button>
       <b-button variant="link" v-on:click="next()"><i class="fa fa-forward" /></b-button>
     </b-button-group>

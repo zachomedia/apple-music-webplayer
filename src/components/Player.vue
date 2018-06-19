@@ -79,9 +79,17 @@
         <div v-else-if="results.type === 'search'">
           <SearchResults :results="results.results" :title='`Search results for "${results.query}"`' />
         </div>
+
+        <div v-if="loading" class="text-center pt-4">
+          <p><i class="fa fa-circle-o-notch fa-spin loading" aria-hidden="true"></i></p>
+          <p>Loading</p>
+        </div>
       </b-col>
       <b-col cols="9" v-else>
-        <div>Loading results...</div>
+        <div v-if="loading" class="text-center pt-4">
+          <p><i class="fa fa-circle-o-notch fa-spin loading" aria-hidden="true"></i></p>
+          <p>Loading</p>
+        </div>
       </b-col>
     </b-row>
     <b-row>
@@ -118,6 +126,7 @@ export default {
   data: function() {
     return {
       userPlaylists: [],
+      loading: true,
       results: null,
       search: {
         query: "",
@@ -178,6 +187,7 @@ export default {
 
     this.onLoad = (description) => {
       // Clear previous results
+      this.loading = true;
       this.results = null;
       window.scrollTo(0, 0);
 
@@ -210,6 +220,8 @@ export default {
 
             if (inAlbums.length == 100) {
               getAlbums(start + 100);
+            } else {
+              this.loading = false;
             }
             
           });
@@ -238,6 +250,8 @@ export default {
 
             if (inArtists.length == 100) {
               getArtists(start + 100);
+            } else {
+              this.loading = false;
             }
             
           });
@@ -267,8 +281,9 @@ export default {
 
             if (inSongs.length == 100) {
               getSongs(start + 100);
+            } else {
+              this.loading = false;
             }
-            
           });
         };
 
@@ -289,6 +304,8 @@ export default {
             type: 'artist',
             artist: res
           };
+
+          this.loading = false;
         });
       }
       // Playlist
@@ -300,6 +317,8 @@ export default {
             type: 'playlist',
             playlist: res
           };
+
+          this.loading = false;
         });
       }
       // Recommendations
@@ -309,6 +328,8 @@ export default {
             type: 'recommendations',
             recommendations: res
           };
+
+          this.loading = false;
         });
       }
       // Search
@@ -333,6 +354,8 @@ export default {
             query: description.search,
             results: res
           };
+
+          this.loading = false;
         })
       }
     }
@@ -359,6 +382,8 @@ export default {
 
         if (playlists.length == 100) {
           getPlaylists(start + 100);
+        } else {
+          this.loading = false;
         }
       });
     };
@@ -436,5 +461,9 @@ h3.heading {
 
 .text-sm {
   font-size: 0.9em;
+}
+
+.loading {
+  font-size: 80px;
 }
 </style>
