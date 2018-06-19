@@ -64,7 +64,7 @@
         </div>
       </b-col>
       <b-col cols="9" v-else>
-        <div v-if="hasFullAccess">Loading results...</div>
+        <div>Loading results...</div>
       </b-col>
     </b-row>
     <b-row>
