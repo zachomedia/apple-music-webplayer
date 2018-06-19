@@ -161,9 +161,15 @@ export default {
             // Store the sourceId of each item, so we can update the UI as the song plays
             q.items.forEach(i => i.sourceId = i.id);
 
-            this.musicKit.player.changeToMediaItem(q.item(descriptor.startPosition || 0)).then(
-              () => null,
-              err => console.error(err))
+            this.musicKit.player.changeToMediaItem(q.item(descriptor.startPosition || 0)).catch(
+              err => {
+                let next = () => {
+                  this.musicKit.skipToNextItem().catch(err => next());
+                }
+
+                next();
+                console.error(err)
+              })
           },
           (err) => console.error(err)
         );
@@ -287,6 +293,8 @@ export default {
       }
       // Playlist
       else if ('playlist' in description) {
+        var tracks = [];
+
         api.playlist(description.playlist).then(res => {
           this.results = {
             type: 'playlist',
@@ -330,6 +338,12 @@ export default {
     }
     EventBus.$on('load', this.onLoad);
 
+
+    this.mediaPlaybackError = err => {
+      console.log(err);
+    }
+    this.musicKit.addEventListener(window.MusicKit.Events.mediaPlaybackError, this.mediaPlaybackError);
+
     // Trigger loading recommendations
     if (!this.results) {
       EventBus.$emit('load', { recommendations: null });
@@ -354,6 +368,8 @@ export default {
   destroyed: function() {
     EventBus.$off('queue', this.onQueue);
     EventBus.$off('load', this.onLoad);
+
+    this.musicKit.removeEventListener(window.MusicKit.Events.mediaPlaybackError, this.mediaPlaybackError);
   },
   components: {
     Playlists,
