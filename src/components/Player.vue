@@ -296,6 +296,8 @@ export default {
             type: 'album',
             album: res
           };
+
+          this.loading = false;
         });
       }
       else if ('artist' in description) {
