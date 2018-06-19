@@ -2,6 +2,8 @@
 
 <template>
   <div>
+    <p class="text-muted" v-if="showCount">{{ items.length }} {{ items.length | pluralize(countLabel || 'item') }}</p>
+
     <div class="grid">
       <div class="item" v-for="item in items" :key="item.id">
         <a href="#" v-on:click.prevent="clicked(item)">
@@ -21,6 +23,8 @@ import EventBus from '../event-bus';
 export default {
   name: 'RecommendedItems',
   props: {
+    showCount: Boolean,
+    countLabel: String,
     items: Array
   },
   computed: {

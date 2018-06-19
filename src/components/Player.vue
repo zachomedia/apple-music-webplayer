@@ -22,7 +22,21 @@
       <b-col>
         <b-button variant="link" v-on:click.prevent="unauthorize()">Sign out of Apple Music</b-button>
 
+        <!-- Search -->
+        <h2 class="text-uppercase heading">Search</h2>
+        <b-form v-on:submit.prevent="load('search')" class="mb-4">
+          <b-form-radio-group id="radios2" v-model="search.library" name="radioSubComponent" buttons button-variant="outline-primary" class="mb-1 btn-group-sm w-100">
+            <b-form-radio :value="false" class="w-50">Apple Music</b-form-radio>
+            <b-form-radio :value="true" class="w-50">Library</b-form-radio>
+          </b-form-radio-group>
+
+          <b-form-input id="q" type="text" v-model="search.query" placeholder="Search" />
+
+          <b-button type="submit" class="d-none">Search</b-button>
+        </b-form>
+
         <!-- Apple Music -->
+        <h2 class="text-uppercase heading">Apple Music</h2>
         <b-list-group class="mb-2">
           <b-list-group-item href="#" v-on:click.prevent="load('user:recommendations')">Recommendations</b-list-group-item>
         </b-list-group>
@@ -62,6 +76,9 @@
         <div v-else-if="results.type === 'recommendations'">
           <Recommendations :recommendations="results.recommendations" title="Recommendations" />
         </div>
+        <div v-else-if="results.type === 'search'">
+          <SearchResults :results="results.results" :title='`Search results for "${results.query}"`' />
+        </div>
       </b-col>
       <b-col cols="9" v-else>
         <div>Loading results...</div>
@@ -91,6 +108,7 @@ import Artists from './Artists.vue';
 import Songs from './Songs.vue';
 import SongCollection from './SongCollection.vue';
 import Recommendations from './Recommendations.vue';
+import SearchResults from './SearchResults.vue';
 
 export default {
   name: 'Player',
@@ -101,6 +119,10 @@ export default {
     return {
       userPlaylists: [],
       results: null,
+      search: {
+        query: "",
+        library: false
+      }
     }
   },
   methods: {
@@ -119,6 +141,9 @@ export default {
 
         case 'user:recommendations': req = { recommendations: null };
                                      break;
+
+        case 'search': req = { search: this.search.query, library: this.search.library };
+                       break;
       }
 
       EventBus.$emit('load', req);
@@ -279,6 +304,30 @@ export default {
           };
         });
       }
+      // Search
+      else if ('search' in description) {
+        var types = [ 'songs', 'albums', 'artists', 'playlists' ];
+
+        if (description.library !== false) {
+          types = types.map(i => 'library-' + i);
+        }
+
+        api.search(description.search, { types: types }).then(res => {
+          // Do some cleanup
+          for (var key in res) {
+            if (key.startsWith('library-')) {
+              res[key.replace('library-', '')] = res[key];
+              delete(res[key]);
+            }
+          }
+
+          this.results = {
+            type: 'search',
+            query: description.search,
+            results: res
+          };
+        })
+      }
     }
     EventBus.$on('load', this.onLoad);
 
@@ -315,7 +364,8 @@ export default {
     Albums,
     Artists,
     SongCollection,
-    Recommendations
+    Recommendations,
+    SearchResults
   }
 }
 </script>
