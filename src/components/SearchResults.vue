@@ -44,10 +44,6 @@ export default {
     Artists,
     RecommendedItems,
     Songs
-  },
-  created: function() {
-    console.log(this.results);
-    console.log(Object.keys(this.results));
   }
 }
 </script>
