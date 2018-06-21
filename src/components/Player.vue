@@ -164,7 +164,6 @@ export default {
   created: function() {
     // Application events
     this.onQueue = (descriptor) => {
-      console.log(descriptor);
       this.musicKit.setQueue(descriptor)
         .then(
           (q) => { 
