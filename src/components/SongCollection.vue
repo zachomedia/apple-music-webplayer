@@ -8,7 +8,12 @@
         <h1>{{ collection.attributes.name }}</h1>
         <p v-if="collection.attributes.description">{{ collection.attributes.description.standard }}</p>
 
-        <p class="text-uppercase"><a href="#" v-on:click.prevent="queue(collection)">Play all</a></p>
+        <p class="text-uppercase actions">
+          <ul class="list-unstyled">
+            <li><a href="#" v-on:click.prevent="queue()">Play all</a></li>
+            <li><a href="#" v-on:click.prevent="shuffle()">Shuffle all</a></li>
+          </ul>
+        </p>
       </div>
     </div>
     
@@ -49,6 +54,21 @@ export default {
       var desc = {};
       desc[map[this.collection.type] || this.collection.type] = this.collection.id;
       EventBus.$emit('queue', desc);
+    },
+    /** shuffle() is a temporary implemention until MusicKit JS shuffling works. */
+    shuffle: function() {
+      var tracks = this.collection.relationships.tracks.data.slice();
+      tracks.sort(i => 0.5 - Math.random());
+
+      EventBus.$emit('queue', { items: tracks.map(i => {
+        return {
+          attributes: i.attributes,
+          id: i.id,
+          container: {
+            id: i.id
+          }
+        }
+      }) });
     }
   },
   created: function() {
@@ -75,5 +95,19 @@ img {
 .header {
   overflow: hidden;
   margin-bottom: 10px;
+}
+
+.actions li {
+  display: inline-block;
+}
+
+.actions li::after {
+  content: '|';
+  padding: 5px;
+  color: #333;
+}
+
+.actions li:last-child::after {
+  content: '';
 }
 </style>
