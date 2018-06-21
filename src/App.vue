@@ -79,6 +79,10 @@ export default {
 </script>
 
 <style>
+body {
+  background: #eee !important;
+};
+
 #app {
   background: #eee;
   font-size: 0.9rem;

@@ -5,12 +5,8 @@
     <p class="mb-4"><a href="https://zacharyseguin.ca"><img src="../assets/logo.svg" width="100%" alt="Zachary Seguin" /></a><span>music</span></p>
     
     <h2 class="h5">Hello!</h2>
-    <p>This is a web player for <a href="https://applemusic.com">Apple Music</a>.</p>
-    <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>. 
-      At this time, you can listen to songs, albums and playlists in your library.
-      <br>
-      The player currently has some issues on small screen sizes.
-    </p>
+    <p>This is a web player for <a href="https://applemusic.com">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs">MusicKit JS</a>.</p>
+    <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>.</p>
 
     <p class="mt-5 mb-5 text-center">
       <b-button variant="primary" v-on:click.prevent="authorize()">Sign in to Apple Music</b-button>

@@ -4,14 +4,24 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>Zachary Seguin Music: an Apple Music web player</title>
 
-    <style>body { background: #eee !important; };</style>
+    <meta name="description" content="A web player for Apple Music, built using MusicKit JS." />
+
+    <noscript>
+      <link rel="stylesheet" href="<%= BASE_URL %>noscript.css" />
+    </noscript>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but music doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <div class="noscript splash">
+        <h2>Hello!</h2>
+        <p>This is a web player for <a href="https://applemusic.com">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs">MusicKit JS</a>.</p>
+        <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>.</p>
+        <strong>This application does not work without JavaScript enabled. Please enable it to continue.</strong>
+      </div>
     </noscript>
     
     <div id="app"></div>
