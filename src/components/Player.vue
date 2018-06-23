@@ -368,7 +368,7 @@ export default {
           types = types.map(i => 'library-' + i);
         }
 
-        api.search(description.search, { types: types }).then(res => {
+        api.search(description.search, { types: types, limit: 20 }).then(res => {
           // Do some cleanup
           for (var key in res) {
             if (key.startsWith('library-')) {

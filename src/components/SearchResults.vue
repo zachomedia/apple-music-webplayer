@@ -5,26 +5,22 @@
     <h1 v-if="title">{{ title }}</h1>
 
     <p v-if="Object.keys(results).length === 0">No results</p>
-
-    <div v-if="results.songs && results.songs.data.length > 0">
-      <h2>Songs</h2>
-      <Songs :songs="results.songs.data" />
-    </div>
-
-    <div v-if="results.albums && results.albums.data.length > 0">
-      <h2>Albums</h2>
-       <RecommendedItems :items="results.albums.data" showCount countLabel="album" />
-    </div>
-
-    <div v-if="results.artists && results.artists.data.length > 0">
-      <h2>Artists</h2>
-      <Artists :artists="results.artists.data" />
-    </div>
-
-    <div v-if="results.playlists && results.playlists.data.length > 0">
-      <h2>Playlists</h2>
-      <RecommendedItems :items="results.playlists.data" showCount countLabel="playlist" />
-    </div>
+    <b-card no-body v-else>
+      <b-tabs card>
+        <b-tab title="Songs" active v-if="results.songs && results.songs.data.length > 0">
+          <Songs :songs="results.songs.data" />
+        </b-tab>
+        <b-tab title="Albums" v-if="results.albums && results.albums.data.length > 0">
+          <RecommendedItems :items="results.albums.data" showCount countLabel="album" />
+        </b-tab>
+        <b-tab title="Artists" v-if="results.artists && results.artists.data.length > 0">
+          <Artists :artists="results.artists.data" />
+        </b-tab>
+        <b-tab title="Playlists" v-if="results.playlists && results.playlists.data.length > 0">
+          <RecommendedItems :items="results.playlists.data" showCount countLabel="playlist" />
+        </b-tab>
+      </b-tabs>
+    </b-card>
   </div>
 </template>
 

@@ -48,10 +48,10 @@ export default {
       return window.MusicKit.formatArtworkURL(url, width, width);
     },
     clicked: function(item) {
-      if (item.type === 'playlists') {
-        EventBus.$emit('load', { playlist: item.id, library: false });
-      } else if (item.type === 'albums') {
-        EventBus.$emit('load', { album: item.id, library: false });
+      if (item.type === 'playlists' || item.type === 'library-playlists') {
+        EventBus.$emit('load', { playlist: item.id, library: item.type === 'library-playlists' });
+      } else if (item.type === 'albums' || item.type === 'library-albums') {
+        EventBus.$emit('load', { album: item.id, library: item.type === 'library-albums' });
       }
     }
   }

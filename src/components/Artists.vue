@@ -36,8 +36,9 @@ export default {
     formatArtworkURL: function(url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
     },
-    clicked: function(artist) {
-      EventBus.$emit('load', { artist: artist.id });
+    clicked: function(artist) { 
+      console.log(artist);
+      EventBus.$emit('load', { artist: artist.id, library: artist.type === 'library-artists' });
     }
   }
 }

@@ -47,7 +47,7 @@ export default {
       return window.MusicKit.formatArtworkURL(url, width, width);
     },
     clicked: function(album) {
-      EventBus.$emit('load', { album: album.id });
+      EventBus.$emit('load', { album: album.id, library: album.type === 'library-albums' });
     }
   }
 }
