@@ -218,7 +218,7 @@ export default {
               this.results.albums = albums;
             }
 
-            if (inAlbums.length == 100) {
+            if (inAlbums.length != 0) {
               getAlbums(start + 100);
             } else {
               this.loading = false;
@@ -248,7 +248,7 @@ export default {
               this.results.artists = artists;
             }
 
-            if (inArtists.length == 100) {
+            if (inArtists.length !== 0) {
               getArtists(start + 100);
             } else {
               this.loading = false;
@@ -279,7 +279,7 @@ export default {
               this.results.songs = songs;
             }
 
-            if (inSongs.length == 100) {
+            if (inSongs.length !== 0) {
               getSongs(start + 100);
             } else {
               this.loading = false;
@@ -408,7 +408,7 @@ export default {
       }).then((playlists) => {
         this.userPlaylists = this.userPlaylists.concat(playlists);
 
-        if (playlists.length == 100) {
+        if (playlists.length !== 0) {
           getPlaylists(start + 100);
         } else {
           this.loading = false;
