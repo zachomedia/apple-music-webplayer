@@ -320,7 +320,33 @@ export default {
             playlist: res
           };
 
-          this.loading = false;
+          // Workaround to load all songs
+          let fetchTracks = (url) => {
+            var headers = new Headers({
+              Authorization: "Bearer " + this.musicKit.developerToken,
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Music-User-Token": "" + this.musicKit.musicUserToken
+            });
+
+            fetch('https://api.music.apple.com' + url, { headers: headers })
+              .then(res => res.json())
+              .then(res => {
+                this.results.playlist.relationships.tracks.data = this.results.playlist.relationships.tracks.data.concat(res.data);
+
+                if (res.next) {
+                  fetchTracks(res.next);
+                } else {
+                  this.loading = false;
+                }
+              })
+          }
+
+          if (res.relationships.tracks.next) {
+            fetchTracks(res.relationships.tracks.next);
+          } else {
+            this.loading = false;
+          }
         });
       }
       // Recommendations
