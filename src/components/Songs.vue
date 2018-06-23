@@ -151,4 +151,8 @@ img.playing {
   vertical-align: middle !important;
   cursor: pointer;
 }
+
+.actions-cell {
+  width: 25px;
+}
 </style>
