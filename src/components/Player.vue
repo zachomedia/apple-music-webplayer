@@ -18,6 +18,18 @@
       </div>
     </div>
     <b-row class="main">
+      <!-- Alert -->
+      <b-alert v-if="alert.details"
+              class="alert"
+              :show="alert.countdown"
+              dismissible
+              fade
+              :variant="alert.details.type"
+              @dismissed="alert.countdown=0"
+              @dismiss-count-down="alertCountdownChanged">
+        {{alert.details.message}}
+      </b-alert>
+
       <!-- Sidebar -->
       <b-col>
         <b-button variant="link" v-on:click.prevent="unauthorize()">Sign out of Apple Music</b-button>
@@ -131,10 +143,17 @@ export default {
       search: {
         query: "",
         library: false
+      },
+      alert: {
+        countdown: 0,
+        details: null
       }
     }
   },
   methods: {
+    alertCountdownChanged: function(count) {
+      this.alert.countdown = count;
+    },
     load: function(content) {
       var req = {};
 
@@ -162,6 +181,12 @@ export default {
     }
   },
   created: function() {
+    this.onAlert = (d) => {
+      this.alert.details = d;
+      this.alert.countdown = 5;
+    }
+    EventBus.$on('alert', this.onAlert);
+
     // Application events
     this.onQueue = (descriptor) => {
       this.musicKit.setQueue(descriptor)
@@ -389,6 +414,24 @@ export default {
     }
     EventBus.$on('load', this.onLoad);
 
+    this.onAddToLibrary = (params, title) => {
+      title = title ? `"${title}"` : "the item(s)";
+      this.musicKit.api.addToLibrary(params)
+        .then(r => {
+          EventBus.$emit('alert', {
+            type: 'success',
+            message: `Successfully added ${title} to your library.`
+          });
+        }, e => {
+          console.error(e);
+
+          EventBus.$emit('alert', {
+            type: 'error',
+            message: `An error occurred while adding ${title} to your library.`
+          });
+        });
+    }
+    EventBus.$on('addToLibrary', this.onAddToLibrary);
 
     this.mediaPlaybackError = err => {
       console.log(err);
@@ -419,8 +462,10 @@ export default {
     getPlaylists();
   },
   destroyed: function() {
+    EventBus.$off('alert', this.onAlert);
     EventBus.$off('queue', this.onQueue);
     EventBus.$off('load', this.onLoad);
+    EventBus.$off('addToLibrary', this.onAddToLibrary);
 
     this.musicKit.removeEventListener(window.MusicKit.Events.mediaPlaybackError, this.mediaPlaybackError);
   },
@@ -493,5 +538,12 @@ h3.heading {
 
 .loading {
   font-size: 80px;
+}
+
+.alert {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
 }
 </style>

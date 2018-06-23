@@ -17,6 +17,16 @@
         <br>
         <span>{{ data.item.attributes.artistName }}</span>
       </template>
+
+      <template slot="actions" slot-scope="data">
+        <b-button-group size="sm">
+          <b-button variant="link"
+                    v-if="!data.item.type.startsWith('library')"
+                    v-on:click.prevent.stop="addToLibrary(data)">
+            <i class="fa fa-plus" />
+          </b-button>
+        </b-button-group>
+      </template>
     </b-table>
   </div>
 </template>
@@ -81,6 +91,11 @@ export default {
           }
         }
       }), startPosition: this.songs.indexOf(item) });
+    },
+    addToLibrary: function(item) {
+      EventBus.$emit('addToLibrary', {
+        songs: [ item.item.id ]
+      }, item.item.attributes.name);
     }
   },
   created: function() {
@@ -96,6 +111,7 @@ export default {
       { key: 'name', label: 'Title<br>Artist', tdClass: 'song-cell' },
       { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell' },
       { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: (value, key, item) => this.formatDuration(value) },
+      { key: 'actions', label: '', tdClass: 'actions-cell' }
     ];
 
     this.mediaItemDidChange = (event) => {
@@ -131,7 +147,7 @@ img.playing {
 </style>
 
 <style>
-.song-cell {
+.song-cell, .actions-cell {
   vertical-align: middle !important;
   cursor: pointer;
 }

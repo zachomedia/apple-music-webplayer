@@ -12,6 +12,7 @@
           <ul class="list-unstyled">
             <li><a href="#" v-on:click.prevent="queue()">Play all</a></li>
             <li><a href="#" v-on:click.prevent="shuffle()">Shuffle all</a></li>
+            <li v-if="!isLibrary"><a href="#" v-on:click.prevent="addToLibrary()">Add to library</a></li>
           </ul>
         </p>
       </div>
@@ -69,10 +70,18 @@ export default {
           }
         }
       }) });
+    },
+    addToLibrary: function() {
+      EventBus.$emit('addToLibrary', {
+        [this.collection.type]: [this.collection.id]
+      }, this.collection.attributes.name);
     }
   },
-  created: function() {
-    this.musicKit = window.MusicKit.getInstance();
+  data: function() {
+    return {
+      musicKit: window.MusicKit.getInstance(),
+      isLibrary: this.collection.type.startsWith("library")
+    }
   }
 }
 </script>
