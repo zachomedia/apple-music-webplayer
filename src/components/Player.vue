@@ -510,6 +510,7 @@ export default {
   padding: 8px 5px;
   overflow: hidden;
   height: 80px;
+  font-size: 0.9em;
 }
 
 .heading {
