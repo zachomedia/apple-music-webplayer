@@ -35,6 +35,12 @@ export default {
   },
   methods: {
     search: function() {
+      // The query hasn't changed, don't search
+      if (this.lastQuery && this.lastQuery === this.$route.query.q) {
+        return;
+      }
+      this.lastQuery = this.$route.query.q;
+      
       this.loading = true;
       this.results = null;
 

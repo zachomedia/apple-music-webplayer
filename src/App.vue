@@ -223,7 +223,7 @@
     },
     {
       name: 'artists',
-      path: 'artists/:id',
+      path: '/artists/:id',
       component: Artist,
       meta: {
         isLibrary: false

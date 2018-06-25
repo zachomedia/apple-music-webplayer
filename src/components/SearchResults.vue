@@ -6,8 +6,8 @@
 
     <p v-if="Object.keys(results).length === 0">No results</p>
     <b-card no-body v-else>
-      <b-tabs card>
-        <b-tab title="Songs" active v-if="results.songs && results.songs.data.length > 0">
+      <b-tabs card v-model="tabIndex">
+        <b-tab title="Songs" v-if="results.songs && results.songs.data.length > 0">
           <Songs :songs="results.songs.data" />
         </b-tab>
         <b-tab title="Albums" v-if="results.albums && results.albums.data.length > 0">
@@ -31,19 +31,36 @@ import Songs from './Songs.vue';
 
 export default {
   name: 'SearchResults',
-  props: {
-    title: String,
-    results: Object,
-  },
   components: {
     Artists,
     SongCollectionList,
     Songs
+  },
+  props: {
+    title: String,
+    results: Object,
+  },
+  data: function() {
+    return {
+      tabIndex: parseInt(this.$route.query.t, 10) || 0
+    }
+  },
+  watch: {
+    '$route': function() {
+      this.tabIndex = parseInt(this.$route.query.t, 10) || 0;
+    },
+    tabIndex: function() {
+      var route = {
+        name: this.$route.name,
+        params: this.$route.params,
+        query: {
+          q: this.$route.query.q,
+          t: this.tabIndex
+        }
+      }
+      console.log(route);
+      this.$router.push(route);
+    }
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>
