@@ -6,13 +6,13 @@
 
     <div class="grid">
       <div class="item" v-for="item in items" :key="item.id">
-        <a href="#" v-on:click.prevent="clicked(item)">
+        <router-link :to="{ name: item.type, params: { id: item.id } }">
           <img :src="formatArtworkURL(item.attributes.artwork)" alt="" v-if="item.attributes.artwork" />
           <div class="artwork-placeholder" v-else></div>
 
           <span>{{ item.attributes.name }}</span>
           <span class="text-muted">{{ item.attributes.curatorName || item.attributes.artistName }}</span>
-        </a>
+        </router-link>
       </div>
     </div>
   </div>
@@ -22,7 +22,7 @@
 import EventBus from '../event-bus';
 
 export default {
-  name: 'RecommendedItems',
+  name: 'SongCollectionList',
   props: {
     showCount: Boolean,
     countLabel: String,
@@ -46,13 +46,6 @@ export default {
   methods: {
     formatArtworkURL: function(url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
-    },
-    clicked: function(item) {
-      if (item.type === 'playlists' || item.type === 'library-playlists') {
-        EventBus.$emit('load', { playlist: item.id, library: item.type === 'library-playlists' });
-      } else if (item.type === 'albums' || item.type === 'library-albums') {
-        EventBus.$emit('load', { album: item.id, library: item.type === 'library-albums' });
-      }
     }
   }
 }

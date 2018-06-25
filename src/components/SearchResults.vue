@@ -11,13 +11,13 @@
           <Songs :songs="results.songs.data" />
         </b-tab>
         <b-tab title="Albums" v-if="results.albums && results.albums.data.length > 0">
-          <RecommendedItems :items="results.albums.data" showCount countLabel="album" />
+          <SongCollectionList :items="results.albums.data" showCount countLabel="album" />
         </b-tab>
         <b-tab title="Artists" v-if="results.artists && results.artists.data.length > 0">
           <Artists :artists="results.artists.data" />
         </b-tab>
         <b-tab title="Playlists" v-if="results.playlists && results.playlists.data.length > 0">
-          <RecommendedItems :items="results.playlists.data" showCount countLabel="playlist" />
+          <SongCollectionList :items="results.playlists.data" showCount countLabel="playlist" />
         </b-tab>
       </b-tabs>
     </b-card>
@@ -25,9 +25,8 @@
 </template>
 
 <script>
-import EventBus from '../event-bus';
 import Artists from './Artists.vue';
-import RecommendedItems from './RecommendedItems.vue';
+import SongCollectionList from './SongCollectionList.vue';
 import Songs from './Songs.vue';
 
 export default {
@@ -38,7 +37,7 @@ export default {
   },
   components: {
     Artists,
-    RecommendedItems,
+    SongCollectionList,
     Songs
   }
 }

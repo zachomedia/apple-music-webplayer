@@ -12,6 +12,7 @@
     "font-awesome": "^4.7.0",
     "moment": "^2.22.2",
     "vue": "^2.5.16",
+    "vue-router": "^3.0.1",
     "vue2-filters": "^0.3.0"
   },
   "devDependencies": {

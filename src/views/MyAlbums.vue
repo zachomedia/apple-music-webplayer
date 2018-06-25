@@ -3,31 +3,26 @@
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
-    <p class="text-muted">{{ albums.length }} {{ albums.length | pluralize('album') }}</p>
 
-    <div class="grid">
-      <div class="item" v-for="album in albums" :key="album.id">
-        <a href="#" v-on:click.prevent="clicked(album)">
-          <img :src="formatArtworkURL(album.attributes.artwork)" alt="" />
-
-          <span>{{ album.attributes.name }}</span>
-          <span class="text-muted">{{ album.attributes.artistName }}</span>
-        </a>
-      </div>
-    </div>
+    <SongCollectionList :items="albums" showCount countLabel="album" v-if="albums" />
+    <Loading message="Loading..." v-if="loading" />
   </div>
 </template>
 
 <script>
 import EventBus from '../event-bus';
 
+import SongCollectionList from '../components/SongCollectionList.vue';
+import Loading from '../components/Loading.vue';
+
 export default {
-  name: 'Albums',
-  props: {
-    title: String,
-    albums: Array
+  name: 'MyAlbums',
+  components: {
+    SongCollectionList,
+    Loading
   },
-  computed: {
+  props: {
+    title: String
   },
   filters: {
     humanize: function(value, unit) {
@@ -39,16 +34,47 @@ export default {
 
     return {
       musicKit: musicKit,
-      fields: [ ]
+      albums: null
     };
   },
   methods: {
     formatArtworkURL: function(url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
     },
-    clicked: function(album) {
-      EventBus.$emit('load', { album: album.id, library: album.type === 'library-albums' });
+    fetch: function(offset) {
+      if (this.abort) {
+        return;
+      }
+
+      this.loading = true;
+
+      if (!offset) {
+        offset = 0;
+      }
+
+      this.musicKit.api.library.albums(null, { offset: offset, limit: 100 })
+        .then(r => {
+          if (!this.albums) {
+            this.albums = r;
+          } else {
+            this.albums = this.albums.concat(r);
+          }
+
+          if (r.length !== 0) {
+            this.fetch(offset + 100);
+          } else {
+            this.loading = false;
+          }
+        }, err => {
+          console.error(err);
+        });
     }
+  },
+  created: function() {
+    this.fetch();
+  },
+  destroyed: function() {
+    this.abort = true;
   }
 }
 </script>

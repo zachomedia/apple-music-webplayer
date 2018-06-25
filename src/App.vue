@@ -1,81 +1,393 @@
 <template>
-  <div id="app">
-    <div v-if="musicKit">
-      <!-- Show login / setup screen if we are not authorized -->
-      <Login v-if="!musicKit.isAuthorized" />
+  <div>
+    <!-- Alert -->
+    <b-alert v-if="alert.details"
+            class="alert"
+            :show="alert.countdown"
+            dismissible
+            fade
+            :variant="alert.details.type"
+            @dismissed="alert.countdown=0"
+            @dismiss-count-down="alertCountdownChanged">
+      {{alert.details.message}}
+    </b-alert>
 
-      <!-- If we are authorized, show the player -->
-      <Player :musicKit="musicKit" v-else />
+    <div id="app" v-if="musicKit">
+      <!-- Header -->
+      <Header />
+
+      <b-container fluid>
+        <b-row>
+          <b-col sm="3">
+            <Sidebar />
+          </b-col>
+          <b-col sm="9">
+            <router-view></router-view>
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
-    <div v-else>
-      <p>Loading...</p>
+    <!-- Waiting for MusicKit -->
+    <div id="app" v-else>
+      <Header>
+        <template slot="controls">
+          <b-col class="text-center pt-2">
+            <i class="fa fa-circle-o-notch fa-spin h2" style="font-size: 20px" aria-hidden="true" />
+            <p>Initializing MusicKit JS...</p>
+          </b-col>
+        </template>
+      </Header>
+
+      <b-container fluid>
+        <b-row>
+          <b-col sm="12">
+            <Index />
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
+
+    <b-container fluid>
+      <b-row>
+        <b-col class="text-muted text-center text-sm mb-4 mt-2">
+          <p class="mb-1 pb-0">Copyright &copy; 2018 &mdash; <a href="https://zacharyseguin.ca">Zachary Seguin</a></p>
+          <p>Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries</p>
+          <p>
+            If you encounter any issues, have any feedback or feature requests, 
+            please <a href="https://github.com/zachomedia/apple-music-webplayer/issues">submit an issue on GitHub</a>
+            or send an email to <a href="mailto:contact@zacharyseguin.ca">contact@zacharyseguin.ca</a>.
+          </p>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
-import Login from './components/Login.vue';
-import Player from './components/Player.vue';
+  import VueRouter from 'vue-router';
 
-import EventBus from './event-bus';
-import privateConfig from './private';
+  // Import private configuration
+  import privateConfig from './private';
 
-export default {
-  name: 'app',
-  data: () => {
-    return {
-      musicKit: null,
-    };
-  },
-  components: {
-    Login,
-    Player
-  },
-  methods: {
-  },
-  created: function() {
-    if ("Notification" in window) {
-      window.Notification.requestPermission();
-    }
+  // Event bus
+  import EventBus from './event-bus';
 
-    let initialize = () => {
-      // Configure MusicKit
-      window.MusicKit.configure({
-        developerToken: privateConfig.developerToken,
-        app: {
-          name: 'Zachary Seguin Music',
-          build: '0.0.1'
+  // Import custom controls
+  import Header from './components/Header.vue';
+  import Index from './views/Index.vue';
+  import Loading from './components/Loading.vue';
+  import Sidebar from './components/Sidebar.vue';
+  import Recommendations from './views/Recommendations.vue';
+  import SongCollection from './views/SongCollection.vue';
+  import MyAlbums from './views/MyAlbums.vue';
+  import MySongs from './views/MySongs.vue';
+  import MyArtists from './views/MyArtists.vue';
+  import Artist from './views/Artist.vue';
+  import Search from './views/Search.vue';
+  import Me from './views/Me.vue';
+  import NotFound from './views/NotFound.vue';
+
+  import moment from 'moment';
+
+  // Initialize router
+  const routes = [
+    { 
+      name: 'index',
+      path: '/',
+      component: Index
+    },
+    {
+      name: 'search',
+      path: '/search',
+      component: Search,
+      props: {
+        title: 'Search'
+      },
+      meta: {
+        title: 'Search'
+      }
+    },
+    { 
+      name: 'recommendations',
+      path: '/recommendations',
+      component: Recommendations,
+      props: {
+        title: 'Recommendations'
+      },
+      meta: {
+        title: 'Recommendations',
+        isLibrary: true
+      }
+    },
+    {
+      name: 'library',
+      path: '/library',
+      component: Me,
+      meta: {
+        isLibrary: true
+      },
+      children: [
+        {
+          name: 'library-search',
+          path: 'search',
+          component: Search,
+          props: {
+            title: 'Search library'
+          },
+          meta: {
+            title: 'Search library',
+            isLibrary: true
+          }
+        },
+        {
+          name: 'my-songs',
+          path: 'songs',
+          component: MySongs,
+          props: {
+            title: 'My songs'
+          },
+          meta: {
+            title: 'My songs',
+            isLibrary: true
+          }
+        },
+        {
+          name: 'my-albums',
+          path: 'albums',
+          component: MyAlbums,
+          props: {
+            title: 'My albums'
+          },
+          meta: {
+            title: 'My albums',
+            isLibrary: true
+          }
+        },
+        {
+          name: 'library-albums',
+          path: 'albums/:id',
+          component: SongCollection,
+          meta: {
+            type: 'album',
+            isLibrary: true
+          }
+        },
+        {
+          name: 'library-playlists',
+          path: 'playlists/:id',
+          component: SongCollection,
+          meta: {
+            type: 'playlist',
+            isLibrary: true
+          }
+        },
+        {
+          name: 'my-artists',
+          path: 'artists',
+          component: MyArtists,
+          props: {
+            title: 'My artists'
+          },
+          meta: {
+            title: 'My artists',
+            isLibrary: true
+          }
+        },
+        {
+          name: 'library-artists',
+          path: 'artists/:id',
+          component: Artist,
+          meta: {
+            isLibrary: true
+          }
         }
-      });
-
-      this.musicKit = window.MusicKit.getInstance();
-
-      // Register events
-      this.onAuthorize = () => {
-        this.musicKit.authorize();
+      ]
+    },
+    {
+      name: 'playlists',
+      path: '/playlists/:id',
+      component: SongCollection,
+      meta: {
+        type: 'playlist',
+        isLibrary: false
       }
-      EventBus.$on('authorize', this.onAuthorize);
-
-      this.onUnauthorize = () => {
-        this.musicKit.unauthorize();
+    },
+    {
+      name: 'albums',
+      path: '/albums/:id',
+      component: SongCollection,
+      meta: {
+        type: 'album',
+        isLibrary: false
       }
-      EventBus.$on('unauthorize', this.onUnauthorize);
+    },
+    {
+      name: 'artists',
+      path: 'artists/:id',
+      component: Artist,
+      meta: {
+        isLibrary: false
+      }
+    },
+    {
+      path: '*',
+      component: NotFound,
+      meta: {
+        title: 'Not found'
+      }
+    }
+  ];
+
+  const router = new VueRouter({
+    mode: 'history',
+    routes
+  });
+
+  router.beforeEach((to, from, next) => {
+    window.scrollTo(0, 0);
+
+    if (to.name === 'library') {
+      next({ path: '/', replace: true });
+      return;
     }
 
-    // Check for MusicKit
-    if (window.MusicKit) {
-      initialize();
+    if (to.meta.title) {
+      document.title = to.meta.title + ' | Zachary Seguin Music';
     } else {
-      document.addEventListener('musickitloaded', () => {
-        initialize();
-      });
+      document.title = 'Zachary Seguin Music: an Apple Music web player';
     }
-  },
-  destroyed: function() {
-    EventBus.$off('authorize', this.onAuthorize);
-    EventBus.$off('unauthorize', this.onUnauthorize);
-  }
-}
+
+    try {
+      let musicKit = window.MusicKit.getInstance();
+
+      if (to.meta.isLibrary && !musicKit.isAuthorized) {
+        next({ path: '/', replace: true });
+        return;
+      }
+    } catch (err) {
+      // Do nothing
+    }
+    
+    next();
+  });
+
+  export default {
+    router,
+    name: 'app',
+    components: {
+      Header,
+      Index,
+      Loading,
+      Sidebar
+    },
+    data: function() {
+      return {
+        musicKit: null,
+        alert: {
+          details: null,
+          countdown: 0
+        }
+      };
+    },
+    methods: {
+      formatDuration: function(value, unit) {
+         let pad = function(num) {
+            if (num < 10) {
+               num = "0" + num;
+            }
+
+            return num;
+         };
+
+         let m = moment.duration(value, unit);
+
+         return m.minutes() + ":" + pad(m.seconds());
+      },
+      alertCountdownChanged: function(count) {
+        this.alert.countdown = count;
+      }
+    },
+    created: function() {
+      // Events
+      this.onAlert = (alert) => {
+        this.alert.details = alert;
+        this.alert.countdown = 5;
+      }
+      EventBus.$on('alert', this.onAlert);
+
+      let initializeMusicKit = () => {
+        // Configure MusicKit
+        window.MusicKit.configure({
+          developerToken: privateConfig.developerToken,
+          app: {
+            name: 'Zachary Seguin Music',
+            build: '0.1.0'
+          }
+        });
+
+        let musicKit = window.MusicKit.getInstance();
+
+        if (!musicKit.isAuthorized && this.$route.meta.isLibrary) {
+          this.$router.push({ path: '/', replace: true });
+        }
+
+        this.musicKit = musicKit;
+
+        // Create callback functions
+        this.mediaPlaybackError = (event) => {
+          console.error(event);
+        };
+        this.musicKit.addEventListener(window.MusicKit.Events.mediaPlaybackError, this.mediaPlaybackError);
+
+        this.mediaItemDidChange = (event) => {
+          // Show a notification
+          if (('Notification' in window) && event.item) {
+            window.Notification.requestPermission();
+
+            if (window.Notification.permission === "granted") {
+              if (this.notification) {
+                this.notification.close();
+              }
+
+              this.notification = new window.Notification(event.item.attributes.name, {
+                tag: 'currentMediaItem',
+                body: event.item.attributes.artistName + " (" + this.formatDuration(event.item.attributes.durationInMillis) + ")",
+                icon: event.item.attributes.artwork ? window.MusicKit.formatArtworkURL(event.item.attributes.artwork) : null
+              });
+
+              this.notification.onclose = e => {
+                this.notification = null;
+                clearTimeout(this.notificationTimeout);
+              }
+
+              this.notificationTimeout = setTimeout(e => {
+                if (this.notification) {
+                  this.notification.close();
+                }
+              }, event.item.attributes.durationInMillis);
+            }
+          }
+        };
+        this.musicKit.addEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+      }
+
+      // Check for MusicKit
+      if (window.MusicKit) {
+        try {
+          this.musicKit = window.MusicKit.getInstance();
+        } catch (err) {
+          initializeMusicKit();
+        }
+      } else {
+        document.addEventListener('musickitloaded', () => {
+          initializeMusicKit();
+        });
+      }
+    },
+    destroyed: function() {
+      EventBus.$off('alert', this.onAlert);
+    }
+  };
 </script>
 
 <style>
@@ -87,6 +399,19 @@ body {
   background: #eee;
   font-size: 0.9rem;
 
-  height: 100%;
+  padding-top: 100px;
+}
+</style>
+
+<style scoped>
+.alert {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.text-sm {
+  font-size: 0.8em;
 }
 </style>

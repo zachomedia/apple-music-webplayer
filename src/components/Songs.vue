@@ -21,7 +21,7 @@
       <template slot="actions" slot-scope="data">
         <b-button-group size="sm">
           <b-button variant="link"
-                    v-if="!data.item.type.startsWith('library')"
+                    v-if="isAuthorized && !data.item.type.startsWith('library')"
                     v-on:click.prevent.stop="addToLibrary(data)">
             <i class="fa fa-plus" />
           </b-button>
@@ -56,6 +56,7 @@ export default {
 
     return {
       musicKit: musicKit,
+      isAuthorized: musicKit.isAuthorized,
       nowPlayingItem: musicKit.player.nowPlayingItem,
       fields: [ ]
     };
@@ -78,24 +79,45 @@ export default {
         return m.minutes() + ":" + pad(m.seconds());
     },
     clicked: function(item, index, event) {
-      this.queue(item);
+      this.play(item);
     },
-    queue: function(item) {
-      EventBus.$emit('queue', { items: this.songs.map(i => {
-        return {
-          attributes: i.attributes,
-          id: i.id,
-          container: {
+    play: function(item) {
+      this.musicKit.setQueue({
+        items: this.songs.map(i => {
+          return {
+            attributes: i.attributes,
             id: i.id,
-            name: "library-song"
-          }
-        }
-      }), startPosition: this.songs.indexOf(item) });
+            container: {
+              id: i.id
+            }
+          };
+        }),
+        startPosition: this.songs.indexOf(item)
+      }).then(queue => {
+        this.musicKit.player.changeToMediaItem(queue.item(this.songs.indexOf(item)))
+          .then(r => {
+            this.musicKit.play().catch(err => console.error(err));
+          }, err => {
+            console.error(err);
+          });
+      }, err => {
+        console.error(err);
+      });
     },
     addToLibrary: function(item) {
-      EventBus.$emit('addToLibrary', {
+      this.musicKit.api.addToLibrary({
         songs: [ item.item.id ]
-      }, item.item.attributes.name);
+      }).then(() => {
+        EventBus.$emit('alert', {
+          type: 'success',
+          message: `Successfully added "${item.item.attributes.name}" to your library.`
+        });
+      }, err => {
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An error occurred while adding "${item.item.attributes.name}" to your library.`
+        });
+      });
     }
   },
   created: function() {
@@ -118,9 +140,19 @@ export default {
       this.nowPlayingItem = event.item;
     };
     this.musicKit.addEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+
+    this.onAuthorizationStatusDidChange = e => {
+      this.isAuthorized = this.musicKit.isAuthorized;
+
+      if (!this.isAuthorized) {
+        this.search.library = false;
+      }
+    }
+    this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
   },
   destroyed: function() {
     this.musicKit.removeEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+    this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
   }
 }
 </script>

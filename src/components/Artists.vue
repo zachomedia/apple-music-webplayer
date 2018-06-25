@@ -7,17 +7,15 @@
 
     <div class="grid">
       <div class="item" v-for="artist in artists" :key="artist.id">
-        <a href="#" v-on:click.prevent="clicked(artist)">
+        <router-link :to="{ name: artist.type, params: { id: artist.id } }">
           <span>{{ artist.attributes.name }}</span>
-        </a>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import EventBus from '../event-bus';
-
 export default {
   name: 'Artists',
   props: {
@@ -35,10 +33,6 @@ export default {
   methods: {
     formatArtworkURL: function(url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
-    },
-    clicked: function(artist) { 
-      console.log(artist);
-      EventBus.$emit('load', { artist: artist.id, library: artist.type === 'library-artists' });
     }
   }
 }
@@ -77,13 +71,5 @@ a:hover {
 
 .item a:hover span {
   color: #007bff;
-}
-
-</style>
-
-<style>
-.song-cell {
-  vertical-align: middle !important;
-  cursor: pointer;
 }
 </style>

@@ -2,15 +2,13 @@
 
 <template>
   <div class="splash">
-    <p class="mb-4"><a href="https://zacharyseguin.ca"><img src="../assets/logo.svg" width="100%" alt="Zachary Seguin" /></a><span>music</span></p>
+    <p class="mb-4 logo">
+      <a href="https://zacharyseguin.ca"><img src="../assets/logo.svg" width="100%" alt="Zachary Seguin" /></a><span>music</span>
+    </p>
     
     <h2 class="h5">Hello!</h2>
     <p>This is a web player for <a href="https://applemusic.com">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs">MusicKit JS</a>.</p>
     <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>.</p>
-
-    <p class="mt-5 mb-5 text-center">
-      <b-button variant="primary" v-on:click.prevent="authorize()">Sign in to Apple Music</b-button>
-    </p>
 
     <div class="border p-2 mb-4 border-warning rounded bg-warning">
       <h2 class="h5 text-uppercase">Notice</h2>
@@ -28,15 +26,8 @@
 </template>
 
 <script>
-import EventBus from '../event-bus';
-
 export default {
-  name: 'Login',
-  methods: {
-    authorize: function() {
-      EventBus.$emit('authorize');
-    }
-  }
+  name: 'Index'
 }
 </script>
 
@@ -50,8 +41,13 @@ p span {
 }
 
 .splash {
-  width: 90%;
-  max-width: 400px;
-  margin: 100px auto;
+  padding: 0 10px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.splash .logo {
+  max-width: 350px;
+  margin: 0 auto;
 }
 </style>

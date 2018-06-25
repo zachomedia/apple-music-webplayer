@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import EventBus from "../event-bus";
 import moment from "moment";
 
 export default {
@@ -59,38 +58,27 @@ export default {
       }
   },
   methods: {
-      formatDuration: function(value, unit) {
-         let pad = function(num) {
-            if (num < 10) {
-               num = "0" + num;
-            }
+    formatDuration: function(value, unit) {
+        let pad = function(num) {
+          if (num < 10) {
+              num = "0" + num;
+          }
 
-            return num;
-         };
+          return num;
+        };
 
-         let m = moment.duration(value, unit);
+        let m = moment.duration(value, unit);
 
-         return m.minutes() + ":" + pad(m.seconds());
-      },
-      formatArtworkURL: function(url, height, width) {
-         return MusicKit.formatArtworkURL(url, width, width);
-      }
+        return m.minutes() + ":" + pad(m.seconds());
+    },
+    formatArtworkURL: function(url, height, width) {
+        return MusicKit.formatArtworkURL(url, width, width);
+    }
   },
    created: function() {
       // Create callback functions
       this.mediaItemDidChange = (event) => {
          this.mediaItem = event.item;
-
-         // Show a notification
-         if (('Notification' in window) && event.item) {
-            var notification = new window.Notification(event.item.attributes.name, {
-               tag: 'currentMediaItem',
-               body: event.item.attributes.artistName + " (" + this.formatDuration(event.item.attributes.durationInMillis) + ")",
-               icon: event.item.attributes.artwork ? window.MusicKit.formatArtworkURL(event.item.attributes.artwork) : null
-            });
-
-            setTimeout(notification.close.bind(this), event.item.attributes.durationInMillis);
-         }
       }
       this.musicKit.addEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
 
