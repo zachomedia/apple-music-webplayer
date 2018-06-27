@@ -68,7 +68,7 @@ export default {
         this.data.recommendations._rowVariant = 'success';
       }, err => {
         this.data.recommendations.status = 'Error';
-        this.data.recommendations.detail = err.toString();
+        this.data.recommendations.detail = JSON.stringify(err);
         this.data.recommendations._rowVariant = 'danger';
       });
 

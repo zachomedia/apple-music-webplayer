@@ -100,6 +100,11 @@ export default {
         }
       }, err => {
         console.error(err);
+
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An unexpected error occurred.`
+        });
       });
     },
     play: function() {
@@ -128,9 +133,21 @@ export default {
           };
         })
       }).then(queue => {
-        this.musicKit.play().catch(err => console.error(err));
+        this.musicKit.play().catch(err => {
+          console.error(err);
+
+          EventBus.$emit('alert', {
+            type: 'danger',
+            message: `An unexpected error occurred.`
+          });
+        });
       }, err => {
         console.error(err);
+
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An unexpected error occurred.`
+        });
       });
     },
     addToLibrary: function() {

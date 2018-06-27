@@ -121,7 +121,6 @@ export default {
   },
   created: function() {
     this.onAuthorizationStatusDidChange = e => {
-      console.log(e, this.musicKit.isAuthorized);
       this.isAuthorized = this.musicKit.isAuthorized;
 
       if (!this.isAuthorized) {

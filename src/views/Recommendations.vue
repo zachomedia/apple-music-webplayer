@@ -50,6 +50,11 @@ export default {
         this.loading = false;
       }, err => {
         console.error(err);
+
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An unexpected error occurred.`
+        });
       })
     };
   }
