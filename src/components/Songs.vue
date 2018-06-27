@@ -142,11 +142,12 @@ export default {
     this.musicKit.addEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
 
     this.onAuthorizationStatusDidChange = e => {
-      this.isAuthorized = this.musicKit.isAuthorized;
-
-      if (!this.isAuthorized) {
-        this.search.library = false;
+      // This seems to cause issues...
+      if (e.authorizationStatus == 3) {
+        return;
       }
+
+      this.isAuthorized = this.musicKit.isAuthorized;
     }
     this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
   },
