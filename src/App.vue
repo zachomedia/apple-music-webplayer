@@ -86,6 +86,7 @@
   import Search from './views/Search.vue';
   import Me from './views/Me.vue';
   import NotFound from './views/NotFound.vue';
+  import Debug from './views/Debug.vue';
 
   import moment from 'moment';
 
@@ -227,6 +228,18 @@
       component: Artist,
       meta: {
         isLibrary: false
+      }
+    },
+    {
+      name: 'debug',
+      path: '/debug',
+      component: Debug,
+      meta: {
+        title: 'Debug',
+        isLibrary: false
+      },
+      props: {
+        title: 'Debug'
       }
     },
     {
