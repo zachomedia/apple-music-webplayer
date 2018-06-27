@@ -38,6 +38,7 @@ export default {
 
     return {
       musicKit: musicKit,
+      loading: false,
       groups: this.recommendations
     };
   },
