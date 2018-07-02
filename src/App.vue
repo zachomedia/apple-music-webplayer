@@ -461,7 +461,7 @@ body {
   font-family: sans-serif;
 }
 
-body:not(.dark) {
+body.light {
   // Default light mode
   @import "assets/_custom.scss";
   @import "~bootstrap/scss/bootstrap.scss";
@@ -472,7 +472,7 @@ body:not(.dark) {
 }
 
 // Colours for dark mode
-.dark {
+body.dark {
   @import "assets/_custom.dark.scss";
   @import "~bootswatch/dist/darkly/variables";
   @import "~bootstrap/scss/bootstrap.scss";
