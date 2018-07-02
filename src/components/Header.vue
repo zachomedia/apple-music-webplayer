@@ -1,7 +1,7 @@
 <template>
   <div class="header container-fluid">
     <div align-self="center" class="logo pull-left pl-2">
-      <a href="https://zacharyseguin.ca"><img src="../assets/icon.svg" alt="Zachary Seguin" /></a>
+      <router-link :to="{ name: 'index' }"><img src="../assets/icon.svg" alt="Zachary Seguin" /></router-link>
     </div>
     <!-- Controls -->
     <div class="controls">
@@ -33,25 +33,33 @@
   };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
   z-index: 100;
-  background: #f8f8f8;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-  padding: 8px 5px;
-  overflow: hidden;
   height: 80px;
   font-size: 0.9em;
+  overflow: hidden;
+  padding: 8px 5px;
+  background: #f8f8f8;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+}
+.dark .header {
+  background: #333;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
 }
 
 .controls {
   position: absolute;
-  left: 60px;
+  left: 80px;
   right: 0;
+}
+
+.dark .logo img {
+  box-shadow: 0px 0px 1px rgba(100, 100, 100, .5);
 }
 
 .logo img {

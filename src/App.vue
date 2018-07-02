@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="theme">
     <!-- Alert -->
     <b-alert v-if="alert.details"
             class="alert"
@@ -86,6 +86,7 @@
   import Search from './views/Search.vue';
   import Me from './views/Me.vue';
   import NotFound from './views/NotFound.vue';
+  import Settings from './views/Settings.vue';
   import Debug from './views/Debug.vue';
 
   import moment from 'moment';
@@ -231,6 +232,18 @@
       }
     },
     {
+      name: 'settings',
+      path: '/settings',
+      component: Settings,
+      meta: {
+        title: 'Settings',
+        isLibrary: false
+      },
+      props: {
+        title: 'Settings'
+      }
+    },
+    {
       name: 'debug',
       path: '/debug',
       component: Debug,
@@ -293,8 +306,20 @@
       Loading,
       Sidebar
     },
+    localStorage: {
+      theme: {
+        type: String,
+        default: 'light'
+      },
+      showPlaybackNotifications: {
+        type: Boolean,
+        default: true
+      }
+    },
     data: function() {
       return {
+        theme: this.$localStorage.get('theme'),
+
         musicKit: null,
         alert: {
           details: null,
@@ -321,6 +346,13 @@
       }
     },
     created: function() {
+      this.onThemeChange = () => {
+        this.theme = this.$localStorage.get('theme');
+        document.body.className = this.theme;
+      }
+      EventBus.$on('theme', this.onThemeChange);
+      this.onThemeChange();
+
       // Events
       this.onAlert = (alert) => {
         this.alert.details = alert;
@@ -354,7 +386,7 @@
 
         this.mediaItemDidChange = (event) => {
           // Show a notification
-          if (('Notification' in window) && event.item) {
+          if (('Notification' in window) && event.item && this.$localStorage.get('showPlaybackNotifications')) {
             window.Notification.requestPermission();
 
             if (window.Notification.permission === "granted") {
@@ -398,27 +430,22 @@
       }
     },
     destroyed: function() {
+      EventBus.$off('theme', this.onThemeChange);
       EventBus.$off('alert', this.onAlert);
     }
   };
 </script>
 
 <style>
-body {
-  background: #eee !important;
-}
-
 #app {
-  background: #eee;
   font-size: 0.9rem;
-
   padding-top: 100px;
 }
 </style>
 
 <style scoped>
 .alert {
-  position: fixed;
+  position: fixed !important;
   bottom: 10px;
   right: 10px;
   z-index: 1000;
@@ -426,5 +453,33 @@ body {
 
 .text-sm {
   font-size: 0.8em;
+}
+</style>
+
+<style lang="scss">
+body {
+  font-family: sans-serif;
+}
+
+body:not(.dark) {
+  // Default light mode
+  @import "assets/_custom.scss";
+  @import "~bootstrap/scss/bootstrap.scss";
+  @import '~bootstrap-vue/dist/bootstrap-vue.css';
+
+  background: $body-bg;
+  color: $body-color;
+}
+
+// Colours for dark mode
+.dark {
+  @import "assets/_custom.dark.scss";
+  @import "~bootswatch/dist/darkly/variables";
+  @import "~bootstrap/scss/bootstrap.scss";
+  @import "~bootswatch/dist/darkly/bootswatch";
+  @import '~bootstrap-vue/dist/bootstrap-vue.css';
+
+  background: $body-bg;
+  color: $body-color;
 }
 </style>

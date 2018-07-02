@@ -1,22 +1,24 @@
 
 <template>
   <div>
-    <b-button v-if="isAuthorized"
-              class="w-100"
-              variant="link"
-              v-on:click.prevent="unauthorize()">Sign out of Apple Music</b-button>
-
-    <b-button v-if="!isAuthorized"
-              class="w-100"
-              variant="primary"
-              v-on:click.prevent="authorize()">Sign in to Apple Music</b-button>
+    <b-button-group class="w-100">
+      <b-button v-if="isAuthorized"
+                variant="outline-primary"
+                class="w-50"
+                v-on:click.prevent="unauthorize()">Sign out</b-button>
+      <b-button v-if="!isAuthorized"
+                variant="primary"
+                class="w-50"
+                v-on:click.prevent="authorize()">Sign in</b-button>
+      <b-button :to="{ name: 'settings' }" variant="outline-secondary" class="w-50"><i class="fa fa-gear" /></b-button>
+    </b-button-group>
 
     <!-- Search -->
-    <h2 class="text-uppercase heading">Search</h2>
+    <h2 class="text-uppercase text-muted heading">Search</h2>
     <b-form v-on:submit.prevent="search()">
       <b-form-radio-group v-model="searchParams.library"
         buttons button-variant="outline-primary"
-        class="mb-1 btn-group-sm split"
+        class="mb-1 btn-group-sm split w-100"
         v-if="isAuthorized">
         <b-form-radio :value="false">Apple Music</b-form-radio>
         <b-form-radio :value="true">Library</b-form-radio>
@@ -28,21 +30,21 @@
     </b-form>
 
     <!-- Apple Music -->
-    <h2 class="text-uppercase heading" v-if="isAuthorized">Apple Music</h2>
+    <h2 class="text-uppercase text-muted heading" v-if="isAuthorized">Apple Music</h2>
     <b-list-group class="mb-2">
       <b-list-group-item :to="{ name: 'recommendations' }" v-if="isAuthorized">Recommendations</b-list-group-item>
     </b-list-group>
 
     <!-- Library -->
     <div v-if="isAuthorized">
-      <h2 class="text-uppercase heading">My Library</h2>
+      <h2 class="text-uppercase text-muted heading">My Library</h2>
       <b-list-group class="mb-2">
         <b-list-group-item :to="{ name: 'my-songs' }" exact>Songs</b-list-group-item>
         <b-list-group-item :to="{ name: 'my-albums' }" exact>Albums</b-list-group-item>
         <b-list-group-item :to="{ name: 'my-artists' }" exact>Artists</b-list-group-item>
       </b-list-group>
 
-      <h3 class="text-uppercase heading">
+      <h3 class="text-uppercase text-muted heading">
         Playlists
         <a href="#" v-on:click.prevent="fetch()" class="pull-right">
           <i :class="{ fa: true, 'fa-refresh': true, 'fa-spin': loading }" />
@@ -152,7 +154,6 @@ export default {
 .heading {
   font-weight: normal;
   padding-top: 10px;
-  color: #666;
 }
 
 h2.heading {

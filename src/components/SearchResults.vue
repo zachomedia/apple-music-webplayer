@@ -7,17 +7,17 @@
     <p v-if="Object.keys(results).length === 0">No results</p>
     <b-card no-body v-else>
       <b-tabs card v-model="tabIndex">
-        <b-tab title="Songs" v-if="results.songs && results.songs.data.length > 0">
-          <Songs :songs="results.songs.data" />
+        <b-tab title="Songs" :disabled="!(results.songs && results.songs.data.length > 0)">
+          <Songs :songs="results.songs.data" v-if="results.songs && results.songs.data.length > 0" />
         </b-tab>
-        <b-tab title="Albums" v-if="results.albums && results.albums.data.length > 0">
-          <SongCollectionList :items="results.albums.data" showCount countLabel="album" />
+        <b-tab title="Albums" :disabled="!(results.albums && results.albums.data.length > 0)">
+          <SongCollectionList :items="results.albums.data" showCount countLabel="album" v-if="results.albums && results.albums.data.length > 0" />
         </b-tab>
-        <b-tab title="Artists" v-if="results.artists && results.artists.data.length > 0">
-          <Artists :artists="results.artists.data" />
+        <b-tab title="Artists" :disabled="!(results.artists && results.artists.data.length > 0)">
+          <Artists :artists="results.artists.data" v-if="results.songs && results.songs.data.length > 0" />
         </b-tab>
-        <b-tab title="Playlists" v-if="results.playlists && results.playlists.data.length > 0">
-          <SongCollectionList :items="results.playlists.data" showCount countLabel="playlist" />
+        <b-tab title="Playlists" :disabled="!(results.playlists && results.playlists.data.length > 0)">
+          <SongCollectionList :items="results.playlists.data" showCount countLabel="playlist" v-if="results.playlists && results.playlists.data.length > 0" />
         </b-tab>
       </b-tabs>
     </b-card>

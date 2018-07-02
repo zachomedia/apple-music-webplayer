@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
+    "bootswatch": "^4.1.1",
     "font-awesome": "^4.7.0",
     "moment": "^2.22.2",
     "vue": "^2.5.16",
+    "vue-localstorage": "^0.6.2",
     "vue-router": "^3.0.1",
     "vue2-filters": "^0.3.0"
   },
@@ -19,6 +21,8 @@
     "@vue/cli-plugin-babel": "^3.0.0-beta.15",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.15",
     "@vue/cli-service": "^3.0.0-beta.15",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.3",
     "vue-template-compiler": "^2.5.16"
   },
   "eslintConfig": {

@@ -8,11 +8,11 @@
 
          <div class="main" v-if="mediaItem">
             <span class="title">{{ mediaItem.attributes.name }}</span>
-            <span class="artist">{{ mediaItem.attributes.artistName }} &mdash; {{ mediaItem.attributes.albumName }}</span>
+            <span class="artist text-muted">{{ mediaItem.attributes.artistName }} &mdash; {{ mediaItem.attributes.albumName }}</span>
          </div>
          <div class="main" v-else>
             <span class="title">Hello!</span>
-            <span class="artist">Select a song, album or playlist to play.</span>
+            <span class="artist text-muted">Select a song, album or playlist to play.</span>
          </div>
 
          <div class="right">
@@ -104,6 +104,10 @@ export default {
   overflow: hidden;
   position: relative;
 }
+.dark .now-playing {
+  border-color: #444;
+  background: #222;
+}
 
 .now-playing .info {
   display: flex;
@@ -128,20 +132,21 @@ export default {
   color: #888;
 }
 
+.dark .now-playing .right {
+  color: #aaa;
+}
+
 .now-playing .title {
   font-weight: bold;
 }
 
 .title {
   display: block;
-  color: black;
-
   font-size: 1.2em;
 }
 
 .artist {
   display: block;
-  color: #666;
 }
 
 .placeholder {
@@ -150,5 +155,9 @@ export default {
    height: 60px;
    margin-right: 10px;
    background: #f2f2f2;
+}
+
+.dark .placeholder {
+  background: #111;
 }
 </style>

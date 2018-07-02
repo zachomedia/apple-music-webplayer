@@ -54,7 +54,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 a:hover {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 .grid {
@@ -83,7 +83,6 @@ a:hover {
 .item span {
   display: block;
   padding: 1px 6px;
-  color: black;
 }
 </style>
 

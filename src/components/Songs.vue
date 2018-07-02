@@ -5,7 +5,7 @@
     <h1 v-if="title">{{ title }}</h1>
     <p class="text-muted">{{ songs.length }} {{ songs.length | pluralize('song') }}, {{ duration | humanize }}</p>
 
-    <b-table :items="songs" :fields="fields" outlined hover v-on:row-clicked="clicked">
+    <b-table :items="songs" :fields="fields" hover v-on:row-clicked="clicked">
       <template slot="attributes.artwork" slot-scope="data">
         <img v-if="data.value && data.value.artwork"
              :src="formatArtworkURL(data.value.artwork, 40, 40)"
@@ -98,9 +98,19 @@ export default {
           .then(r => {
             this.musicKit.play().catch(err => console.error(err));
           }, err => {
+            EventBus.$emit('alert', {
+              type: 'danger',
+              message: `An unexpected error occurred.`
+            });
+            
             console.error(err);
           });
       }, err => {
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An unexpected error occurred.`
+        });
+
         console.error(err);
       });
     },
@@ -160,10 +170,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-table {
-  background: #fefefe;
-}
-
 img {
   width: 40px;
   height: 40px;

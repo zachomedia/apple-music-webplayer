@@ -67,6 +67,10 @@ button {
   font-size: 1.2em;
 }
 
+.dark button {
+  color: #ccc;
+}
+
 .main {
   font-size: 1.8em;
 }

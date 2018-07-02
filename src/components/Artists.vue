@@ -40,10 +40,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-a:hover {
-  text-decoration: none;
-}
-
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -55,21 +51,4 @@ a:hover {
   font-size: 0.9em;
 }
 
-.item img {
-  width: 200px;
-  height: 200px;
-  border-radius: 4px;
-  margin-bottom: 4px;
-  box-shadow: 0 0 1px rgba(0, 0, 0, .4);
-}
-
-.item span {
-  display: block;
-  padding: 1px 6px;
-  color: black;
-}
-
-.item a:hover span {
-  color: #007bff;
-}
 </style>

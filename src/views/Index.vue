@@ -49,5 +49,8 @@ p span {
 .splash .logo {
   max-width: 350px;
   margin: 0 auto;
+  background: #f3f3f3;
+  padding: 15px;
+  border-radius: 4px;
 }
 </style>

@@ -6,8 +6,6 @@ import BootstrapVue from 'bootstrap-vue';
 Vue.config.productionTip = false
 
 // Load Bootstrap
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 
 // Load Font Awesome
@@ -16,6 +14,10 @@ import 'font-awesome/css/font-awesome.css';
 // Vue.js 2 filters
 import Vue2Filters from 'vue2-filters';
 Vue.use(Vue2Filters)
+
+// Local storage
+import VueLocalStorage from 'vue-localstorage';
+Vue.use(VueLocalStorage);
 
 // Vue router
 import VueRouter from 'vue-router';
