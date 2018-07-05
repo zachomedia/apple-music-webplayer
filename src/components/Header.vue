@@ -5,16 +5,10 @@
     </div>
     <!-- Controls -->
     <div class="controls">
-      <b-row>
-        <slot name="controls">
-          <b-col align-self="center" cols="3" sm="2">
-            <MediaControls />
-          </b-col> 
-          <b-col align-self="center" class="mr-2">
-            <NowPlaying />
-          </b-col>
-        </slot>
-      </b-row>
+      <MediaControls />
+    </div>
+    <div class="now-playing">
+      <NowPlaying />
     </div>
   </div>
 </template>
@@ -42,39 +36,32 @@
   z-index: 100;
   height: 80px;
   font-size: 0.9em;
-  overflow: hidden;
   padding: 8px 5px;
   background: #f8f8f8;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-}
-.dark .header {
-  background: #333;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-}
 
-.controls {
-  position: absolute;
-  left: 80px;
-  right: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
+.dark {
+  .header {
+    background: #333;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+  }
 
-.dark .logo img {
-  box-shadow: 0px 0px 1px rgba(100, 100, 100, .5);
+ .logo img {
+    box-shadow: 0px 0px 1px rgba(100, 100, 100, .5);
+  }
 }
 
 .logo img {
   height: 100%;
   max-height: 50px;
-  margin-top: 6px;
 }
 
-@media (max-width: 680px) {
-  .logo { 
-    display: none;
-  }
-
-  .controls {
-    left: 0;
-  }
+.now-playing {
+  flex-grow: 2;
 }
 </style>

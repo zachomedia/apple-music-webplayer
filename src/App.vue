@@ -482,4 +482,13 @@ body.dark {
   background: $body-bg;
   color: $body-color;
 }
+
+body.modal-open {
+  overflow: hidden;
+
+  .modal {
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+}
 </style>
