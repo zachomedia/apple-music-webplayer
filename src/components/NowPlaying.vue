@@ -77,7 +77,7 @@ export default {
          queueTab: 1,
          queuePosition: musicKit.player.queue.position,
          queue: musicKit.player.queue.items,
-         showQueue: true,
+         showQueue: false,
          playbackTime: {
             currentPlaybackDuration: musicKit.player.currentPlaybackDuration,
             currentPlaybackTime: musicKit.player.currentPlaybackTime,
