@@ -29,11 +29,11 @@
                <b-form-radio :value="2" class="w-50">History</b-form-radio>
               </b-form-radio-group>
               <b-list-group flush v-if="queue.length > 0">
-                 <b-list-group-item href="#" v-for="(item, index) in queue"
+                 <b-list-group-item href="#" v-for="(item, index) in (queueTab === 1 ? queue : queue.slice().reverse())"
                                     v-bind:key="item.id"
-                                    @click.prevent="change(index)"
-                                    v-if="queueTab == 1 ? index > queuePosition : index < queuePosition">
-                     <div :class="{ 'queue-item': true, 'playing': index == queuePosition }">
+                                    @click.prevent="queueTab === 1 ? change(index) : change(queue.length - 1 - index)"
+                                    v-if="queueTab == 1 ? index > queuePosition : queue.length - 1 - index < queuePosition">
+                     <div class="queue-item">
                         <div class="mr-2">
                            <img v-if="item.attributes.artwork"
                                  :src="formatArtworkURL(item.attributes.artwork, 40, 40)" />
@@ -248,9 +248,5 @@ export default {
   .grow-1 {
     flex-grow: 1;
   }
-}
-
-.playing img {
-   border: 2px solid #007bff;
 }
 </style>
