@@ -24,8 +24,8 @@
             <i class="fa fa-ellipsis-h" /><span class="sr-only">Song actions</span>
           </template>
 
-          <b-dropdown-item-button @click.stop="addToLibrary(data)">Add to library</b-dropdown-item-button>
-          <b-dropdown-divider />
+          <b-dropdown-item-button @click.stop="addToLibrary(data)" v-if="isAuthorized">Add to library</b-dropdown-item-button>
+          <b-dropdown-divider  v-if="isAuthorized" />
           <b-dropdown-item-button @click.stop="queueNext(data)">Play next</b-dropdown-item-button>
           <b-dropdown-item-button @click.stop="queueLater(data)">Play later</b-dropdown-item-button>
         </b-dropdown>
