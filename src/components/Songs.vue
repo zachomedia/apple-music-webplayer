@@ -19,13 +19,16 @@
       </template>
 
       <template slot="actions" slot-scope="data">
-        <b-button-group size="sm">
-          <b-button variant="link"
-                    v-if="isAuthorized && !data.item.type.startsWith('library')"
-                    v-on:click.prevent.stop="addToLibrary(data)">
-            <i class="fa fa-plus" />
-          </b-button>
-        </b-button-group>
+        <b-dropdown variant="link" size="sm" no-caret right>
+          <template slot="button-content">
+            <i class="fa fa-ellipsis-h" /><span class="sr-only">Song actions</span>
+          </template>
+
+          <b-dropdown-item-button @click.stop="addToLibrary(data)">Add to library</b-dropdown-item-button>
+          <b-dropdown-divider />
+          <b-dropdown-item-button @click.stop="queueNext(data)">Play next</b-dropdown-item-button>
+          <b-dropdown-item-button @click.stop="queueLater(data)">Play later</b-dropdown-item-button>
+        </b-dropdown>
       </template>
     </b-table>
   </div>
@@ -81,17 +84,18 @@ export default {
     clicked: function(item, index, event) {
       this.play(item);
     },
+    trackToMediaItem(track) {
+      return {
+        attributes: track.attributes,
+        id: track.id,
+        container: {
+          id: track.id
+        }
+      };
+    },
     play: function(item) {
       this.musicKit.setQueue({
-        items: this.songs.map(i => {
-          return {
-            attributes: i.attributes,
-            id: i.id,
-            container: {
-              id: i.id
-            }
-          };
-        }),
+        items: this.songs.map(i => this.trackToMediaItem(i)),
         startPosition: this.songs.indexOf(item)
       }).then(queue => {
         this.musicKit.player.changeToMediaItem(queue.item(this.songs.indexOf(item)))
@@ -128,6 +132,14 @@ export default {
           message: `An error occurred while adding "${item.item.attributes.name}" to your library.`
         });
       });
+    },
+    queueNext(item) {
+      let mediaItem = this.trackToMediaItem(item.item);
+      this.musicKit.player.queue.prepend({ items: [mediaItem] });
+    },
+    queueLater(item) {
+      let mediaItem = this.trackToMediaItem(item.item);
+      this.musicKit.player.queue.append({ items: [mediaItem] });
     }
   },
   created: function() {
