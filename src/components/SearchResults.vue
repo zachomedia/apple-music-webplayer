@@ -14,7 +14,7 @@
           <SongCollectionList :items="results.albums.data" showCount countLabel="album" v-if="results.albums && results.albums.data.length > 0" />
         </b-tab>
         <b-tab title="Artists" :disabled="!(results.artists && results.artists.data.length > 0)">
-          <Artists :artists="results.artists.data" v-if="results.songs && results.songs.data.length > 0" />
+          <Artists :artists="results.artists.data" v-if="results.artists && results.artists.data.length > 0" />
         </b-tab>
         <b-tab title="Playlists" :disabled="!(results.playlists && results.playlists.data.length > 0)">
           <SongCollectionList :items="results.playlists.data" showCount countLabel="playlist" v-if="results.playlists && results.playlists.data.length > 0" />
