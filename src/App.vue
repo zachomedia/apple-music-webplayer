@@ -19,10 +19,10 @@
       <b-container fluid>
         <b-row>
           <b-col lg="3" class="mb-4">
-            <b-button :class="{ 'w-100 d-sm-block d-md-block d-lg-none d-xl-none': true, 'mb-4': showSidebar }" @click="showSidebar = !showSidebar">
+            <b-button :class="{ 'w-100': true, 'd-none': !isAuthorized, 'd-sm-block d-md-block d-lg-none d-xl-none': isAuthorized, 'mb-4': showSidebar }" @click="showSidebar = !showSidebar">
               <i :class="{ 'fa': true, 'fa-bars': !showSidebar, 'fa-times': showSidebar }" /> Menu
             </b-button>
-            <Sidebar :class="{ 'd-none': !showSidebar, 'd-sm-none': !showSidebar, 'd-md-none': !showSidebar, 'd-lg-block': true, 'd-xl-block': true }" />
+            <Sidebar :class="{ 'd-none': !showSidebar && isAuthorized, 'd-sm-none': !showSidebar && isAuthorized, 'd-md-none': !showSidebar && isAuthorized, 'd-lg-block': true, 'd-xl-block': true }" />
           </b-col>
           <b-col lg="9">
             <router-view></router-view>
@@ -323,6 +323,7 @@
       return {
         theme: this.$localStorage.get('theme'),
         showSidebar: false,
+        isAuthorized: false,
 
         musicKit: null,
         alert: {
@@ -380,6 +381,10 @@
           }
         });
 
+        initialize();
+      }
+
+      let initialize = () => {
         let musicKit = window.MusicKit.getInstance();
 
         if (!musicKit.isAuthorized && this.$route.meta.isLibrary) {
@@ -387,6 +392,23 @@
         }
 
         this.musicKit = musicKit;
+        
+        this.isAuthorized = this.musicKit.isAuthorized;
+        this.onAuthorizationStatusDidChange = e => {
+          // This seems to cause issues...
+          if (e.authorizationStatus == 3) {
+            return;
+          }
+
+          this.isAuthorized = this.musicKit.isAuthorized;
+
+          if (!this.isAuthorized) {
+            this.search.library = false;
+          } else {
+            this.fetch();
+          }
+        }
+        this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
 
         // Create callback functions
         this.mediaPlaybackError = (event) => {
@@ -430,6 +452,7 @@
       if (window.MusicKit) {
         try {
           this.musicKit = window.MusicKit.getInstance();
+          initialize();
         } catch (err) {
           initializeMusicKit();
         }
@@ -440,6 +463,9 @@
       }
     },
     destroyed: function() {
+      this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
+      this.musicKit.removeEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+
       EventBus.$off('theme', this.onThemeChange);
       EventBus.$off('alert', this.onAlert);
     }
