@@ -20,7 +20,7 @@
          </div>
 
          <div class="queue">
-           <b-button variant="link" @click="showQueue = !showQueue"><i class="fa fa-bars" /></b-button>
+           <b-button variant="link" @click="showQueue = !showQueue"><i class="fa fa-list-ul" /></b-button>
            <b-modal v-model="showQueue" title="Queue" centered hide-footer>
               <b-form-radio-group v-model="queueTab"
                                  buttons button-variant="outline-primary"
@@ -225,6 +225,12 @@ export default {
 
 .dark .placeholder {
   background: #111;
+}
+
+@media (max-width: 650px) and (min-width: 601px) {
+  img, .placeholder {
+    width: 0;
+  }
 }
 
 @media (max-width: 600px) {

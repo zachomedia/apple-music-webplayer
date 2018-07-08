@@ -18,10 +18,13 @@
 
       <b-container fluid>
         <b-row>
-          <b-col sm="3">
-            <Sidebar />
+          <b-col lg="3" class="mb-4">
+            <b-button :class="{ 'w-100 d-sm-block d-md-block d-lg-none d-xl-none': true, 'mb-4': showSidebar }" @click="showSidebar = !showSidebar">
+              <i :class="{ 'fa': true, 'fa-bars': !showSidebar, 'fa-times': showSidebar }" /> Menu
+            </b-button>
+            <Sidebar :class="{ 'd-none': !showSidebar, 'd-sm-none': !showSidebar, 'd-md-none': !showSidebar, 'd-lg-block': true, 'd-xl-block': true }" />
           </b-col>
-          <b-col sm="9">
+          <b-col lg="9">
             <router-view></router-view>
           </b-col>
         </b-row>
@@ -319,6 +322,7 @@
     data: function() {
       return {
         theme: this.$localStorage.get('theme'),
+        showSidebar: true,
 
         musicKit: null,
         alert: {
@@ -326,6 +330,13 @@
           countdown: 0
         }
       };
+    },
+    watch: {
+      '$route': function() {
+        // If the route changes, hide the sidebar
+        console.log('route changed');
+        this.showSidebar = false; 
+      },
     },
     methods: {
       formatDuration: function(value, unit) {

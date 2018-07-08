@@ -35,6 +35,9 @@ export default {
       artist: null
     };
   },
+  watch: {
+    '$route': 'fetch',
+  },
   methods: {
     formatArtworkURL: function(url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
