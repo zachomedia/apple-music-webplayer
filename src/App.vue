@@ -322,7 +322,7 @@
     data: function() {
       return {
         theme: this.$localStorage.get('theme'),
-        showSidebar: true,
+        showSidebar: false,
 
         musicKit: null,
         alert: {
@@ -334,7 +334,6 @@
     watch: {
       '$route': function() {
         // If the route changes, hide the sidebar
-        console.log('route changed');
         this.showSidebar = false; 
       },
     },
