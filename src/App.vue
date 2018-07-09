@@ -401,12 +401,6 @@
           }
 
           this.isAuthorized = this.musicKit.isAuthorized;
-
-          if (!this.isAuthorized) {
-            this.search.library = false;
-          } else {
-            this.fetch();
-          }
         }
         this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
 
