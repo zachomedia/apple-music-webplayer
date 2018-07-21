@@ -7,7 +7,16 @@
          <div v-else class="placeholder" />
 
          <div class="main" v-if="nowPlayingItem">
-            <span class="title">{{ nowPlayingItem.attributes.name }}</span>
+            <span class="title">
+              {{ nowPlayingItem.attributes.name }}
+              <b-dropdown variant="link" size="sm" no-caret boundary="viewport" v-if="isAuthorized">
+                <template slot="button-content">
+                  <i class="fa fa-ellipsis-h" /><span class="sr-only">Song actions</span>
+                </template>
+
+                <b-dropdown-item-button @click.stop="addToLibrary(nowPlayingItem)">Add to library</b-dropdown-item-button>
+              </b-dropdown>
+            </span>
             <span class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</span>
          </div>
          <div class="main" v-else>
@@ -64,6 +73,7 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 import moment from "moment";
 
 export default {
@@ -73,6 +83,7 @@ export default {
 
       return {
          musicKit: musicKit,
+         isAuthorized: musicKit.isAuthorized,
          nowPlayingItem: musicKit.player.nowPlayingItem,
          queueTab: 1,
          queuePosition: musicKit.player.queue.position,
@@ -101,6 +112,21 @@ export default {
       }
   },
   methods: {
+    addToLibrary: function(item) {
+      this.musicKit.api.addToLibrary({
+        songs: [ item.id ]
+      }).then(() => {
+        EventBus.$emit('alert', {
+          type: 'success',
+          message: `Successfully added "${item.attributes.name}" to your library.`
+        });
+      }, err => {
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An error occurred while adding "${item.attributes.name}" to your library.`
+        });
+      });
+    },
     formatDuration: function(value, unit) {
         let pad = function(num) {
           if (num < 10) {
@@ -130,6 +156,16 @@ export default {
   },
    created: function() {
       // Create callback functions
+      this.onAuthorizationStatusDidChange = e => {
+        // This seems to cause issues...
+        if (e.authorizationStatus == 3) {
+          return;
+        }
+
+        this.isAuthorized = this.musicKit.isAuthorized;
+      }
+      this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
+
       this.mediaItemDidChange = (event) => {
          this.nowPlayingItem = event.item;
       }
@@ -151,10 +187,11 @@ export default {
       this.musicKit.addEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
    },
    destroyed: function() {
-      this.musicKit.removeEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
+      this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.authorizationStatusDidChange);
       this.musicKit.removeEventListener(window.MusicKit.Events.queueItemsDidChange, this.queueItemsDidChange);
       this.musicKit.removeEventListener(window.MusicKit.Events.queuePositionDidChange, this.queuePositionDidChange);
       this.musicKit.removeEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+      this.musicKit.removeEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
    }
 };
 </script>
@@ -166,7 +203,6 @@ export default {
   background: white;
   padding: 0px;
   border-radius: 4px;
-  overflow: hidden;
   position: relative;
 }
 .dark .now-playing {
