@@ -6,12 +6,12 @@
 </template>
 
 <script>
-  export default {
-    name: 'Loading',
-    props: {
-      message: String
-    } 
-  };
+export default {
+  name: 'Loading',
+  props: {
+    message: String
+  }
+};
 </script>
 
 <style scoped>

@@ -1,5 +1,4 @@
 
-
 <template>
   <div class="now-playing">
      <div class="info">
@@ -74,45 +73,45 @@
 
 <script>
 import EventBus from '../event-bus';
-import moment from "moment";
+import moment from 'moment';
 
 export default {
-  name: "NowPlaying",
-  data: function() {
-     let musicKit = window.MusicKit.getInstance();
+  name: 'NowPlaying',
+  data: function () {
+    let musicKit = window.MusicKit.getInstance();
 
-      return {
-         musicKit: musicKit,
-         isAuthorized: musicKit.isAuthorized,
-         nowPlayingItem: musicKit.player.nowPlayingItem,
-         queueTab: 1,
-         queuePosition: musicKit.player.queue.position,
-         queue: musicKit.player.queue.items,
-         showQueue: false,
-         playbackTime: {
-            currentPlaybackDuration: musicKit.player.currentPlaybackDuration,
-            currentPlaybackTime: musicKit.player.currentPlaybackTime,
-            currentPlaybackTimeRemaining: musicKit.player.currentPlaybackTimeRemaining
-         }
-      };
+    return {
+      musicKit: musicKit,
+      isAuthorized: musicKit.isAuthorized,
+      nowPlayingItem: musicKit.player.nowPlayingItem,
+      queueTab: 1,
+      queuePosition: musicKit.player.queue.position,
+      queue: musicKit.player.queue.items,
+      showQueue: false,
+      playbackTime: {
+        currentPlaybackDuration: musicKit.player.currentPlaybackDuration,
+        currentPlaybackTime: musicKit.player.currentPlaybackTime,
+        currentPlaybackTimeRemaining: musicKit.player.currentPlaybackTimeRemaining
+      }
+    };
   },
   filters: {
-      formattedDuration: function(value, unit) {
-         let pad = function(num) {
-            if (num < 10) {
-               num = "0" + num;
-            }
+    formattedDuration: function (value, unit) {
+      let pad = function (num) {
+        if (num < 10) {
+          num = '0' + num;
+        }
 
-            return num;
-         };
+        return num;
+      };
 
-         let m = moment.duration(value, unit);
+      let m = moment.duration(value, unit);
 
-         return m.minutes() + ":" + pad(m.seconds());
-      }
+      return m.minutes() + ':' + pad(m.seconds());
+    }
   },
   methods: {
-    addToLibrary: function(item) {
+    addToLibrary: function (item) {
       this.musicKit.api.addToLibrary({
         songs: [ item.id ]
       }).then(() => {
@@ -121,78 +120,79 @@ export default {
           message: `Successfully added "${item.attributes.name}" to your library.`
         });
       }, err => {
+        console.err(err);
         EventBus.$emit('alert', {
           type: 'danger',
           message: `An error occurred while adding "${item.attributes.name}" to your library.`
         });
       });
     },
-    formatDuration: function(value, unit) {
-        let pad = function(num) {
-          if (num < 10) {
-              num = "0" + num;
-          }
-
-          return num;
-        };
-
-        let m = moment.duration(value, unit);
-
-        return m.minutes() + ":" + pad(m.seconds());
-    },
-    formatArtworkURL: function(url, height, width) {
-      return MusicKit.formatArtworkURL(url, width, width);
-    },
-    change(index) {
-      this.musicKit.changeToMediaAtIndex(index).catch(err => {
-         EventBus.$emit('alert', {
-            type: 'danger',
-            message: `An unexpected error occurred.`
-         });
-
-         console.err(err);
-      })
-    }
-  },
-   created: function() {
-      // Create callback functions
-      this.onAuthorizationStatusDidChange = e => {
-        // This seems to cause issues...
-        if (e.authorizationStatus == 3) {
-          return;
+    formatDuration: function (value, unit) {
+      let pad = function (num) {
+        if (num < 10) {
+          num = '0' + num;
         }
 
-        this.isAuthorized = this.musicKit.isAuthorized;
-      }
-      this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
+        return num;
+      };
 
-      this.mediaItemDidChange = (event) => {
-         this.nowPlayingItem = event.item;
-      }
-      this.musicKit.addEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+      let m = moment.duration(value, unit);
 
-      this.queueItemsDidChange = (items) => {
-         this.queue = items;
-      }
-      this.musicKit.addEventListener(window.MusicKit.Events.queueItemsDidChange, this.queueItemsDidChange);
+      return m.minutes() + ':' + pad(m.seconds());
+    },
+    formatArtworkURL: function (url, height, width) {
+      return window.MusicKit.formatArtworkURL(url, width, width);
+    },
+    change (index) {
+      this.musicKit.changeToMediaAtIndex(index).catch(err => {
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `An unexpected error occurred.`
+        });
 
-      this.queuePositionDidChange = (event) => {
-         this.queuePosition = event.position;
+        console.err(err);
+      });
+    }
+  },
+  created: function () {
+    // Create callback functions
+    this.onAuthorizationStatusDidChange = e => {
+      // This seems to cause issues...
+      if (e.authorizationStatus === 3) {
+        return;
       }
-      this.musicKit.addEventListener(window.MusicKit.Events.queuePositionDidChange, this.queuePositionDidChange);
 
-      this.playbackTimeDidChange = (event) => {
-         this.playbackTime = event;
-      }
-      this.musicKit.addEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
-   },
-   destroyed: function() {
-      this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.authorizationStatusDidChange);
-      this.musicKit.removeEventListener(window.MusicKit.Events.queueItemsDidChange, this.queueItemsDidChange);
-      this.musicKit.removeEventListener(window.MusicKit.Events.queuePositionDidChange, this.queuePositionDidChange);
-      this.musicKit.removeEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
-      this.musicKit.removeEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
-   }
+      this.isAuthorized = this.musicKit.isAuthorized;
+    };
+    this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
+
+    this.mediaItemDidChange = (event) => {
+      this.nowPlayingItem = event.item;
+    };
+    this.musicKit.addEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+
+    this.queueItemsDidChange = (items) => {
+      this.queue = items;
+    };
+    this.musicKit.addEventListener(window.MusicKit.Events.queueItemsDidChange, this.queueItemsDidChange);
+
+    this.queuePositionDidChange = (event) => {
+      this.queuePosition = event.position;
+    };
+    this.musicKit.addEventListener(window.MusicKit.Events.queuePositionDidChange, this.queuePositionDidChange);
+
+    this.playbackTimeDidChange = (event) => {
+      this.playbackTime = event;
+    };
+    this.musicKit.addEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
+  },
+  destroyed: function () {
+    this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.authorizationStatusDidChange);
+    this.musicKit.removeEventListener(window.MusicKit.Events.queueItemsDidChange, this.queueItemsDidChange);
+    this.musicKit.removeEventListener(window.MusicKit.Events.queuePositionDidChange, this.queuePositionDidChange);
+    this.musicKit.removeEventListener(window.MusicKit.Events.mediaItemDidChange, this.mediaItemDidChange);
+    this.musicKit.removeEventListener(window.MusicKit.Events.playbackTimeDidChange, this.playbackTimeDidChange);
+  }
 };
 </script>
 

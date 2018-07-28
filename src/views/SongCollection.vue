@@ -1,5 +1,4 @@
 
-
 <template>
   <div v-if="collection">
     <div class="header">
@@ -17,7 +16,7 @@
         </p>
       </div>
     </div>
-    
+
     <Songs :songs="collection.relationships.tracks.data" />
   </div>
   <div v-else>
@@ -35,31 +34,31 @@ import Loading from '../components/Loading.vue';
 export default {
   name: 'SongCollection',
   filters: {
-    formattedDuration: function(value, unit) {
+    formattedDuration: function (value, unit) {
       return moment.duration(value, unit).humanize();
-    },
+    }
   },
   components: {
     Songs,
     Loading
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
       musicKit: musicKit,
       isAuthorized: musicKit.isAuthorized,
       collection: null
-    }
+    };
   },
   watch: {
-    '$route': 'fetch',
+    '$route': 'fetch'
   },
   methods: {
-    formatArtworkURL: function(url, height, width) {
+    formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
     },
-    fetch: function() {
+    fetch: function () {
       if (this.abort) {
         return;
       }
@@ -77,10 +76,10 @@ export default {
         // Workaround to load all songs
         let fetchTracks = (url) => {
           var headers = new Headers({
-            Authorization: "Bearer " + this.musicKit.developerToken,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Music-User-Token": "" + this.musicKit.musicUserToken
+            Authorization: 'Bearer ' + this.musicKit.developerToken,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Music-User-Token': '' + this.musicKit.musicUserToken
           });
           fetch('https://api.music.apple.com' + url, { headers: headers })
             .then(res => res.json())
@@ -91,8 +90,8 @@ export default {
               } else {
                 this.loading = false;
               }
-            })
-        }
+            });
+        };
         if (r.relationships.tracks.next) {
           fetchTracks(r.relationships.tracks.next);
         } else {
@@ -107,17 +106,17 @@ export default {
         });
       });
     },
-    play: function() {
+    play: function () {
       this.musicKit.setQueue({
         [this.collection.attributes.playParams.kind]: this.collection.attributes.playParams.id
       }).then(queue => {
-        queue.items.forEach(i => i.sourceId = i.id);
+        queue.items.forEach(i => { i.sourceId = i.id; });
         this.musicKit.play();
       }, err => {
         console.error(err);
       });
     },
-    shuffle: function() {
+    shuffle: function () {
       // Temporary shuffle implementation until supported in MusicKit JS.
       var tracks = this.collection.relationships.tracks.data.slice();
       tracks.sort(i => 0.5 - Math.random());
@@ -150,7 +149,7 @@ export default {
         });
       });
     },
-    addToLibrary: function() {
+    addToLibrary: function () {
       this.musicKit.api.addToLibrary({
         [this.collection.type]: [ this.collection.id ]
       }).then(() => {
@@ -159,6 +158,7 @@ export default {
           message: `Successfully added "${this.collection.attributes.name}" to your library.`
         });
       }, err => {
+        console.error(err);
         EventBus.$emit('alert', {
           type: 'danger',
           message: `An error occurred while adding "${this.collection.attributes.name}" to your library.`
@@ -166,25 +166,25 @@ export default {
       });
     }
   },
-  created: function() {
+  created: function () {
     this.onAuthorizationStatusDidChange = e => {
       // This seems to cause issues...
-      if (e.authorizationStatus == 3) {
+      if (e.authorizationStatus === 3) {
         return;
       }
 
       this.isAuthorized = this.musicKit.isAuthorized;
-    }
+    };
     this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
 
     this.fetch();
   },
-  destroyed: function() {
+  destroyed: function () {
     this.abort = true;
 
     this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

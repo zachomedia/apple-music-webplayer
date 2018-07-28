@@ -14,17 +14,17 @@
 </template>
 
 <script>
-  // Import custom controls
-  import MediaControls from '../components/MediaControls.vue';
-  import NowPlaying from '../components/NowPlaying.vue';
+// Import custom controls
+import MediaControls from '../components/MediaControls.vue';
+import NowPlaying from '../components/NowPlaying.vue';
 
-  export default {
-    name: 'Header',
-    components: {
-      MediaControls,
-      NowPlaying
-    }
-  };
+export default {
+  name: 'Header',
+  components: {
+    MediaControls,
+    NowPlaying
+  }
+};
 </script>
 
 <style scoped lang="scss">

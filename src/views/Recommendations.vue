@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
@@ -8,7 +7,7 @@
     <div v-for="(r, indx) in groups" :key="indx" class="recommendation-group">
       <h2 v-if="(r.attributes.title || {}).stringForDisplay">{{ r.attributes.title.stringForDisplay }}</h2>
       <h3 v-else-if="(r.attributes.reason || {}).stringForDisplay">{{ r.attributes.reason.stringForDisplay }}</h3>
-      
+
       <Recommendations v-if="r.relationships.recommendations" :recommendations="r.relationships.recommendations.data" />
       <SongCollectionList v-else :items="r.relationships.contents.data" />
     </div>
@@ -33,7 +32,7 @@ export default {
     SongCollectionList,
     Loading
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -42,7 +41,7 @@ export default {
       groups: this.recommendations
     };
   },
-  created: function() {
+  created: function () {
     if (!this.groups) {
       this.loading = true;
       this.musicKit.api.recommendations().then(r => {
@@ -55,10 +54,10 @@ export default {
           type: 'danger',
           message: `An unexpected error occurred.`
         });
-      })
+      });
     };
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

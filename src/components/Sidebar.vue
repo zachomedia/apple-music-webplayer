@@ -63,7 +63,7 @@ export default {
   components: {
     Playlists
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -77,13 +77,13 @@ export default {
     };
   },
   methods: {
-    authorize: function() {
+    authorize: function () {
       this.musicKit.authorize();
     },
-    unauthorize: function() {
+    unauthorize: function () {
       this.musicKit.unauthorize();
     },
-    search: function() {
+    search: function () {
       this.$router.push({
         name: this.searchParams.library ? 'library-search' : 'search',
         query: {
@@ -91,7 +91,7 @@ export default {
         }
       });
     },
-    fetch: function(offset) {
+    fetch: function (offset) {
       if (this.abort) {
         return;
       }
@@ -121,10 +121,10 @@ export default {
         });
     }
   },
-  created: function() {
+  created: function () {
     this.onAuthorizationStatusDidChange = e => {
       // This seems to cause issues...
-      if (e.authorizationStatus == 3) {
+      if (e.authorizationStatus === 3) {
         return;
       }
 
@@ -135,18 +135,18 @@ export default {
       } else {
         this.fetch();
       }
-    }
+    };
     this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
 
     if (this.isAuthorized) {
       this.fetch();
     }
   },
-  destroyed: function() {
+  destroyed: function () {
     this.abort = true;
     this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

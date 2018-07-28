@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
@@ -24,12 +23,7 @@ export default {
   props: {
     title: String
   },
-  filters: {
-    humanize: function(value, unit) {
-      return moment.duration(value, unit).humanize();
-    }
-  },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -38,10 +32,7 @@ export default {
     };
   },
   methods: {
-    formatArtworkURL: function(url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
-    },
-    fetch: function(offset) {
+    fetch: function (offset) {
       if (this.abort) {
         return;
       }
@@ -75,11 +66,11 @@ export default {
         });
     }
   },
-  created: function() {
+  created: function () {
     this.fetch();
   },
-  destroyed: function() {
+  destroyed: function () {
     this.abort = true;
   }
-}
+};
 </script>

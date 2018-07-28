@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <b-list-group>
@@ -21,5 +20,5 @@ export default {
   props: {
     playlists: Array
   }
-}
+};
 </script>

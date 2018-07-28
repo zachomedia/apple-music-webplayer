@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
@@ -10,6 +9,7 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 import SearchResults from '../components/SearchResults.vue';
 import Loading from '../components/Loading.vue';
 
@@ -22,7 +22,7 @@ export default {
     SearchResults,
     Loading
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -31,16 +31,16 @@ export default {
     };
   },
   watch: {
-    '$route': 'search',
+    '$route': 'search'
   },
   methods: {
-    search: function() {
+    search: function () {
       // The query hasn't changed, don't search
       if (this.lastQuery && this.lastQuery === this.$route.query.q) {
         return;
       }
       this.lastQuery = this.$route.query.q;
-      
+
       this.loading = true;
       this.results = null;
 
@@ -58,10 +58,10 @@ export default {
         for (var key in r) {
           if (key.startsWith('library-')) {
             r[key.replace('library-', '')] = r[key];
-            delete(r[key]);
+            delete (r[key]);
           }
         }
-        
+
         this.results = r;
         this.loading = false;
       }, err => {
@@ -74,8 +74,8 @@ export default {
       });
     }
   },
-  created: function() {
+  created: function () {
     this.search();
   }
-}
+};
 </script>

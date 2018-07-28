@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <p class="text-muted" v-if="showCount">{{ items.length }} {{ items.length | pluralize(countLabel || 'item') }}</p>
@@ -19,7 +18,7 @@
 </template>
 
 <script>
-import EventBus from '../event-bus';
+import moment from 'moment';
 
 export default {
   name: 'SongCollectionList',
@@ -31,11 +30,11 @@ export default {
   computed: {
   },
   filters: {
-    humanize: function(value, unit) {
+    humanize: function (value, unit) {
       return moment.duration(value, unit).humanize();
     }
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -44,11 +43,11 @@ export default {
     };
   },
   methods: {
-    formatArtworkURL: function(url, height, width) {
+    formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

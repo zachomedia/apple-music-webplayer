@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <b-button-group>
@@ -24,8 +23,8 @@
 
 <script>
 export default {
-  name: "MediaControls",
-  data: function() {
+  name: 'MediaControls',
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -35,28 +34,28 @@ export default {
     };
   },
   methods: {
-    play: function() {
+    play: function () {
       this.musicKit.player.play();
     },
-    pause: function() {
+    pause: function () {
       this.musicKit.player.pause();
     },
-    prev: function() {
+    prev: function () {
       this.musicKit.player.skipToPreviousItem();
     },
-    next: function() {
+    next: function () {
       this.musicKit.player.skipToNextItem();
     }
   },
-    created: function() {
-      this.playbackStateDidChange = (event) => {
-        this.state = event.state;
-      }
-      this.musicKit.addEventListener(window.MusicKit.Events.playbackStateDidChange, this.playbackStateDidChange);
-    },
-    destroyed: function() {
-      this.musicKit.removeEventListener(window.MusicKit.Events.playbackStateDidChange, this.playbackStateDidChange);
-    }
+  created: function () {
+    this.playbackStateDidChange = (event) => {
+      this.state = event.state;
+    };
+    this.musicKit.addEventListener(window.MusicKit.Events.playbackStateDidChange, this.playbackStateDidChange);
+  },
+  destroyed: function () {
+    this.musicKit.removeEventListener(window.MusicKit.Events.playbackStateDidChange, this.playbackStateDidChange);
+  }
 };
 </script>
 
