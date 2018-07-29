@@ -11,6 +11,7 @@
 
     <b-form-group label="Playback">
       <b-form-checkbox v-model="showPlaybackNotifications">Show notifications when the song changes</b-form-checkbox>
+      <b-form-checkbox v-model="queueAllSongs">Queue all songs in the current view when double clicking on a song</b-form-checkbox>
     </b-form-group>
   </div>
 </template>
@@ -30,12 +31,16 @@ export default {
     },
     showPlaybackNotifications () {
       this.$localStorage.set('showPlaybackNotifications', this.showPlaybackNotifications);
+    },
+    queueAllSongs () {
+      this.$localStorage.set('queueAllSongs', this.queueAllSongs);
     }
   },
   data () {
     return {
       theme: this.$localStorage.get('theme'),
       showPlaybackNotifications: this.$localStorage.get('showPlaybackNotifications'),
+      queueAllSongs: this.$localStorage.get('queueAllSongs'),
       themes: {
         'light': 'Light',
         'dark': 'Dark'

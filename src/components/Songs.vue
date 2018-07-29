@@ -93,29 +93,49 @@ export default {
       };
     },
     play: function (item) {
-      this.musicKit.setQueue({
-        items: this.songs.map(i => this.trackToMediaItem(i)),
-        startPosition: this.songs.indexOf(item)
-      }).then(queue => {
-        this.musicKit.player.changeToMediaItem(queue.item(this.songs.indexOf(item)))
-          .then(r => {
-            this.musicKit.play().catch(err => console.error(err));
-          }, err => {
+      if (this.$localStorage.get('queueAllSongs')) {
+        this.musicKit.setQueue({
+          items: this.songs.map(i => this.trackToMediaItem(i)),
+          startPosition: this.songs.indexOf(item)
+        }).then(queue => {
+          this.musicKit.player.changeToMediaItem(queue.item(this.songs.indexOf(item)))
+            .then(r => {
+              this.musicKit.play().catch(err => console.error(err));
+            }, err => {
+              EventBus.$emit('alert', {
+                type: 'danger',
+                message: `An unexpected error occurred.`
+              });
+
+              console.error(err);
+            });
+        }, err => {
+          EventBus.$emit('alert', {
+            type: 'danger',
+            message: `An unexpected error occurred.`
+          });
+
+          console.error(err);
+        });
+      } else {
+        this.musicKit.setQueue({
+          items: [ this.trackToMediaItem(item) ]
+        }).then(queue => {
+          this.musicKit.play().catch(err => {
             EventBus.$emit('alert', {
               type: 'danger',
-              message: `An unexpected error occurred.`
+              message: `The song could not be played.`
             });
-
             console.error(err);
           });
-      }, err => {
-        EventBus.$emit('alert', {
-          type: 'danger',
-          message: `An unexpected error occurred.`
+        }, err => {
+          EventBus.$emit('alert', {
+            type: 'danger',
+            message: `The song could not be played.`
+          });
+          console.error(err);
         });
-
-        console.error(err);
-      });
+      }
     },
     addToLibrary: function (item) {
       this.musicKit.api.addToLibrary({

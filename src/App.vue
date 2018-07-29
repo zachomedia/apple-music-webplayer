@@ -317,6 +317,10 @@ export default {
     showPlaybackNotifications: {
       type: Boolean,
       default: true
+    },
+    queueAllSongs: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
