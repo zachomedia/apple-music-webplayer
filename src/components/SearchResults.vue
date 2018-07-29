@@ -38,18 +38,18 @@ export default {
   },
   props: {
     title: String,
-    results: Object,
+    results: Object
   },
-  data: function() {
+  data () {
     return {
       tabIndex: parseInt(this.$route.query.t, 10) || 0
-    }
+    };
   },
   watch: {
-    '$route': function() {
+    '$route': function () {
       this.tabIndex = parseInt(this.$route.query.t, 10) || 0;
     },
-    tabIndex: function() {
+    tabIndex: function () {
       var route = {
         name: this.$route.name,
         params: this.$route.params,
@@ -57,10 +57,10 @@ export default {
           q: this.$route.query.q,
           t: this.tabIndex
         }
-      }
+      };
       console.log(route);
       this.$router.push(route);
     }
   }
-}
+};
 </script>

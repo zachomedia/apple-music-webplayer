@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
@@ -22,7 +21,7 @@ export default {
     title: String,
     artists: Array
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -31,11 +30,11 @@ export default {
     };
   },
   methods: {
-    formatArtworkURL: function(url, height, width) {
+    formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="artist">{{ artist.attributes.name }}</h1>
@@ -10,6 +9,7 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 import SongCollectionsList from '../components/SongCollectionList.vue';
 import Loading from '../components/Loading.vue';
 
@@ -22,12 +22,7 @@ export default {
   props: {
     title: String
   },
-  filters: {
-    humanize: function(value, unit) {
-      return moment.duration(value, unit).humanize();
-    }
-  },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -36,13 +31,10 @@ export default {
     };
   },
   watch: {
-    '$route': 'fetch',
+    '$route': 'fetch'
   },
   methods: {
-    formatArtworkURL: function(url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
-    },
-    fetch: function(offset) {
+    fetch: function (offset) {
       if (this.abort) {
         return;
       }
@@ -74,11 +66,11 @@ export default {
       });
     }
   },
-  created: function() {
+  created: function () {
     this.fetch();
   },
-  destroyed: function() {
+  destroyed: function () {
     this.abort = true;
   }
-}
+};
 </script>

@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
@@ -25,23 +24,23 @@ export default {
     title: String
   },
   watch: {
-    theme() {
+    theme () {
       this.$localStorage.set('theme', this.theme);
       EventBus.$emit('theme');
     },
-    showPlaybackNotifications() {
+    showPlaybackNotifications () {
       this.$localStorage.set('showPlaybackNotifications', this.showPlaybackNotifications);
     }
   },
-  data() {
+  data () {
     return {
       theme: this.$localStorage.get('theme'),
       showPlaybackNotifications: this.$localStorage.get('showPlaybackNotifications'),
       themes: {
-        "light": "Light",
-        "dark": "Dark"
+        'light': 'Light',
+        'dark': 'Dark'
       }
-    }
+    };
   }
-}
+};
 </script>

@@ -1,0 +1,10 @@
+sudo: false
+language: node_js
+node_js:
+  - "node"
+install:
+  - npm install
+script:
+  - npm run lint
+  - cp src/private.js.sample src/private.js
+  - npm run build

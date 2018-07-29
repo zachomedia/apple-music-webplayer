@@ -1,5 +1,4 @@
 
-
 <template>
   <div class="splash">
     <h2 class="h5">Not found</h2>
@@ -10,7 +9,7 @@
 <script>
 export default {
   name: 'Index'
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

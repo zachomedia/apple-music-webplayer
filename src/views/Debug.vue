@@ -1,5 +1,4 @@
 
-
 <template>
   <div>
     <h1 v-if="title">{{ title }}</h1>
@@ -21,7 +20,7 @@ export default {
   props: {
     title: String
   },
-  data: function() {
+  data: function () {
     let musicKit = window.MusicKit.getInstance();
 
     return {
@@ -47,9 +46,9 @@ export default {
     };
   },
   methods: {
-    check: function() {
+    check: function () {
       this.data = {};
-      
+
       // isAuthorized
       this.data.isAuthorized = {
         endpoint: 'isAuthorized',
@@ -162,11 +161,11 @@ export default {
       });
     }
   },
-  created: function() {
+  created: function () {
     this.check();
   },
-  destroyed: function() {
+  destroyed: function () {
     this.abort = true;
   }
-}
+};
 </script>
