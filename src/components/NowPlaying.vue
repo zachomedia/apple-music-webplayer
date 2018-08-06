@@ -74,6 +74,7 @@
 <script>
 import EventBus from '../event-bus';
 import moment from 'moment';
+import Raven from 'raven-js';
 
 export default {
   name: 'NowPlaying',
@@ -120,7 +121,8 @@ export default {
           message: `Successfully added "${item.attributes.name}" to your library.`
         });
       }, err => {
-        console.err(err);
+        Raven.captureException(err);
+
         EventBus.$emit('alert', {
           type: 'danger',
           message: `An error occurred while adding "${item.attributes.name}" to your library.`
@@ -145,12 +147,12 @@ export default {
     },
     change (index) {
       this.musicKit.changeToMediaAtIndex(index).catch(err => {
+        Raven.captureException(err);
+
         EventBus.$emit('alert', {
           type: 'danger',
           message: `An unexpected error occurred.`
         });
-
-        console.err(err);
       });
     }
   },

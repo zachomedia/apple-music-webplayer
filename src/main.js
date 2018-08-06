@@ -1,4 +1,8 @@
 import Vue from 'vue';
+
+import Raven from 'raven-js';
+import RavenVue from 'raven-js/plugins/vue';
+
 import App from './App.vue';
 
 import BootstrapVue from 'bootstrap-vue';
@@ -15,7 +19,18 @@ import VueLocalStorage from 'vue-localstorage';
 // Vue router
 import VueRouter from 'vue-router';
 
+// Private configuration
+import privateConfig from './private';
+
 Vue.config.productionTip = false;
+
+// Configure Sentry
+if (privateConfig.sentry) {
+  Raven
+    .config(privateConfig.sentry)
+    .addPlugin(RavenVue, Vue)
+    .install();
+}
 
 // Load Bootstrap
 Vue.use(BootstrapVue);

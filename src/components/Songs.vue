@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import moment from 'moment';
 
@@ -102,38 +103,40 @@ export default {
             .then(r => {
               this.musicKit.play().catch(err => console.error(err));
             }, err => {
+              Raven.captureException(err);
+
               EventBus.$emit('alert', {
                 type: 'danger',
                 message: `An unexpected error occurred.`
               });
-
-              console.error(err);
             });
         }, err => {
+          Raven.captureException(err);
+
           EventBus.$emit('alert', {
             type: 'danger',
             message: `An unexpected error occurred.`
           });
-
-          console.error(err);
         });
       } else {
         this.musicKit.setQueue({
           items: [ this.trackToMediaItem(item) ]
         }).then(queue => {
           this.musicKit.play().catch(err => {
+            Raven.captureException(err);
+
             EventBus.$emit('alert', {
               type: 'danger',
               message: `The song could not be played.`
             });
-            console.error(err);
           });
         }, err => {
+          Raven.captureException(err);
+
           EventBus.$emit('alert', {
             type: 'danger',
             message: `The song could not be played.`
           });
-          console.error(err);
         });
       }
     },
@@ -146,7 +149,8 @@ export default {
           message: `Successfully added "${item.item.attributes.name}" to your library.`
         });
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
+
         EventBus.$emit('alert', {
           type: 'danger',
           message: `An error occurred while adding "${item.item.attributes.name}" to your library.`

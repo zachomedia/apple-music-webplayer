@@ -58,7 +58,6 @@ export default {
           t: this.tabIndex
         }
       };
-      console.log(route);
       this.$router.push(route);
     }
   }

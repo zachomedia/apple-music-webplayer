@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import SearchResults from '../components/SearchResults.vue';
 import Loading from '../components/Loading.vue';
@@ -65,7 +66,7 @@ export default {
         this.results = r;
         this.loading = false;
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
 
         EventBus.$emit('alert', {
           type: 'danger',

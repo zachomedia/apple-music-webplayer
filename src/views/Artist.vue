@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import SongCollectionsList from '../components/SongCollectionList.vue';
 import Loading from '../components/Loading.vue';
@@ -57,7 +58,7 @@ export default {
         this.loading = false;
         // TODO: Load > 100 albums
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
 
         EventBus.$emit('alert', {
           type: 'danger',

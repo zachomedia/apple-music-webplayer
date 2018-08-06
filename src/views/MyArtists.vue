@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import EventBus from '../event-bus';
 
 import Artists from '../components/Artists.vue';
@@ -57,7 +58,7 @@ export default {
             this.loading = false;
           }
         }, err => {
-          console.error(err);
+          Raven.captureException(err);
 
           EventBus.$emit('alert', {
             type: 'danger',

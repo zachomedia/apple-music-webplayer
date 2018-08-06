@@ -1,3 +1,5 @@
 export default {
-  developerToken: 'developerToken'
+  developerToken: 'developerToken',
+  // Optional:
+  sentry: 'sentryurlandtoken'
 };

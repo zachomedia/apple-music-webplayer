@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import VueRouter from 'vue-router';
 
 // Import private configuration
@@ -410,7 +411,7 @@ export default {
 
       // Create callback functions
       this.mediaPlaybackError = (event) => {
-        console.error(event);
+        Raven.captureException(event);
       };
       this.musicKit.addEventListener(window.MusicKit.Events.mediaPlaybackError, this.mediaPlaybackError);
 

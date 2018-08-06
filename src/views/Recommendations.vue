@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import EventBus from '../event-bus';
 
 import SongCollectionList from '../components/SongCollectionList.vue';
@@ -48,7 +49,7 @@ export default {
         this.groups = r;
         this.loading = false;
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
 
         EventBus.$emit('alert', {
           type: 'danger',

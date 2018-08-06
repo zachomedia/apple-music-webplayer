@@ -15,6 +15,7 @@
     "bootswatch": "^4.1.1",
     "font-awesome": "^4.7.0",
     "moment": "^2.22.2",
+    "raven-js": "^3.26.4",
     "vue": "^2.5.16",
     "vue-localstorage": "^0.6.2",
     "vue-router": "^3.0.1",

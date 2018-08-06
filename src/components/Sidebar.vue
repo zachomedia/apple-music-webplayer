@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import Playlists from './Playlists.vue';
 
 export default {
@@ -117,7 +118,7 @@ export default {
             this.loading = false;
           }
         }, err => {
-          console.error(err);
+          Raven.captureException(err);
         });
     }
   },

@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import moment from 'moment';
 
@@ -98,7 +99,7 @@ export default {
           this.loading = false;
         }
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
 
         EventBus.$emit('alert', {
           type: 'danger',
@@ -113,7 +114,7 @@ export default {
         queue.items.forEach(i => { i.sourceId = i.id; });
         this.musicKit.play();
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
       });
     },
     shuffle: function () {
@@ -133,7 +134,7 @@ export default {
         })
       }).then(queue => {
         this.musicKit.play().catch(err => {
-          console.error(err);
+          Raven.captureException(err);
 
           EventBus.$emit('alert', {
             type: 'danger',
@@ -141,7 +142,7 @@ export default {
           });
         });
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
 
         EventBus.$emit('alert', {
           type: 'danger',
@@ -158,7 +159,8 @@ export default {
           message: `Successfully added "${this.collection.attributes.name}" to your library.`
         });
       }, err => {
-        console.error(err);
+        Raven.captureException(err);
+
         EventBus.$emit('alert', {
           type: 'danger',
           message: `An error occurred while adding "${this.collection.attributes.name}" to your library.`

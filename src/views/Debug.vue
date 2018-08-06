@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
+
 export default {
   name: 'Debug',
   props: {
@@ -66,6 +68,8 @@ export default {
         this.data.recommendations.detail = `Received: ${r.length}`;
         this.data.recommendations._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.recommendations.status = 'Error';
         this.data.recommendations.detail = JSON.stringify(err);
         this.data.recommendations._rowVariant = 'danger';
@@ -81,6 +85,8 @@ export default {
         this.data.playlists.detail = `Received: ${r.length}`;
         this.data.playlists._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.playlists.status = 'Error';
         this.data.playlists.detail = JSON.stringify(err);
         this.data.playlists._rowVariant = 'danger';
@@ -96,6 +102,8 @@ export default {
         this.data.songs.detail = `Received: ${r.length}`;
         this.data.songs._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.songs.status = 'Error';
         this.data.songs.detail = JSON.stringify(err);
         this.data.songs._rowVariant = 'danger';
@@ -111,6 +119,8 @@ export default {
         this.data.albums.detail = `Received: ${r.length}`;
         this.data.albums._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.albums.status = 'Error';
         this.data.albums.detail = JSON.stringify(err);
         this.data.albums._rowVariant = 'danger';
@@ -126,6 +136,8 @@ export default {
         this.data.artists.detail = `Received: ${r.length}`;
         this.data.artists._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.artists.status = 'Error';
         this.data.artists.detail = JSON.stringify(err);
         this.data.artists._rowVariant = 'danger';
@@ -141,6 +153,8 @@ export default {
         this.data.searchLibrary.detail = `Received: ${Object.keys(r).length}`;
         this.data.searchLibrary._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.searchLibrary.status = 'Error';
         this.data.searchLibrary.detail = JSON.stringify(err);
         this.data.searchLibrary._rowVariant = 'danger';
@@ -155,6 +169,8 @@ export default {
         this.data.searchAM.detail = `Received: ${Object.keys(r).length}`;
         this.data.searchAM._rowVariant = 'success';
       }, err => {
+        Raven.captureException(err);
+
         this.data.searchAM.status = 'Error';
         this.data.searchAM.detail = JSON.stringify(err);
         this.data.searchAM._rowVariant = 'danger';
