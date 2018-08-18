@@ -6,7 +6,7 @@
     <div class="grid">
       <div class="item" v-for="item in items" :key="item.id">
         <router-link :to="{ name: item.type, params: { id: item.id } }">
-          <lazy-img :src="formatArtworkURL(item.attributes.artwork)" alt="" v-if="item.attributes.artwork" />
+          <lazy-img :src="formatArtworkURL(item.attributes.artwork, 200, 200)" alt="" v-if="item.attributes.artwork" />
           <div class="artwork-placeholder" v-else></div>
 
           <span>{{ item.attributes.name }}</span>
