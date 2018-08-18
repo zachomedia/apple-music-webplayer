@@ -6,7 +6,7 @@
     <div class="grid">
       <div class="item" v-for="item in items" :key="item.id">
         <router-link :to="{ name: item.type, params: { id: item.id } }">
-          <img :src="formatArtworkURL(item.attributes.artwork)" alt="" v-if="item.attributes.artwork" />
+          <lazy-img :src="formatArtworkURL(item.attributes.artwork)" alt="" v-if="item.attributes.artwork" />
           <div class="artwork-placeholder" v-else></div>
 
           <span>{{ item.attributes.name }}</span>
@@ -19,9 +19,11 @@
 
 <script>
 import moment from 'moment';
+import LazyImg from './LazyImg';
 
 export default {
   name: 'SongCollectionList',
+  components: {LazyImg},
   props: {
     showCount: Boolean,
     countLabel: String,
@@ -68,8 +70,10 @@ a:hover {
 }
 
 .item img, .artwork-placeholder {
+  display: block;
   width: 200px;
   height: 200px;
+  object-fit: contain;
   border-radius: 4px;
   margin-bottom: 4px;
   box-shadow: 0 0 1px rgba(0, 0, 0, .4);

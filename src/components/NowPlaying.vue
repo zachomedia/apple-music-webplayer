@@ -43,7 +43,7 @@
                                     v-if="queueTab == 1 ? index > queuePosition : queue.length - 1 - index < queuePosition">
                      <div class="queue-item">
                         <div class="mr-2">
-                           <img v-if="item.attributes.artwork"
+                           <lazy-img v-if="item.attributes.artwork"
                                  :src="formatArtworkURL(item.attributes.artwork, 40, 40)" />
                         </div>
                         <div class="m-0 grow-1">
@@ -75,9 +75,11 @@
 import EventBus from '../event-bus';
 import moment from 'moment';
 import Raven from 'raven-js';
+import LazyImg from './LazyImg';
 
 export default {
   name: 'NowPlaying',
+  components: {LazyImg},
   data: function () {
     let musicKit = window.MusicKit.getInstance();
 
