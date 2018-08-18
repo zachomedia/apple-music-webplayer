@@ -86,6 +86,7 @@ import SongCollection from './views/SongCollection.vue';
 import MyAlbums from './views/MyAlbums.vue';
 import MySongs from './views/MySongs.vue';
 import MyArtists from './views/MyArtists.vue';
+import RecentlyAdded from './views/RecentlyAdded';
 import Artist from './views/Artist.vue';
 import Search from './views/Search.vue';
 import Me from './views/Me.vue';
@@ -175,6 +176,18 @@ const routes = [
         component: SongCollection,
         meta: {
           type: 'album',
+          isLibrary: true
+        }
+      },
+      {
+        name: 'recently-added',
+        path: 'recently-added',
+        component: RecentlyAdded,
+        props: {
+          title: 'Recently Added'
+        },
+        meta: {
+          title: 'Recently Added',
           isLibrary: true
         }
       },
