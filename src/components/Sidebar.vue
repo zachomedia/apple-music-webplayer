@@ -39,6 +39,7 @@
     <div v-if="isAuthorized">
       <h2 class="text-uppercase text-muted heading">My Library</h2>
       <b-list-group class="mb-2">
+        <b-list-group-item :to="{ name: 'recently-added' }" exact>Recently Added</b-list-group-item>
         <b-list-group-item :to="{ name: 'my-songs' }" exact>Songs</b-list-group-item>
         <b-list-group-item :to="{ name: 'my-albums' }" exact>Albums</b-list-group-item>
         <b-list-group-item :to="{ name: 'my-artists' }" exact>Artists</b-list-group-item>
