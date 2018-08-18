@@ -6,7 +6,7 @@
 
     <b-table :items="songs" :fields="fields" hover v-on:row-clicked="clicked">
       <template slot="attributes.artwork" slot-scope="data">
-        <img v-if="data.value && data.value.artwork"
+        <lazy-img v-if="data.value && data.value.artwork"
              :src="formatArtworkURL(data.value.artwork, 40, 40)"
              :class="{ 'playing': data.value.playing }" />
       </template>
@@ -37,9 +37,11 @@
 import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import moment from 'moment';
+import LazyImg from './LazyImg';
 
 export default {
   name: 'Songs',
+  components: {LazyImg},
   props: {
     title: String,
     songs: Array
