@@ -14,7 +14,7 @@
       <template slot="name" slot-scope="data">
         <span class="font-weight-bold" v-if="data.item.attributes">{{ data.item.attributes.name }}</span>
         <br>
-        <span v-if="data.item.attributes">{{ data.item.attributes.artistName }}</span>
+        <span v-if="showArtist && data.item.attributes">{{ data.item.attributes.artistName }}</span>
       </template>
 
       <template slot="actions" slot-scope="data">
@@ -50,6 +50,13 @@ export default {
   computed: {
     duration: function () {
       return this.songs.reduce((total, song) => total + ((song.attributes || {}).durationInMillis || 0), 0);
+    },
+    showArtist: function () {
+      const artist =
+          this.songs.length > 0 ? this.songs[0].attributes.artistName : '';
+      const allArtistsMatch =
+          this.songs.every(item => item.attributes.artistName === artist);
+      return !(this.isAlbum && allArtistsMatch);
     }
   },
   filters: {
@@ -183,7 +190,7 @@ export default {
           };
         } },
       { key: 'attributes.trackNumber', label: '', tdClass: 'song-cell' },
-      { key: 'name', label: 'Title<br>Artist', tdClass: 'song-cell' },
+      { key: 'name', label: 'Title' + (this.showArtist ? '<br>Artist' : ''), tdClass: 'song-cell' },
       { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell' },
       { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: (value, key, item) => this.formatDuration(value) },
       { key: 'actions', label: '', tdClass: 'actions-cell' }
