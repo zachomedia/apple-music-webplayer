@@ -6,7 +6,9 @@
     <div class="grid">
       <div class="item" v-for="item in items" :key="item.id">
         <router-link :to="{ name: item.type, params: { id: item.id } }">
-          <lazy-img :src="formatArtworkURL(item.attributes.artwork, 200, 200)" alt="" v-if="item.attributes.artwork" />
+          <lazy-img v-if="item.attributes.artwork"
+                    :src="item.attributes.artwork | formatArtworkURL(200)"
+                    alt="" />
           <div class="artwork-placeholder" v-else></div>
 
           <span>{{ item.attributes.name }}</span>
@@ -22,11 +24,14 @@
 
 <script>
 import LazyImg from './LazyImg';
-import {playItem} from '../utils';
+import {formatArtworkURL, playItem} from '../utils';
 
 export default {
   name: 'SongCollectionList',
   components: {LazyImg},
+  filters: {
+    formatArtworkURL
+  },
   props: {
     showCount: Boolean,
     countLabel: String,
@@ -41,9 +46,6 @@ export default {
     };
   },
   methods: {
-    formatArtworkURL: function (url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
-    },
     play: playItem
   }
 };

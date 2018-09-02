@@ -2,7 +2,8 @@
 <template>
   <div class="now-playing">
      <div class="info">
-         <img v-if="nowPlayingItem && nowPlayingItem.attributes.artwork" :src="formatArtworkURL(nowPlayingItem.attributes.artwork)" />
+         <img v-if="nowPlayingItem && nowPlayingItem.attributes.artwork"
+              :src="nowPlayingItem.attributes.artwork | formatArtworkURL" />
          <div v-else class="placeholder" />
 
          <div class="main" v-if="nowPlayingItem">
@@ -44,7 +45,7 @@
                      <div class="queue-item">
                         <div class="mr-2">
                            <lazy-img v-if="item.attributes.artwork"
-                                 :src="formatArtworkURL(item.attributes.artwork, 40, 40)" />
+                                 :src="item.attributes.artwork | formatArtworkURL(40)" />
                         </div>
                         <div class="m-0 grow-1">
                            <p class="m-0 pb-1 text-bold">{{ item.attributes.name }}</p>
@@ -75,7 +76,7 @@
 import EventBus from '../event-bus';
 import Raven from 'raven-js';
 import LazyImg from './LazyImg';
-import {formatMillis, formatSeconds} from '../utils';
+import {formatArtworkURL, formatMillis, formatSeconds} from '../utils';
 
 export default {
   name: 'NowPlaying',
@@ -99,6 +100,7 @@ export default {
     };
   },
   filters: {
+    formatArtworkURL,
     formatSeconds,
     formatMillis
   },
@@ -119,9 +121,6 @@ export default {
           message: `An error occurred while adding "${item.attributes.name}" to your library.`
         });
       });
-    },
-    formatArtworkURL: function (url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
     },
     change (index) {
       this.musicKit.changeToMediaAtIndex(index).catch(err => {

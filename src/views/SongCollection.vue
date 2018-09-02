@@ -2,7 +2,10 @@
 <template>
   <div v-if="collection">
     <div class="header">
-      <img class="pull-left" alt="" :src="formatArtworkURL(collection.attributes.artwork, 150, 150)" v-if="collection.attributes.artwork" />
+      <img v-if="collection.attributes.artwork"
+           :src="collection.attributes.artwork | formatArtworkURL(150)"
+           class="pull-left"
+           alt="" />
       <div class="info">
         <h1>{{ collection.attributes.name }}</h1>
         <p v-if="collection.attributes.description">{{ collection.attributes.description.standard }}</p>
@@ -31,10 +34,13 @@ import EventBus from '../event-bus';
 
 import Songs from '../components/Songs.vue';
 import Loading from '../components/Loading.vue';
-import {playItem} from '../utils';
+import {formatArtworkURL, playItem} from '../utils';
 
 export default {
   name: 'SongCollection',
+  filters: {
+    formatArtworkURL
+  },
   components: {
     Songs,
     Loading
@@ -52,9 +58,6 @@ export default {
     '$route': 'fetch'
   },
   methods: {
-    formatArtworkURL: function (url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
-    },
     fetch: function () {
       if (this.abort) {
         return;
