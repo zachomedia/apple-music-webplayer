@@ -24,7 +24,7 @@
          </div>
 
          <div class="right">
-            <span>{{ playbackTime.currentPlaybackTime | formattedDuration('seconds') }} / {{ playbackTime.currentPlaybackDuration | formattedDuration('seconds') }}</span>
+            <span>{{ playbackTime.currentPlaybackTime | formatSeconds }} / {{ playbackTime.currentPlaybackDuration | formatSeconds }}</span>
          </div>
 
          <div class="queue">
@@ -51,7 +51,7 @@
                            <p class="m-0 text-muted">{{ item.attributes.albumName }}</p>
                         </div>
                         <div class="m-0 text-right text-muted">
-                           {{ item.attributes.durationInMillis | formattedDuration }}
+                           {{ item.attributes.durationInMillis | formatMillis }}
                         </div>
                      </div>
                  </b-list-group-item>
@@ -73,9 +73,9 @@
 
 <script>
 import EventBus from '../event-bus';
-import moment from 'moment';
 import Raven from 'raven-js';
 import LazyImg from './LazyImg';
+import {formatMillis, formatSeconds} from '../utils';
 
 export default {
   name: 'NowPlaying',
@@ -99,19 +99,8 @@ export default {
     };
   },
   filters: {
-    formattedDuration: function (value, unit) {
-      let pad = function (num) {
-        if (num < 10) {
-          num = '0' + num;
-        }
-
-        return num;
-      };
-
-      let m = moment.duration(value, unit);
-
-      return m.minutes() + ':' + pad(m.seconds());
-    }
+    formatSeconds,
+    formatMillis
   },
   methods: {
     addToLibrary: function (item) {
@@ -130,19 +119,6 @@ export default {
           message: `An error occurred while adding "${item.attributes.name}" to your library.`
         });
       });
-    },
-    formatDuration: function (value, unit) {
-      let pad = function (num) {
-        if (num < 10) {
-          num = '0' + num;
-        }
-
-        return num;
-      };
-
-      let m = moment.duration(value, unit);
-
-      return m.minutes() + ':' + pad(m.seconds());
     },
     formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);

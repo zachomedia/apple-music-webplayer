@@ -94,7 +94,7 @@ import NotFound from './views/NotFound.vue';
 import Settings from './views/Settings.vue';
 import Debug from './views/Debug.vue';
 
-import moment from 'moment';
+import {formatMillis} from './utils';
 
 // Initialize router
 const routes = [
@@ -357,19 +357,6 @@ export default {
     }
   },
   methods: {
-    formatDuration: function (value, unit) {
-      let pad = function (num) {
-        if (num < 10) {
-          num = '0' + num;
-        }
-
-        return num;
-      };
-
-      let m = moment.duration(value, unit);
-
-      return m.minutes() + ':' + pad(m.seconds());
-    },
     alertCountdownChanged: function (count) {
       this.alert.countdown = count;
     }
@@ -440,7 +427,7 @@ export default {
 
             this.notification = new window.Notification(event.item.attributes.name, {
               tag: 'currentMediaItem',
-              body: event.item.attributes.artistName + ' (' + this.formatDuration(event.item.attributes.durationInMillis) + ')',
+              body: `${event.item.attributes.artistName} (${formatMillis(event.item.attributes.durationInMillis)})`,
               icon: event.item.attributes.artwork ? window.MusicKit.formatArtworkURL(event.item.attributes.artwork) : null
             });
 

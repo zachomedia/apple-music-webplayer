@@ -49,8 +49,8 @@
 <script>
 import Raven from 'raven-js';
 import EventBus from '../event-bus';
-import moment from 'moment';
 import LazyImg from './LazyImg';
+import {formatMillis, humanize} from '../utils';
 
 export default {
   name: 'Songs',
@@ -88,19 +88,6 @@ export default {
   methods: {
     formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
-    },
-    formatDuration: function (value, unit) {
-      let pad = function (num) {
-        if (num < 10) {
-          num = '0' + num;
-        }
-
-        return num;
-      };
-
-      let m = moment.duration(value, unit);
-
-      return m.minutes() + ':' + pad(m.seconds());
     },
     clicked: function (item, index, event) {
       this.play(item);
@@ -191,7 +178,7 @@ export default {
       { key: 'attributes.trackNumber', label: '', tdClass: 'song-cell' },
       { key: 'name', label: 'Title' + (this.showArtist ? '<br>Artist' : ''), tdClass: 'song-cell' },
       { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell' },
-      { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: (value, key, item) => this.formatDuration(value) },
+      { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: value => formatMillis(value) },
       { key: 'actions', label: '', tdClass: 'actions-cell' }
     ];
 

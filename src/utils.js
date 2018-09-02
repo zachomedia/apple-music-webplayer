@@ -44,3 +44,18 @@ export function humanize (value) {
   }
   return hours + mins;
 }
+
+/**
+ * Returns a formatted media duration string for a {@code value} in seconds.
+ */
+export function formatSeconds (value) {
+  return window.MusicKit.formatMediaTime(value);
+}
+
+/**
+ * Returns a formatted media duration string for a {@code value} in
+ * milliseconds.
+ */
+export function formatMillis (value) {
+  return window.MusicKit.formatMediaTime(value / 1000);
+}
