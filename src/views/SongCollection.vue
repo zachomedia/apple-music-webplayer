@@ -31,6 +31,7 @@ import moment from 'moment';
 
 import Songs from '../components/Songs.vue';
 import Loading from '../components/Loading.vue';
+import {playItem} from '../utils';
 
 export default {
   name: 'SongCollection',
@@ -108,14 +109,7 @@ export default {
       });
     },
     play: function () {
-      this.musicKit.setQueue({
-        [this.collection.attributes.playParams.kind]: this.collection.attributes.playParams.id
-      }).then(queue => {
-        queue.items.forEach(i => { i.sourceId = i.id; });
-        this.musicKit.play();
-      }, err => {
-        Raven.captureException(err);
-      });
+      playItem(this.collection);
     },
     shuffle: function () {
       // Temporary shuffle implementation until supported in MusicKit JS.

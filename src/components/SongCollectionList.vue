@@ -23,7 +23,7 @@
 <script>
 import moment from 'moment';
 import LazyImg from './LazyImg';
-import Raven from 'raven-js';
+import {playItem} from '../utils';
 
 export default {
   name: 'SongCollectionList',
@@ -52,16 +52,7 @@ export default {
     formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
     },
-    play: function (item) {
-      this.musicKit.setQueue({
-        [item.attributes.playParams.kind]: item.attributes.playParams.id
-      }).then(queue => {
-        queue.items.forEach(i => { i.sourceId = i.id; });
-        this.musicKit.play();
-      }, err => {
-        Raven.captureException(err);
-      });
-    }
+    play: playItem
   }
 };
 </script>
