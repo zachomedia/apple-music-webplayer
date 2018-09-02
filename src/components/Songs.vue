@@ -73,9 +73,7 @@ export default {
     }
   },
   filters: {
-    humanize: function (value, unit) {
-      return moment.duration(value, unit).humanize();
-    }
+    humanize
   },
   data: function () {
     let musicKit = window.MusicKit.getInstance();
