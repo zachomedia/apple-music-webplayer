@@ -43,6 +43,7 @@ export default {
   name: 'Songs',
   components: {LazyImg},
   props: {
+    isAlbum: Boolean,
     title: String,
     songs: Array
   },
@@ -181,11 +182,21 @@ export default {
             artwork: value
           };
         } },
+      { key: 'attributes.trackNumber', label: '', tdClass: 'song-cell' },
       { key: 'name', label: 'Title<br>Artist', tdClass: 'song-cell' },
       { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell' },
       { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: (value, key, item) => this.formatDuration(value) },
       { key: 'actions', label: '', tdClass: 'actions-cell' }
     ];
+
+    if (this.isAlbum) {
+      // Don't show album art and name for album entities.
+      this.fields.splice(0, 1);
+      this.fields.splice(2, 1);
+    } else {
+      // Don't show track number for non-album entities.
+      this.fields.splice(1, 1);
+    }
 
     this.mediaItemDidChange = (event) => {
       this.nowPlayingItem = event.item;
