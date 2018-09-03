@@ -17,7 +17,8 @@
       </div>
     </div>
 
-    <Songs :songs="collection.relationships.tracks.data" />
+    <Songs :songs="collection.relationships.tracks.data"
+           :isAlbum="collection.type.includes('album')" />
   </div>
   <div v-else>
     <Loading message="Loading..." />

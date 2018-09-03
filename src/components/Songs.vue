@@ -6,15 +6,28 @@
 
     <b-table :items="songs" :fields="fields" hover v-on:row-clicked="clicked">
       <template slot="attributes.artwork" slot-scope="data">
-        <lazy-img v-if="data.value && data.value.artwork"
-             :src="formatArtworkURL(data.value.artwork, 40, 40)"
-             :class="{ 'playing': data.value.playing }" />
+        <lazy-img v-if="data.item.attributes && data.item.attributes.artwork"
+             :src="formatArtworkURL(data.item.attributes.artwork, 40, 40)" />
+        <div class="playing-indicator" v-if="isPlaying(data.item)">
+          <i class="fa fa-volume-up"></i>
+        </div>
+      </template>
+
+      <template slot="attributes.trackNumber" slot-scope="data">
+        <div v-if="!isPlaying(data.item)">
+          {{ data.item.attributes.trackNumber }}
+        </div>
+        <div v-else>
+          <div class="album-playing-indicator">
+            <i class="fa fa-volume-up"></i>
+          </div>
+        </div>
       </template>
 
       <template slot="name" slot-scope="data">
         <span class="font-weight-bold" v-if="data.item.attributes">{{ data.item.attributes.name }}</span>
         <br>
-        <span v-if="data.item.attributes">{{ data.item.attributes.artistName }}</span>
+        <span v-if="showArtist && data.item.attributes">{{ data.item.attributes.artistName }}</span>
       </template>
 
       <template slot="actions" slot-scope="data">
@@ -43,12 +56,20 @@ export default {
   name: 'Songs',
   components: {LazyImg},
   props: {
+    isAlbum: Boolean,
     title: String,
     songs: Array
   },
   computed: {
     duration: function () {
       return this.songs.reduce((total, song) => total + ((song.attributes || {}).durationInMillis || 0), 0);
+    },
+    showArtist: function () {
+      const artist =
+          this.songs.length > 0 ? this.songs[0].attributes.artistName : '';
+      const allArtistsMatch =
+          this.songs.every(item => item.attributes.artistName === artist);
+      return !(this.isAlbum && allArtistsMatch);
     }
   },
   filters: {
@@ -156,26 +177,34 @@ export default {
     queueLater (item) {
       let mediaItem = this.trackToMediaItem(item.item);
       this.musicKit.player.queue.append({ items: [mediaItem] });
+    },
+    isPlaying (item) {
+      if (!this.nowPlayingItem) {
+        return false;
+      }
+      return item.id === this.nowPlayingItem.id ||
+        item.id === this.nowPlayingItem.container.id ||
+        item.id === this.nowPlayingItem.sourceId;
     }
   },
   created: function () {
     this.fields = [
-      { key: 'attributes.artwork',
-        label: '',
-        tdClass: 'song-cell',
-        formatter: (value, key, item) => {
-          return {
-            playing: this.nowPlayingItem
-              ? item.id === this.nowPlayingItem.id || item.id === this.nowPlayingItem.container.id || item.id === this.nowPlayingItem.sourceId
-              : false,
-            artwork: value
-          };
-        } },
-      { key: 'name', label: 'Title<br>Artist', tdClass: 'song-cell' },
+      { key: 'attributes.artwork', label: '', tdClass: 'song-cell' },
+      { key: 'attributes.trackNumber', label: '', tdClass: 'song-cell' },
+      { key: 'name', label: 'Title' + (this.showArtist ? '<br>Artist' : ''), tdClass: 'song-cell' },
       { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell' },
       { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: (value, key, item) => this.formatDuration(value) },
       { key: 'actions', label: '', tdClass: 'actions-cell' }
     ];
+
+    if (this.isAlbum) {
+      // Don't show album art and name for album entities.
+      this.fields.splice(0, 1);
+      this.fields.splice(2, 1);
+    } else {
+      // Don't show track number for non-album entities.
+      this.fields.splice(1, 1);
+    }
 
     this.mediaItemDidChange = (event) => {
       this.nowPlayingItem = event.item;
@@ -200,18 +229,35 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
+  $art-radius: 4px;
+  $art-size: 40px;
+
 img {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
+  width: $art-size;
+  height: $art-size;
+  border-radius: $art-radius;
   box-sizing: content-box;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, .4);
   border: 2px solid #fefefe;
 }
 
-img.playing {
-  border: 2px solid #007bff;
+.playing-indicator {
+  background-color: rgba(0, 0, 0, .3);
+  border-radius: $art-radius;
+  color: #fff;
+  font-size: 24px;
+  height: $art-size;
+  line-height: 40px;
+  margin-top: -40px;
+  position: absolute;
+  text-align: center;
+  width: $art-size;
+}
+
+.album-playing-indicator {
+  color: #007bff;
+  font-size: 20px;
 }
 
 </style>
@@ -224,5 +270,9 @@ img.playing {
 
 .actions-cell {
   width: 25px;
+}
+
+.song-cell:first-child {
+  width: 60px;
 }
 </style>
