@@ -100,18 +100,8 @@ export default {
         this.musicKit.setQueue({
           items: this.songs.map(i => this.trackToMediaItem(i)),
           startPosition: this.songs.indexOf(item)
-        }).then(queue => {
-          this.musicKit.player.changeToMediaItem(queue.item(this.songs.indexOf(item)))
-            .then(r => {
-              this.musicKit.play().catch(err => console.error(err));
-            }, err => {
-              Raven.captureException(err);
-
-              EventBus.$emit('alert', {
-                type: 'danger',
-                message: `An unexpected error occurred.`
-              });
-            });
+        }).then(() => {
+          this.musicKit.play().catch(err => console.error(err));
         }, err => {
           Raven.captureException(err);
 
