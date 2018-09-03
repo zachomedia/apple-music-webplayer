@@ -12,6 +12,9 @@
           <span>{{ item.attributes.name }}</span>
           <span class="text-muted">{{ item.attributes.curatorName || item.attributes.artistName }}</span>
         </router-link>
+        <button class="play-button" v-on:click="play(item)">
+          <i class="fa fa-play"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -20,6 +23,7 @@
 <script>
 import moment from 'moment';
 import LazyImg from './LazyImg';
+import {playItem} from '../utils';
 
 export default {
   name: 'SongCollectionList',
@@ -47,7 +51,8 @@ export default {
   methods: {
     formatArtworkURL: function (url, height, width) {
       return window.MusicKit.formatArtworkURL(url, width, width);
-    }
+    },
+    play: playItem
   }
 };
 </script>
@@ -64,6 +69,7 @@ a:hover {
   justify-content: flex-start;
 }
 .grid .item {
+  position: relative;
   width: 200px;
   margin: 5px;
   font-size: 0.9em;
@@ -77,6 +83,31 @@ a:hover {
   border-radius: 4px;
   margin-bottom: 4px;
   box-shadow: 0 0 1px rgba(0, 0, 0, .4);
+}
+
+.item .play-button {
+  background-color: rgba(255, 255, 255, .8);
+  border: none;
+  border-radius: 50%;
+  color: #2e8af7;
+  display: none;
+  font-size: 18px;
+  height: 32px;
+  left: 10px;
+  line-height: 32px;
+  outline: none;
+  padding-left: 9px;
+  position: absolute;
+  top: 158px;
+  width: 32px;
+}
+
+.item .play-button:active {
+  background-color: rgba(220, 220, 220, 0.8);
+}
+
+.item:hover .play-button {
+  display: block;
 }
 
 .artwork-placeholder {
