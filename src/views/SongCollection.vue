@@ -28,7 +28,6 @@
 <script>
 import Raven from 'raven-js';
 import EventBus from '../event-bus';
-import moment from 'moment';
 
 import Songs from '../components/Songs.vue';
 import Loading from '../components/Loading.vue';
@@ -36,11 +35,6 @@ import {playItem} from '../utils';
 
 export default {
   name: 'SongCollection',
-  filters: {
-    formattedDuration: function (value, unit) {
-      return moment.duration(value, unit).humanize();
-    }
-  },
   components: {
     Songs,
     Loading

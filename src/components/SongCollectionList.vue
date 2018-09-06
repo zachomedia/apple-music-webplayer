@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import LazyImg from './LazyImg';
 import {playItem} from '../utils';
 
@@ -32,13 +31,6 @@ export default {
     showCount: Boolean,
     countLabel: String,
     items: Array
-  },
-  computed: {
-  },
-  filters: {
-    humanize: function (value, unit) {
-      return moment.duration(value, unit).humanize();
-    }
   },
   data: function () {
     let musicKit = window.MusicKit.getInstance();

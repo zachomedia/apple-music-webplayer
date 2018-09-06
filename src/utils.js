@@ -16,3 +16,46 @@ export function playItem (item) {
     Raven.captureException(err);
   });
 }
+
+/**
+ * Returns a humanized media duration string for a {@code value} in
+ * milliseconds.
+ */
+export function humanize (value) {
+  const duration = window.MusicKit.formattedMilliseconds(value);
+  if (duration.hours === 0 && duration.minutes === 0) {
+    return 'No items';
+  }
+  if (duration.hours >= 24) {
+    const days = (duration.hours + duration.minutes / 60) / 24;
+    const dayString = days.toFixed(1).replace('.0', '');
+    return `${dayString} day` + (dayString === '1' ? '' : 's');
+  }
+  let hours = '';
+  if (duration.hours > 0) {
+    hours = `${duration.hours} hour` + (duration.hours > 1 ? 's' : '');
+  }
+  let mins = '';
+  if (duration.minutes > 0) {
+    mins = `${duration.minutes} minute` + (duration.minutes > 1 ? 's' : '');
+  }
+  if (hours && mins) {
+    return `${hours}, ${mins}`;
+  }
+  return hours + mins;
+}
+
+/**
+ * Returns a formatted media duration string for a {@code value} in seconds.
+ */
+export function formatSeconds (value) {
+  return window.MusicKit.formatMediaTime(value);
+}
+
+/**
+ * Returns a formatted media duration string for a {@code value} in
+ * milliseconds.
+ */
+export function formatMillis (value) {
+  return window.MusicKit.formatMediaTime(value / 1000);
+}
