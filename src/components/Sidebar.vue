@@ -17,14 +17,19 @@
     <h2 class="text-uppercase text-muted heading">Search</h2>
     <b-form v-on:submit.prevent="search()">
       <b-form-radio-group v-model="searchParams.library"
-        buttons button-variant="outline-primary"
-        class="mb-1 btn-group-sm split w-100"
-        v-if="isAuthorized">
+                          v-on:change="focusInput()"
+                          buttons button-variant="outline-primary"
+                          class="mb-1 btn-group-sm split w-100"
+                          v-if="isAuthorized">
         <b-form-radio :value="false">Apple Music</b-form-radio>
         <b-form-radio :value="true">Library</b-form-radio>
       </b-form-radio-group>
 
-      <b-form-input id="q" type="text" v-model="searchParams.query" placeholder="Search" />
+      <b-form-input id="q"
+                    ref="searchInput"
+                    type="text"
+                    v-model="searchParams.query"
+                    placeholder="Search" />
 
       <b-button type="submit" class="d-none">Search</b-button>
     </b-form>
@@ -84,6 +89,9 @@ export default {
     },
     unauthorize: function () {
       this.musicKit.unauthorize();
+    },
+    focusInput: function () {
+      this.$refs.searchInput.focus();
     },
     search: function () {
       this.$router.push({
