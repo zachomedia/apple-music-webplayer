@@ -17,7 +17,7 @@
     <h2 class="text-uppercase text-muted heading">Search</h2>
     <b-form v-on:submit.prevent="search()">
       <b-form-radio-group v-model="searchParams.library"
-                          v-on:change="focusInput()"
+                          v-on:change="searchScopeChange()"
                           buttons button-variant="outline-primary"
                           class="mb-1 btn-group-sm split w-100"
                           v-if="isAuthorized">
@@ -90,8 +90,11 @@ export default {
     unauthorize: function () {
       this.musicKit.unauthorize();
     },
-    focusInput: function () {
+    searchScopeChange: function () {
       this.$refs.searchInput.focus();
+      if (this.searchParams.query) {
+        this.search();
+      }
     },
     search: function () {
       this.$router.push({
