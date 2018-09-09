@@ -17,7 +17,7 @@
     <h2 class="text-uppercase text-muted heading">Search</h2>
     <b-form v-on:submit.prevent="search()">
       <b-form-radio-group v-model="searchParams.library"
-                          v-on:change="searchScopeChange()"
+                          v-on:input="searchScopeChange()"
                           buttons button-variant="outline-primary"
                           class="mb-1 btn-group-sm split w-100"
                           v-if="isAuthorized">
