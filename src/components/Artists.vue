@@ -28,11 +28,6 @@ export default {
       musicKit: musicKit,
       fields: [ ]
     };
-  },
-  methods: {
-    formatArtworkURL: function (url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
-    }
   }
 };
 </script>

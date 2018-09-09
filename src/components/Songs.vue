@@ -7,7 +7,7 @@
     <b-table :items="songs" :fields="fields" hover v-on:row-clicked="clicked">
       <template slot="attributes.artwork" slot-scope="data">
         <lazy-img v-if="data.item.attributes && data.item.attributes.artwork"
-             :src="formatArtworkURL(data.item.attributes.artwork, 40, 40)" />
+             :src="data.item.attributes.artwork | formatArtworkURL(40)" />
         <div class="playing-indicator" v-if="isPlaying(data.item)">
           <i class="fa fa-volume-up"></i>
         </div>
@@ -50,7 +50,7 @@
 import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import LazyImg from './LazyImg';
-import {formatMillis, humanize} from '../utils';
+import {formatArtworkURL, formatMillis, humanize} from '../utils';
 
 export default {
   name: 'Songs',
@@ -73,6 +73,7 @@ export default {
     }
   },
   filters: {
+    formatArtworkURL,
     humanize
   },
   data: function () {
@@ -86,9 +87,6 @@ export default {
     };
   },
   methods: {
-    formatArtworkURL: function (url, height, width) {
-      return window.MusicKit.formatArtworkURL(url, width, width);
-    },
     clicked: function (item, index, event) {
       this.play(item);
     },

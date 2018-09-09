@@ -59,3 +59,13 @@ export function formatSeconds (value) {
 export function formatMillis (value) {
   return window.MusicKit.formatMediaTime(value / 1000);
 }
+
+/**
+ * Returns a formatted MusicKit artwork URL for the specified size.
+ * @param artwork MusicKit {@code artwork} object, with {@code url}, {@code
+ *     width} and {@code height} properties.
+ * @param size Size in pixels.
+ */
+export function formatArtworkURL (artwork, size) {
+  return window.MusicKit.formatArtworkURL(artwork, size, size);
+}

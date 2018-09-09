@@ -94,7 +94,7 @@ import NotFound from './views/NotFound.vue';
 import Settings from './views/Settings.vue';
 import Debug from './views/Debug.vue';
 
-import {formatMillis} from './utils';
+import {formatArtworkURL, formatMillis} from './utils';
 
 // Initialize router
 const routes = [
@@ -428,7 +428,7 @@ export default {
             this.notification = new window.Notification(event.item.attributes.name, {
               tag: 'currentMediaItem',
               body: `${event.item.attributes.artistName} (${formatMillis(event.item.attributes.durationInMillis)})`,
-              icon: event.item.attributes.artwork ? window.MusicKit.formatArtworkURL(event.item.attributes.artwork) : null
+              icon: event.item.attributes.artwork ? formatArtworkURL(event.item.attributes.artwork) : null
             });
 
             this.notification.onclose = e => {
