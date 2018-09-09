@@ -7,7 +7,7 @@
     <b-table :items="songs" :fields="fields" hover v-on:row-clicked="clicked">
       <template slot="attributes.artwork" slot-scope="data">
         <lazy-img v-if="data.item.attributes && data.item.attributes.artwork"
-             :src="data.value.artwork | formatArtworkURL(40)" />
+             :src="data.item.attributes.artwork | formatArtworkURL(40)" />
         <div class="playing-indicator" v-if="isPlaying(data.item)">
           <i class="fa fa-volume-up"></i>
         </div>
