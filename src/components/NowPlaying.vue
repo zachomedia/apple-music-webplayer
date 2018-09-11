@@ -15,6 +15,7 @@
                 </template>
 
                 <b-dropdown-item-button @click.stop="addToLibrary(nowPlayingItem)">Add to library</b-dropdown-item-button>
+                <b-dropdown-item-button @click.stop="goToAlbum(nowPlayingItem)">Go to album</b-dropdown-item-button>
               </b-dropdown>
             </span>
             <span class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</span>
@@ -121,6 +122,21 @@ export default {
           message: `An error occurred while adding "${item.attributes.name}" to your library.`
         });
       });
+    },
+    goToAlbum: function (item) {
+      if (item.assets && item.assets[0].metadata) {
+        this.$router.push({
+          name: 'albums',
+          params: {
+            id: item.assets[0].metadata.playlistId
+          }
+        });
+      } else {
+        EventBus.$emit('alert', {
+          type: 'danger',
+          message: `Unable to locate album ID for "${item.albumName}".`
+        });
+      }
     },
     change (index) {
       this.musicKit.changeToMediaAtIndex(index).catch(err => {
