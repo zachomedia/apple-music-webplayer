@@ -166,7 +166,14 @@ export default {
       var percentage = (hoverLeftOffset / progressBar.offsetWidth);
       this.hoverTooltipTime = this.playbackTime.currentPlaybackDuration * percentage;
       var newLeft = event.pageX - progressBar.offsetParent.offsetLeft - (tooltip.offsetWidth / 2);
-      tooltip.style.left = newLeft + 'px';
+      // do not allow the tooltip to go off the screen, maximum of 10px past progress bar
+      if (newLeft > (progressBar.offsetWidth - tooltip.offsetWidth + 10)) {
+        tooltip.style.left = 'auto';
+        tooltip.style.right = '-10px';
+      } else {
+        tooltip.style.left = newLeft + 'px';
+        tooltip.style.right = 'auto';
+      }
     },
     change (index) {
       this.musicKit.changeToMediaAtIndex(index).catch(err => {
