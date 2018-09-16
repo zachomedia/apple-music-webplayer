@@ -3,6 +3,7 @@
   <div>
     <h1 v-if="title">{{ title }}</h1>
 
+    <SearchBox class="mb-2" />
     <SearchResults :results="results" v-if="results" />
     <Loading message="Searching" v-if="loading" />
   </div>
@@ -11,6 +12,7 @@
 <script>
 import Raven from 'raven-js';
 import EventBus from '../event-bus';
+import SearchBox from '../components/SearchBox.vue';
 import SearchResults from '../components/SearchResults.vue';
 import Loading from '../components/Loading.vue';
 
@@ -20,6 +22,7 @@ export default {
     title: String
   },
   components: {
+    SearchBox,
     SearchResults,
     Loading
   },
@@ -28,6 +31,8 @@ export default {
 
     return {
       musicKit: musicKit,
+      loading: false,
+      hasQuery: false,
       results: null
     };
   },
@@ -36,6 +41,15 @@ export default {
   },
   methods: {
     search: function () {
+      // Don't search, if we don't have a query
+      this.hasQuery = this.$route.query.q !== undefined && this.$route.query.q.length > 0;
+
+      // Clear results if we don't have a query
+      if (!this.hasQuery) {
+        this.results = null;
+        return;
+      }
+
       // The query hasn't changed, don't search
       if (this.lastQuery && this.lastQuery === this.$route.query.q) {
         return;

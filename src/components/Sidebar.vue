@@ -15,24 +15,7 @@
 
     <!-- Search -->
     <h2 class="text-uppercase text-muted heading">Search</h2>
-    <b-form v-on:submit.prevent="search()">
-      <b-form-radio-group v-model="searchParams.library"
-                          v-on:input="searchScopeChange()"
-                          buttons button-variant="outline-primary"
-                          class="mb-1 btn-group-sm split w-100"
-                          v-if="isAuthorized">
-        <b-form-radio :value="false">Apple Music</b-form-radio>
-        <b-form-radio :value="true">Library</b-form-radio>
-      </b-form-radio-group>
-
-      <b-form-input id="q"
-                    ref="searchInput"
-                    type="text"
-                    v-model="searchParams.query"
-                    placeholder="Search" />
-
-      <b-button type="submit" class="d-none">Search</b-button>
-    </b-form>
+    <SearchBox />
 
     <!-- Apple Music -->
     <h2 class="text-uppercase text-muted heading" v-if="isAuthorized">Apple Music</h2>
@@ -64,11 +47,13 @@
 <script>
 import Raven from 'raven-js';
 import Playlists from './Playlists.vue';
+import SearchBox from './SearchBox.vue';
 
 export default {
   name: 'Sidebar',
   components: {
-    Playlists
+    Playlists,
+    SearchBox
   },
   data: function () {
     let musicKit = window.MusicKit.getInstance();
@@ -89,20 +74,6 @@ export default {
     },
     unauthorize: function () {
       this.musicKit.unauthorize();
-    },
-    searchScopeChange: function () {
-      this.$refs.searchInput.focus();
-      if (this.searchParams.query) {
-        this.search();
-      }
-    },
-    search: function () {
-      this.$router.push({
-        name: this.searchParams.library ? 'library-search' : 'search',
-        query: {
-          q: this.searchParams.query
-        }
-      });
     },
     fetch: function (offset) {
       if (this.abort) {
