@@ -61,10 +61,6 @@ export default {
     return {
       isAuthorized: musicKit.isAuthorized,
       musicKit: musicKit,
-      searchParams: {
-        query: this.$route.query.q || '',
-        library: this.$route.meta.isLibrary || false
-      },
       playlists: null
     };
   },
@@ -114,9 +110,7 @@ export default {
 
       this.isAuthorized = this.musicKit.isAuthorized;
 
-      if (!this.isAuthorized) {
-        this.search.library = false;
-      } else {
+      if (this.isAuthorized) {
         this.fetch();
       }
     };
