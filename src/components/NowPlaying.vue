@@ -16,6 +16,9 @@
 
                 <b-dropdown-item-button @click.stop="addToLibrary(nowPlayingItem)">Add to library</b-dropdown-item-button>
                 <b-dropdown-item-button @click.stop="goToAlbum(nowPlayingItem)">Go to album</b-dropdown-item-button>
+                <b-dropdown-divider />
+                <b-dropdown-item-button @click.stop="rateSong(nowPlayingItem, 1)">Love</b-dropdown-item-button>
+                <b-dropdown-item-button @click.stop="rateSong(nowPlayingItem, -1)">Dislike</b-dropdown-item-button>
               </b-dropdown>
             </span>
             <span class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</span>
@@ -77,7 +80,7 @@
 import EventBus from '../event-bus';
 import Raven from 'raven-js';
 import LazyImg from './LazyImg';
-import {formatArtworkURL, formatMillis, formatSeconds} from '../utils';
+import {formatArtworkURL, formatMillis, formatSeconds, rateSong} from '../utils';
 
 export default {
   name: 'NowPlaying',
@@ -138,6 +141,7 @@ export default {
         });
       }
     },
+    rateSong,
     change (index) {
       this.musicKit.changeToMediaAtIndex(index).catch(err => {
         Raven.captureException(err);

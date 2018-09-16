@@ -37,9 +37,12 @@
           </template>
 
           <b-dropdown-item-button @click.stop="addToLibrary(data)" v-if="isAuthorized">Add to library</b-dropdown-item-button>
-          <b-dropdown-divider  v-if="isAuthorized" />
+          <b-dropdown-divider v-if="isAuthorized" />
           <b-dropdown-item-button @click.stop="queueNext(data)">Play next</b-dropdown-item-button>
           <b-dropdown-item-button @click.stop="queueLater(data)">Play later</b-dropdown-item-button>
+          <b-dropdown-divider  v-if="isAuthorized && !isLibrary(data.item)" />
+          <b-dropdown-item-button @click.stop="rateSong(data.item, 1)" v-if="isAuthorized && !isLibrary(data.item)">Love</b-dropdown-item-button>
+          <b-dropdown-item-button @click.stop="rateSong(data.item, -1)" v-if="isAuthorized && !isLibrary(data.item)">Dislike</b-dropdown-item-button>
         </b-dropdown>
       </template>
     </b-table>
@@ -50,7 +53,7 @@
 import Raven from 'raven-js';
 import EventBus from '../event-bus';
 import LazyImg from './LazyImg';
-import {formatArtworkURL, formatMillis, humanize} from '../utils';
+import {formatArtworkURL, formatMillis, humanize, rateSong} from '../utils';
 
 export default {
   name: 'Songs',
@@ -87,6 +90,9 @@ export default {
     };
   },
   methods: {
+    isLibrary (song) {
+      return song.type.indexOf('library-') === 0;
+    },
     clicked: function (item, index, event) {
       this.play(item);
     },
@@ -168,7 +174,8 @@ export default {
       return item.id === this.nowPlayingItem.id ||
         item.id === this.nowPlayingItem.container.id ||
         item.id === this.nowPlayingItem.sourceId;
-    }
+    },
+    rateSong
   },
   created: function () {
     this.fields = [

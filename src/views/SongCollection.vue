@@ -34,7 +34,7 @@ import EventBus from '../event-bus';
 
 import Songs from '../components/Songs.vue';
 import Loading from '../components/Loading.vue';
-import {formatArtworkURL, playItem} from '../utils';
+import {formatArtworkURL, playItem, apiHeaders} from '../utils';
 
 export default {
   name: 'SongCollection',
@@ -75,13 +75,7 @@ export default {
 
         // Workaround to load all songs
         let fetchTracks = (url) => {
-          var headers = new Headers({
-            Authorization: 'Bearer ' + this.musicKit.developerToken,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            'Music-User-Token': '' + this.musicKit.musicUserToken
-          });
-          fetch('https://api.music.apple.com' + url, { headers: headers })
+          fetch('https://api.music.apple.com' + url, { headers: apiHeaders() })
             .then(res => res.json())
             .then(res => {
               this.collection.relationships.tracks.data = this.collection.relationships.tracks.data.concat(res.data);

@@ -1,4 +1,5 @@
 import Raven from 'raven-js';
+import EventBus from './event-bus';
 
 /**
  * Sets the queue to a single item and starts playback.
@@ -68,4 +69,54 @@ export function formatMillis (value) {
  */
 export function formatArtworkURL (artwork, size) {
   return window.MusicKit.formatArtworkURL(artwork, size, size);
+}
+
+/**
+ * Returns headers for a fetch request to the Apple Music API.
+ */
+export function apiHeaders () {
+  return new Headers({
+    Authorization: 'Bearer ' + window.MusicKit.getInstance().developerToken,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'Music-User-Token': '' + window.MusicKit.getInstance().musicUserToken
+  });
+}
+
+/**
+ * Sets the user's rating for a song.
+ *
+ * @param song MusicKit {@code Song} object
+ * @param rating Rating (-1: dislike, 1: like)
+ */
+export function rateSong (song, rating) {
+  fetch(`https://api.music.apple.com/v1/me/ratings/songs/${song.id}`, {
+    method: 'PUT',
+    headers: apiHeaders(),
+    body: JSON.stringify({
+      type: 'rating',
+      attributes: {
+        value: rating
+      }
+    })
+  }).then(res => {
+    if (res.status === 200) {
+      EventBus.$emit('alert', {
+        type: 'success',
+        message: `Successfully saved rating for "${song.attributes.name}".`
+      });
+    } else {
+      EventBus.$emit('alert', {
+        type: 'danger',
+        message: `Unable to save rating for "${song.attributes.name}".`
+      });
+    }
+  }, err => {
+    Raven.captureException(err);
+
+    EventBus.$emit('alert', {
+      type: 'danger',
+      message: `An error occurred while trying to save rating for "${song.attributes.name}".`
+    });
+  });
 }
