@@ -72,7 +72,11 @@
         </div>
       </div>
 
-      <b-progress height="2px" :value="playbackTime.currentPlaybackTime / playbackTime.currentPlaybackDuration * 100"  v-if="playbackTime.currentPlaybackDuration > 0"></b-progress>
+      <div ref="progressTooltip" class="progressTooltip">{{ hoverTooltipTime | formatSeconds }}</div>
+
+      <b-progress ref="songProgress" class="songProgress" height="4px" :value="playbackTime.currentPlaybackTime / playbackTime.currentPlaybackDuration * 100"
+        v-if="playbackTime.currentPlaybackDuration > 0" v-b-tooltip.hover @click.native="seekToTime($event)"
+        @mousemove.native="getHoverTime($event)" @mouseover.native="showTooltip()" @mouseleave.native="hideTooltip()"></b-progress>
   </div>
 </template>
 
@@ -96,6 +100,7 @@ export default {
       queuePosition: musicKit.player.queue.position,
       queue: musicKit.player.queue.items,
       showQueue: false,
+      hoverTooltipTime: '0:00',
       playbackTime: {
         currentPlaybackDuration: musicKit.player.currentPlaybackDuration,
         currentPlaybackTime: musicKit.player.currentPlaybackTime,
@@ -142,6 +147,32 @@ export default {
       }
     },
     rateSong,
+    seekToTime: function (event) {
+      var clickLeftOffset = (event.pageX - event.target.offsetParent.offsetLeft);
+      var fullWidth = this.$refs.songProgress.$el.offsetWidth;
+      var percentage = (clickLeftOffset / fullWidth);
+      this.musicKit.player.seekToTime(this.playbackTime.currentPlaybackDuration * percentage);
+    },
+    showTooltip: function () {
+      this.$refs.progressTooltip.style.opacity = 1;
+    },
+    hideTooltip: function () {
+      this.$refs.progressTooltip.style.opacity = 0;
+    },
+    getHoverTime: function (event) {
+      var hoverLeftOffset = (event.pageX - this.$refs.songProgress.$el.offsetParent.offsetLeft);
+      var percentage = (hoverLeftOffset / this.$refs.songProgress.$el.offsetWidth);
+      this.hoverTooltipTime = this.playbackTime.currentPlaybackDuration * percentage;
+      var newLeft = event.pageX - this.$refs.songProgress.$el.offsetParent.offsetLeft - (this.$refs.progressTooltip.offsetWidth / 2);
+      // do not allow the tooltip to go off the screen, maximum of 10px past progress bar
+      if (newLeft > (this.$refs.songProgress.$el.offsetWidth - this.$refs.progressTooltip.offsetWidth + 10)) {
+        this.$refs.progressTooltip.style.left = 'auto';
+        this.$refs.progressTooltip.style.right = '-10px';
+      } else {
+        this.$refs.progressTooltip.style.left = newLeft + 'px';
+        this.$refs.progressTooltip.style.right = 'auto';
+      }
+    },
     change (index) {
       this.musicKit.changeToMediaAtIndex(index).catch(err => {
         Raven.captureException(err);
@@ -260,6 +291,28 @@ export default {
 
 .dark .placeholder {
   background: #111;
+}
+
+.songProgress {
+  cursor: pointer;
+}
+
+.progressTooltip {
+  position: absolute;
+  bottom: 8px;
+  padding: 5px 7px;
+  min-width: 45px;
+  text-align: center;
+  color: #fff;
+  border-radius: 2px;
+  background: rgba(98, 107, 115, 0.9);
+  opacity: 0;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+}
+
+.dark .progressTooltip {
+  background: rgba(65, 100, 137, 0.9);
 }
 
 @media (max-width: 650px) and (min-width: 601px) {
