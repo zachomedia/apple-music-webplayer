@@ -69,9 +69,9 @@
         </div>
       </div>
 
-      <div id="progressTooltip">{{ hoverTooltipTime | formatSeconds }}</div>
+      <div ref="progressTooltip" class="progressTooltip">{{ hoverTooltipTime | formatSeconds }}</div>
 
-      <b-progress id="songProgress" height="5px" :value="playbackTime.currentPlaybackTime / playbackTime.currentPlaybackDuration * 100"
+      <b-progress ref="songProgress" height="4px" :value="playbackTime.currentPlaybackTime / playbackTime.currentPlaybackDuration * 100"
         v-if="playbackTime.currentPlaybackDuration > 0" v-b-tooltip.hover @click.native="seekToTime($event)"
         @mousemove.native="getHoverTime($event)" @mouseover.native="showTooltip()" @mouseleave.native="hideTooltip()"></b-progress>
   </div>
@@ -145,30 +145,28 @@ export default {
     },
     seekToTime: function (event) {
       var clickLeftOffset = (event.pageX - event.target.offsetParent.offsetLeft);
-      var fullWidth = document.getElementById('songProgress').offsetWidth;
+      var fullWidth = this.$refs.songProgress.$el.offsetWidth;
       var percentage = (clickLeftOffset / fullWidth);
       this.musicKit.player.seekToTime(this.playbackTime.currentPlaybackDuration * percentage);
     },
     showTooltip: function () {
-      document.getElementById('progressTooltip').style.opacity = 1;
+      this.$refs.progressTooltip.style.opacity = 1;
     },
     hideTooltip: function () {
-      document.getElementById('progressTooltip').style.opacity = 0;
+      this.$refs.progressTooltip.style.opacity = 0;
     },
     getHoverTime: function (event) {
-      var progressBar = document.getElementById('songProgress');
-      var tooltip = document.getElementById('progressTooltip');
-      var hoverLeftOffset = (event.pageX - progressBar.offsetParent.offsetLeft);
-      var percentage = (hoverLeftOffset / progressBar.offsetWidth);
+      var hoverLeftOffset = (event.pageX - this.$refs.songProgress.$el.offsetParent.offsetLeft);
+      var percentage = (hoverLeftOffset / this.$refs.songProgress.$el.offsetWidth);
       this.hoverTooltipTime = this.playbackTime.currentPlaybackDuration * percentage;
-      var newLeft = event.pageX - progressBar.offsetParent.offsetLeft - (tooltip.offsetWidth / 2);
+      var newLeft = event.pageX - this.$refs.songProgress.$el.offsetParent.offsetLeft - (this.$refs.progressTooltip.offsetWidth / 2);
       // do not allow the tooltip to go off the screen, maximum of 10px past progress bar
-      if (newLeft > (progressBar.offsetWidth - tooltip.offsetWidth + 10)) {
-        tooltip.style.left = 'auto';
-        tooltip.style.right = '-10px';
+      if (newLeft > (this.$refs.songProgress.$el.offsetWidth - this.$refs.progressTooltip.offsetWidth + 10)) {
+        this.$refs.progressTooltip.style.left = 'auto';
+        this.$refs.progressTooltip.style.right = '-10px';
       } else {
-        tooltip.style.left = newLeft + 'px';
-        tooltip.style.right = 'auto';
+        this.$refs.progressTooltip.style.left = newLeft + 'px';
+        this.$refs.progressTooltip.style.right = 'auto';
       }
     },
     change (index) {
@@ -291,11 +289,11 @@ export default {
   background: #111;
 }
 
-#songProgress {
+.songProgress {
   cursor: pointer;
 }
 
-#progressTooltip {
+.progressTooltip {
   position: absolute;
   bottom: 8px;
   padding: 5px 7px;
@@ -309,7 +307,7 @@ export default {
   transition: opacity 0.2s;
 }
 
-.dark #progressTooltip {
+.dark .progressTooltip {
   background: rgba(65, 100, 137, 0.9);
 }
 
