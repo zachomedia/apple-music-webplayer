@@ -4,7 +4,9 @@
     <h1 v-if="title">{{ title }}</h1>
     <p class="text-muted">{{ songs.length }} {{ songs.length | pluralize('song') }}, {{ duration | humanize }}</p>
 
-    <b-table :items="songs" :fields="fields" hover v-on:row-clicked="clicked">
+    <b-table :items="songs" :fields="fields" hover
+             v-on:row-clicked="clicked"
+             v-on:contextmenu.native="contextmenu($event)">
       <template slot="attributes.artwork" slot-scope="data">
         <lazy-img v-if="data.item.attributes && data.item.attributes.artwork"
              :src="data.item.attributes.artwork | formatArtworkURL(40)" />
@@ -31,7 +33,8 @@
       </template>
 
       <template slot="actions" slot-scope="data">
-        <b-dropdown variant="link" size="sm" no-caret right>
+        <b-dropdown variant="link" size="sm" no-caret right
+                    :ref="`actions-${data.item.id}`">
           <template slot="button-content">
             <i class="fa fa-ellipsis-h" /><span class="sr-only">Song actions</span>
           </template>
@@ -95,6 +98,23 @@ export default {
     },
     clicked: function (item, index, event) {
       this.play(item);
+    },
+    contextmenu: function (e) {
+      e.preventDefault();
+
+      // Find parent TD, in case the event fired on a child element.
+      let td = e.target;
+      while (td.tagName !== 'TD') {
+        td = td.parentElement;
+        if (td === null) {
+          // Bail out for clicks on e.g. table header.
+          return;
+        }
+      }
+
+      const id = td.getAttribute('item-id');
+      const dropdown = this.$refs[`actions-${id}`];
+      dropdown.show();
     },
     trackToMediaItem (track) {
       return {
@@ -178,13 +198,16 @@ export default {
     rateSong
   },
   created: function () {
+    // Temporary workaround until contextmenu support is added to Bootstrap Vue.
+    const tdAttr = (value, key, item) => ({'item-id': item.id});
+
     this.fields = [
-      { key: 'attributes.artwork', label: '', tdClass: 'song-cell' },
-      { key: 'attributes.trackNumber', label: '', tdClass: 'song-cell' },
-      { key: 'name', label: 'Title' + (this.showArtist ? '<br>Artist' : ''), tdClass: 'song-cell' },
-      { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell' },
-      { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: value => formatMillis(value) },
-      { key: 'actions', label: '', tdClass: 'actions-cell' }
+      { key: 'attributes.artwork', label: '', tdClass: 'song-cell', tdAttr: tdAttr },
+      { key: 'attributes.trackNumber', label: '', tdClass: 'song-cell', tdAttr: tdAttr },
+      { key: 'name', label: 'Title' + (this.showArtist ? '<br>Artist' : ''), tdClass: 'song-cell', tdAttr: tdAttr },
+      { key: 'attributes.albumName', label: 'Album', tdClass: 'song-cell', tdAttr: tdAttr },
+      { key: 'attributes.durationInMillis', label: 'Time', tdClass: 'song-cell', formatter: value => formatMillis(value), tdAttr: tdAttr },
+      { key: 'actions', label: '', tdClass: 'actions-cell', tdAttr: tdAttr }
     ];
 
     if (this.isAlbum) {
