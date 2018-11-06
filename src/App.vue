@@ -87,12 +87,14 @@ import MyAlbums from './views/MyAlbums.vue';
 import MySongs from './views/MySongs.vue';
 import MyArtists from './views/MyArtists.vue';
 import RecentlyAdded from './views/RecentlyAdded';
+import RecentlyPlayed from './views/RecentlyPlayed';
 import Artist from './views/Artist.vue';
 import Search from './views/Search.vue';
 import Me from './views/Me.vue';
 import NotFound from './views/NotFound.vue';
 import Settings from './views/Settings.vue';
 import Debug from './views/Debug.vue';
+import Station from './views/Station.vue';
 
 import {formatArtworkURL, formatMillis} from './utils';
 
@@ -123,6 +125,18 @@ const routes = [
     },
     meta: {
       title: 'Recommendations',
+      isLibrary: true
+    }
+  },
+  {
+    name: 'recently-played',
+    path: '/recently-played',
+    component: RecentlyPlayed,
+    props: {
+      title: 'Recently Played'
+    },
+    meta: {
+      title: 'Recently Played',
       isLibrary: true
     }
   },
@@ -237,6 +251,15 @@ const routes = [
     component: SongCollection,
     meta: {
       type: 'album',
+      isLibrary: false
+    }
+  },
+  {
+    name: 'stations',
+    path: '/stations/:id',
+    component: Station,
+    meta: {
+      type: 'station',
       isLibrary: false
     }
   },

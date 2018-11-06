@@ -21,6 +21,7 @@
     <h2 class="text-uppercase text-muted heading" v-if="isAuthorized">Apple Music</h2>
     <b-list-group class="mb-2">
       <b-list-group-item :to="{ name: 'recommendations' }" v-if="isAuthorized">Recommendations</b-list-group-item>
+      <b-list-group-item :to="{ name: 'recently-played' }" v-if="isAuthorized">Recently Played</b-list-group-item>
     </b-list-group>
 
     <!-- Library -->
