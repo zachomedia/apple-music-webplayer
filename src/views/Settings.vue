@@ -10,8 +10,12 @@
     </b-form-group>
 
     <b-form-group label="Playback">
+      <b-form-group label="Bitrate" class="ml-3">
+        <p class="text-muted mb-1">Changing the bitrate will cause the page to reload.</p>
+        <b-form-select v-model="bitrate" :options="bitrates" />
+      </b-form-group>
       <b-form-checkbox v-model="showPlaybackNotifications">Show notifications when the song changes</b-form-checkbox>
-      <b-form-checkbox v-model="queueAllSongs">Queue all songs in the current view when double clicking on a song</b-form-checkbox>
+      <b-form-checkbox v-model="queueAllSongs">Queue all songs in the current view when selecting a song</b-form-checkbox>
     </b-form-group>
   </div>
 </template>
@@ -34,6 +38,10 @@ export default {
     },
     queueAllSongs () {
       this.$localStorage.set('queueAllSongs', this.queueAllSongs);
+    },
+    bitrate () {
+      this.$localStorage.set('bitrate', this.bitrate);
+      window.location.reload();
     }
   },
   data () {
@@ -44,7 +52,12 @@ export default {
       themes: {
         'light': 'Light',
         'dark': 'Dark'
-      }
+      },
+      bitrates: {
+        'STANDARD': 'Standard (64 kbps)',
+        'HIGH': 'High (256 kbps)'
+      },
+      bitrate: this.$localStorage.get('bitrate')
     };
   }
 };

@@ -358,6 +358,10 @@ export default {
     queueAllSongs: {
       type: Boolean,
       default: true
+    },
+    bitrate: {
+      type: String,
+      default: 'STANDARD'
     }
   },
   data: function () {
@@ -406,7 +410,8 @@ export default {
         app: {
           name: 'Zachary Seguin Music',
           build: '0.1.0'
-        }
+        },
+        bitrate: window.MusicKit.PlaybackBitrate[this.$localStorage.get('bitrate')]
       });
 
       initialize();
