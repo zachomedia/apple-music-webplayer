@@ -48,6 +48,7 @@
                                     v-if="queueTab == 1 ? index > queuePosition : queue.length - 1 - index < queuePosition">
                      <div class="queue-item">
                         <div class="mr-2">
+                           <b-button v-if="queueTab === 1" variant="link" @click.stop="removeQueueItem(index)" class="pl-0"><i class="fa fa-close" /></b-button>
                            <lazy-img v-if="item.attributes.artwork"
                                  :src="item.attributes.artwork | formatArtworkURL(40)" />
                         </div>
@@ -182,6 +183,9 @@ export default {
           message: `An unexpected error occurred.`
         });
       });
+    },
+    removeQueueItem (index) {
+      this.musicKit.player.queue.remove(index);
     }
   },
   created: function () {
