@@ -60,11 +60,6 @@ export default {
   },
   created: function () {
     this.onAuthorizationStatusDidChange = e => {
-      // This seems to cause issues...
-      if (e.authorizationStatus === 3) {
-        return;
-      }
-
       this.isAuthorized = this.musicKit.isAuthorized;
 
       if (!this.isAuthorized) {

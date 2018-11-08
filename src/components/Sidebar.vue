@@ -49,6 +49,7 @@
 import Raven from 'raven-js';
 import Playlists from './Playlists.vue';
 import SearchBox from './SearchBox.vue';
+import EventBus from '../event-bus';
 
 export default {
   name: 'Sidebar',
@@ -71,6 +72,12 @@ export default {
     },
     unauthorize: function () {
       this.musicKit.unauthorize();
+
+      // If we're on a page that requires authentication,
+      // then let's go back to /.
+      if (this.$route.meta.isLibrary) {
+        this.$router.push('/');
+      }
     },
     fetch: function (offset) {
       if (this.abort) {
@@ -99,16 +106,21 @@ export default {
           }
         }, err => {
           Raven.captureException(err);
+
+          // If we got an access denied, it's likely the user's token has expired.
+          if (err.name === window.MusicKit.MKError.ACCESS_DENIED) {
+            EventBus.$emit('alert', {
+              type: 'danger',
+              message: `Unable to load playlists - it is likely that your session has expired. Please sign in again.`
+            });
+
+            this.unauthorize();
+          }
         });
     }
   },
   created: function () {
     this.onAuthorizationStatusDidChange = e => {
-      // This seems to cause issues...
-      if (e.authorizationStatus === 3) {
-        return;
-      }
-
       this.isAuthorized = this.musicKit.isAuthorized;
 
       if (this.isAuthorized) {

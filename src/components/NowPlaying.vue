@@ -191,11 +191,6 @@ export default {
   created: function () {
     // Create callback functions
     this.onAuthorizationStatusDidChange = e => {
-      // This seems to cause issues...
-      if (e.authorizationStatus === 3) {
-        return;
-      }
-
       this.isAuthorized = this.musicKit.isAuthorized;
     };
     this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
