@@ -7,7 +7,8 @@
            class="pull-left"
            alt="" />
       <div class="info">
-        <h1>{{ collection.attributes.name }}</h1>
+        <h1 class="mb-0">{{ collection.attributes.name }}</h1>
+        <p class="text-bold text-muted mt-0 pt-0" v-if="collection.attributes.curatorName || collection.attributes.artistName">{{ collection.attributes.curatorName || collection.attributes.artistName }}</p>
         <p v-if="collection.attributes.description">{{ collection.attributes.description.standard }}</p>
 
         <p class="text-uppercase actions">
