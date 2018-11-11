@@ -63,7 +63,8 @@ export default {
     return {
       isAuthorized: musicKit.isAuthorized,
       musicKit: musicKit,
-      playlists: null
+      playlists: null,
+      loading: false
     };
   },
   methods: {
@@ -124,7 +125,7 @@ export default {
       this.isAuthorized = this.musicKit.isAuthorized;
 
       if (this.isAuthorized) {
-        this.fetch();
+        setTimeout(() => this.fetch(), 500);
       }
     };
     this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
