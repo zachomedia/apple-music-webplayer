@@ -2,12 +2,12 @@
 <template>
   <div class="splash">
     <p class="mb-4 logo">
-      <a href="https://zacharyseguin.ca"><img src="../assets/logo.svg" width="100%" alt="Zachary Seguin" /></a><span>music</span>
+      <a href="https://zacharyseguin.ca" target="_blank"><img src="../assets/logo.svg" width="100%" alt="Zachary Seguin" /></a><span>music</span>
     </p>
 
     <h2 class="h5">Hello!</h2>
-    <p>This is a web player for <a href="https://applemusic.com">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs">MusicKit JS</a>.</p>
-    <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>.</p>
+    <p>This is a web player for <a href="https://applemusic.com" target="_blank">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs" target="_blank">MusicKit JS</a>.</p>
+    <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer" target="_blank">development</a>.</p>
 
     <div class="border p-2 mb-4 border-warning rounded bg-warning">
       <h2 class="h5 text-uppercase">Notice</h2>
@@ -15,8 +15,8 @@
     </div>
 
     <p>If you encounter any issues, have any feedback or feature requests,
-      please <a href="https://github.com/zachomedia/apple-music-webplayer/issues">submit an issue on GitHub</a>
-      or send an email to <a href="mailto:contact@zacharyseguin.ca">contact@zacharyseguin.ca</a>.</p>
+      please <a href="https://github.com/zachomedia/apple-music-webplayer/issues" target="_blank">submit an issue on GitHub</a>
+      or send an email to <a href="mailto:contact@zacharyseguin.ca" target="_blank">contact@zacharyseguin.ca</a>.</p>
 
     <p class="text-muted">
       Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries

@@ -53,12 +53,12 @@
     <b-container fluid>
       <b-row>
         <b-col class="text-muted text-center text-sm mb-4 mt-2">
-          <p class="mb-1 pb-0">Copyright &copy; 2018 &mdash; <a href="https://zacharyseguin.ca">Zachary Seguin</a></p>
+          <p class="mb-1 pb-0">Copyright &copy; 2018 &mdash; <a href="https://zacharyseguin.ca" target="_blank">Zachary Seguin</a></p>
           <p>Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries</p>
           <p>
             If you encounter any issues, have any feedback or feature requests,
-            please <a href="https://github.com/zachomedia/apple-music-webplayer/issues">submit an issue on GitHub</a>
-            or send an email to <a href="mailto:contact@zacharyseguin.ca">contact@zacharyseguin.ca</a>.
+            please <a href="https://github.com/zachomedia/apple-music-webplayer/issues" target="_blank">submit an issue on GitHub</a>
+            or send an email to <a href="mailto:contact@zacharyseguin.ca" target="_blank">contact@zacharyseguin.ca</a>.
           </p>
         </b-col>
       </b-row>
