@@ -3,10 +3,19 @@
     <b-button-group>
       <b-button
         variant="link"
-        :class="{ 'is-active': shuffleMode === shuffleModes.songs }"
+        :class="{ 'is-active': shuffleMode !== shuffleModes.off }"
         v-on:click="toggleShuffleMode()">
         <i class="fa fa-random" />
         <span class="sr-only">Shuffle</span>
+      </b-button>
+      <b-button
+        variant="link"
+        :class="{ 'is-active': repeatMode !== repeatModes.off }"
+        v-on:click="toggleRepeatMode()">
+        <i class="fa fa-retweet" />
+        <b-badge v-if="repeatMode === repeatModes.one" variant="danger" class="one">1</b-badge>
+        <b-badge v-else class="hide">1</b-badge>
+        <span class="sr-only">Repeat</span>
       </b-button>
     </b-button-group>
   </div>
@@ -22,16 +31,22 @@ export default {
       shuffleModes: {
         off: 0,
         songs: 1
+      },
+      repeatModes: {
+        off: 0,
+        one: 1,
+        all: 2
       }
     };
   },
   computed: {
     ...mapState({
-      shuffleMode: state => state.musicKit.shuffleMode
+      shuffleMode: state => state.musicKit.shuffleMode,
+      repeatMode: state => state.musicKit.repeatMode
     })
   },
   methods: {
-    ...mapActions('musicKit', [ 'toggleShuffleMode' ])
+    ...mapActions('musicKit', [ 'toggleShuffleMode', 'toggleRepeatMode' ])
   }
 };
 </script>
@@ -52,7 +67,21 @@ button {
   font-size: 1.1em;
 }
 
+button:not(.is-active):hover {
+  color: #aaa;
+}
+
 .is-active {
   color: $link-color;
+}
+
+.one, .hide {
+  font-size: 0.5rem !important;
+  float: right;
+  right: 5px;
+}
+
+.hide {
+  opacity: 0;
 }
 </style>

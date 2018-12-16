@@ -15,6 +15,7 @@ const state = {
   playbackState: 0,
   bufferedProgress: 0,
   shuffleMode: 0,
+  repeatMode: 0,
   nowPlayingItem: null,
   playbackTime: null,
   volume: null
@@ -51,6 +52,9 @@ const mutations = {
   },
   shuffleMode (state, shuffleMode) {
     state.shuffleMode = shuffleMode;
+  },
+  repeatMode (state, repeatMode) {
+    state.repeatMode = repeatMode;
   },
   nowPlayingItem (state, nowPlayingItem) {
     state.nowPlayingItem = nowPlayingItem;
@@ -96,6 +100,9 @@ const actions = {
 
     // Update shuffle mode
     commit('shuffleMode', instance.player.shuffleMode);
+
+    // Update shuffle mode
+    commit('repeatMode', instance.player.repeatMode);
 
     // Update playback state
     commit('playbackState', instance.playbackState);
@@ -162,6 +169,17 @@ const actions = {
     let instance = window.MusicKit.getInstance();
     instance.player.shuffle = shuffle;
     commit('shuffleMode', instance.player.shuffleMode);
+  },
+  toggleRepeatMode ({ commit }) {
+    // Repeat modes: 0 - off, 1 - one, 2 - all
+    let instance = window.MusicKit.getInstance();
+    instance.player.repeatMode = instance.player.repeatMode === 2 ? 0 : instance.player.repeatMode + 1;
+    commit('repeatMode', instance.player.repeatMode);
+  },
+  repeat ({ commit }, mode = 2) {
+    let instance = window.MusicKit.getInstance();
+    instance.player.repeatMode = mode;
+    commit('repeatMode', instance.player.repeatMode);
   }
 };
 
