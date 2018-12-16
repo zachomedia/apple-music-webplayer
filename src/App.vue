@@ -11,8 +11,8 @@
       </header>
       <b-container fluid>
         <b-row>
-          <b-col lg="12" class="mt-3" v-if="!isAuthorized">
-            <b-alert variant="info" show>
+          <b-col lg="12" class="m-0 p-0" v-if="!isAuthorized">
+            <b-alert variant="info" show class="m-0 no-border">
               <b-button variant="primary" @click="authorize()">Sign in</b-button> now for full length tracks and access to your Apple Music library.
             </b-alert>
           </b-col>
@@ -168,5 +168,9 @@ body {
     border-radius: $border-radius;
     box-shadow: 1px 1px 1px lighten($body-bg, 10%);
   }
+}
+
+.no-border {
+  border-radius: 0;
 }
 </style>
