@@ -1,207 +1,160 @@
-
 <template>
-  <div v-if="collection">
-    <div class="header">
-      <img v-if="collection.attributes.artwork"
-           :src="collection.attributes.artwork | formatArtworkURL(150)"
-           class="pull-left"
-           alt="" />
-      <div class="info">
-        <h1 class="mb-0">{{ collection.attributes.name }}</h1>
-        <p class="text-bold text-muted mt-0 pt-0" v-if="collection.attributes.curatorName || collection.attributes.artistName">{{ collection.attributes.curatorName || collection.attributes.artistName }}</p>
-        <p v-if="collection.attributes.description">{{ collection.attributes.description.standard }}</p>
+  <div class="collection">
+    <div v-if="collection">
+      <header :style="{
+        background: `#${collection.attributes.artwork.bgColor}`,
+        color: `#${collection.attributes.artwork.textColor1}`
+      }">
+        <div class="contents">
+          <img v-if="collection.attributes.artwork"
+              :src="collection.attributes.artwork | formatArtworkURL(200)"
+              alt="" />
+          <div>
+            <h1 class="h3">{{ collection.attributes.name }}</h1>
+            <p v-if="collection.attributes.curatorName || collection.attributes.artistName"
+              class="h5"
+              :style="{ color: `#${collection.attributes.artwork.textColor2}`}">
+              {{ collection.attributes.curatorName || collection.attributes.artistName }}
+              </p>
+            <p v-if="collection.attributes.description"
+              class="d-none d-md-block"
+              :style="{ color: `#${collection.attributes.artwork.textColor3}`}">
+              {{ collection.attributes.description.standard || collection.attributes.description.short }}
+            </p>
+            <p v-if="collection.attributes.description"
+              class="d-block d-md-none"
+              :style="{ color: `#${collection.attributes.artwork.textColor3}`}">
+              {{ collection.attributes.description.short }}
+            </p>
+            <p v-if="collection.attributes.lastModifiedDate"
+              :style="{ color: `#${collection.attributes.artwork.textColor4}`}">
+              Updated {{ collection.attributes.lastModifiedDate | moment('from') }}
+            </p>
 
-        <p class="text-uppercase actions">
-          <ul class="list-unstyled">
-            <li><a href="#" v-on:click.prevent="play()">Play all</a></li>
-            <li><a href="#" v-on:click.prevent="shuffle()">Shuffle all</a></li>
-            <li v-if="isAuthorized && !$route.meta.isLibrary"><a href="#" v-on:click.prevent="addToLibrary()">Add to library</a></li>
-          </ul>
-        </p>
+            <b-button-group class="mt-0 pt-0">
+              <b-button @click.prevent="playCollection()" :style="buttonStyle">Play all</b-button>
+              <b-button @click.prevent="shuffleCollection()" :style="buttonStyle">Shuffle all</b-button>
+            </b-button-group>
+          </div>
+        </div>
+      </header>
+
+      <div class="tracks">
+        <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" />
       </div>
     </div>
-
-    <Songs :songs="collection.relationships.tracks.data"
-           :isAlbum="collection.type.includes('album')" />
-  </div>
-  <div v-else>
-    <Loading message="Loading..." />
   </div>
 </template>
 
 <script>
-import Raven from 'raven-js';
-import EventBus from '../event-bus';
-
-import Songs from '../components/Songs.vue';
-import Loading from '../components/Loading.vue';
-import {formatArtworkURL, playItem, apiHeaders} from '../utils';
-
+import Songs from '../components/collections/Songs';
+import { formatArtworkURL, setPageTitle, playItem, apiHeaders } from '../utils';
+import { mapActions } from 'vuex';
 export default {
   name: 'SongCollection',
+  components: {
+    Songs
+  },
   filters: {
     formatArtworkURL
   },
-  components: {
-    Songs,
-    Loading
-  },
-  data: function () {
-    let musicKit = window.MusicKit.getInstance();
-
+  data () {
     return {
-      musicKit: musicKit,
-      isAuthorized: musicKit.isAuthorized,
+      loading: true,
       collection: null
     };
+  },
+  computed: {
+    buttonStyle () {
+      return {
+        background: `#${this.collection.attributes.artwork.textColor1}`,
+        color: `#${this.collection.attributes.artwork.bgColor}`,
+        'border-color': `#${this.collection.attributes.artwork.bgColor}`
+      };
+    }
   },
   watch: {
     '$route': 'fetch'
   },
   methods: {
-    fetch: function () {
-      if (this.abort) {
-        return;
-      }
-
-      this.loading = true;
-      this.collection = null;
-
-      let api = this.$route.meta.isLibrary ? this.musicKit.api.library : this.musicKit.api;
-
-      api[this.$route.meta.type](this.$route.params.id).then(r => {
-        this.collection = r;
-
-        document.title = this.collection.attributes.name + ' | Zachary Seguin Music';
-
-        // Workaround to load all songs
-        let fetchTracks = (url) => {
-          fetch('https://api.music.apple.com' + url, { headers: apiHeaders() })
-            .then(res => res.json())
-            .then(res => {
-              this.collection.relationships.tracks.data = this.collection.relationships.tracks.data.concat(res.data);
-              if (!this.abort && res.next) {
-                fetchTracks(res.next);
-              } else {
-                this.loading = false;
-              }
-            });
-        };
-        if (r.relationships.tracks.next) {
-          fetchTracks(r.relationships.tracks.next);
-        } else {
-          this.loading = false;
-        }
-      }, err => {
-        Raven.captureException(err);
-
-        EventBus.$emit('alert', {
-          type: 'danger',
-          message: `An unexpected error occurred.`
-        });
-      });
-    },
-    play: function () {
+    ...mapActions('musicKit', [ 'shuffle' ]),
+    playCollection () {
+      this.shuffle(false);
       playItem(this.collection);
     },
-    shuffle: function () {
-      // Temporary shuffle implementation until supported in MusicKit JS.
-      var tracks = this.collection.relationships.tracks.data.slice();
-      tracks.sort(i => 0.5 - Math.random());
-
-      this.musicKit.setQueue({
-        items: tracks.map(i => {
-          return {
-            attributes: i.attributes,
-            id: i.id,
-            container: {
-              id: i.id
-            }
-          };
-        })
-      }).then(queue => {
-        this.musicKit.play().catch(err => {
-          Raven.captureException(err);
-
-          EventBus.$emit('alert', {
-            type: 'danger',
-            message: `An unexpected error occurred.`
-          });
-        });
-      }, err => {
-        Raven.captureException(err);
-
-        EventBus.$emit('alert', {
-          type: 'danger',
-          message: `An unexpected error occurred.`
-        });
-      });
+    shuffleCollection () {
+      this.shuffle(true);
+      playItem(this.collection);
     },
-    addToLibrary: function () {
-      this.musicKit.api.addToLibrary({
-        [this.collection.type]: [ this.collection.id ]
-      }).then(() => {
-        EventBus.$emit('alert', {
-          type: 'success',
-          message: `Successfully added "${this.collection.attributes.name}" to your library.`
-        });
-      }, err => {
-        Raven.captureException(err);
+    async fetch () {
+      // Load MusicKit
+      const instance = window.MusicKit.getInstance();
 
-        EventBus.$emit('alert', {
-          type: 'danger',
-          message: `An error occurred while adding "${this.collection.attributes.name}" to your library.`
-        });
-      });
+      // Select the appropriate API based on the route's meta information
+      const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
+
+      // Load the collection
+      try {
+        var collection = await musicKitAPI[this.$route.meta.type](this.$route.params.id);
+        setPageTitle(collection.attributes.name);
+
+        // Fetch the rest of the tracks
+        var tracks = collection.relationships.tracks.data;
+        var tracksRelationship = collection.relationships.tracks;
+        while (tracksRelationship.next) {
+          var res = await fetch('https://api.music.apple.com' + tracksRelationship.next, { headers: apiHeaders() });
+          tracksRelationship = await res.json();
+          tracks = tracks.concat(tracksRelationship.data);
+        }
+        collection.relationships.tracks.data = tracks;
+
+        // Make the collection availabe to the page
+        this.collection = collection;
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
-  created: function () {
-    this.onAuthorizationStatusDidChange = e => {
-      this.isAuthorized = this.musicKit.isAuthorized;
-    };
-    this.musicKit.addEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
-
+  created () {
     this.fetch();
-  },
-  destroyed: function () {
-    this.abort = true;
-
-    this.musicKit.removeEventListener(window.MusicKit.Events.authorizationStatusDidChange, this.onAuthorizationStatusDidChange);
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-img {
-  width: 150px;
-  height: 150px;
-  border-radius: 4px;
-  box-sizing: content-box;
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, .4);
-  border: 2px solid #fefefe;
+<style lang="scss" scoped>
+header {
+  padding: 10px;
+
+  .contents {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    img {
+      flex: 0;
+      border-radius: 4px;
+      margin: 10px 0;
+      margin-right: 40px;
+      box-shadow: 0 0 4px rgba(0, 0, 0, .6);
+      width: 200px;
+      height: 200px;
+      min-width: 200px;
+    }
+
+    > div {
+      max-width: 65%;
+      margin: 10px;
+    }
+  }
 }
 
-.info {
-  padding-left: 170px;
-}
-
-.header {
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-.actions li {
-  display: inline-block;
-}
-
-.actions li::after {
-  content: '|';
-  padding: 5px;
-  color: #333;
-}
-
-.actions li:last-child::after {
-  content: '';
+.tracks {
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1200px;
 }
 </style>

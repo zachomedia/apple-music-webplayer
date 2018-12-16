@@ -1,5 +1,8 @@
 import Raven from 'raven-js';
-import EventBus from './event-bus';
+import Vue from 'vue';
+
+// TODO: Add EventBus
+var EventBus = new Vue();
 
 /**
  * Sets the queue to a single item and starts playback.
@@ -119,4 +122,8 @@ export function rateSong (song, rating) {
       message: `An error occurred while trying to save rating for "${song.attributes.name}".`
     });
   });
+}
+
+export function setPageTitle (title) {
+  document.title = `${title} | Zachary Seguin Music`;
 }

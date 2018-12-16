@@ -1,10 +1,11 @@
 <template>
   <div class="list">
-    <h1 v-if="artist && artist.attributes" class="h3">{{ artist.attributes.name }}</h1>
-    <div class="items">
+    <h1 v-if="title" class="sr-only">{{ title }}</h1>
+    <songs :songs="collection" v-if="$route.meta.type === 'songs'" class="songs" />
+    <div class="items" v-else>
       <song-collection-item
         class="item"
-        v-for="item in albums"
+        v-for="item in collection"
         :key="item.id"
         :item="item" />
     </div>
@@ -12,12 +13,14 @@
 </template>
 
 <script>
+import Songs from '../components/collections/Songs';
 import SongCollectionItem from '../components/collections/SongCollectionItem';
-import { apiHeaders } from '../utils';
+import mergeWith from 'lodash.mergewith';
 
 export default {
-  name: 'Artist',
+  name: 'SongCollectionList',
   components: {
+    Songs,
     SongCollectionItem
   },
   props: {
@@ -25,8 +28,7 @@ export default {
   },
   data () {
     return {
-      artist: null,
-      albums: []
+      collection: null
     };
   },
   watch: {
@@ -41,18 +43,15 @@ export default {
       const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
 
       // Load the collection
-      this.artist = null;
-      this.albums = [];
-      try {
-        this.artist = await musicKitAPI[this.$route.meta.type](this.$route.params.id, { include: 'albums' });
-        this.albums = this.artist.relationships.albums.data;
+      this.collection = [];
 
-        // Load additional albums, if there are any
-        var albumsRelationship = this.artist.relationships.albums;
-        while (albumsRelationship.next) {
-          var res = await fetch('https://api.music.apple.com' + albumsRelationship.next, { headers: apiHeaders() });
-          albumsRelationship = await res.json();
-          this.albums = this.albums.concat(albumsRelationship.data);
+      let options = {
+        limit: 100
+      };
+      try {
+        for (var offset = 0, res = null; res === null || res.length !== 0; offset += options.limit) {
+          res = await musicKitAPI[this.$route.meta.type](this.$route.params.id, mergeWith(options, { offset: offset }));
+          this.collection = this.collection.concat(res);
         }
       } catch (err) {
         console.error(err);
@@ -73,6 +72,11 @@ export default {
 h2, h3, h4 {
   color: #ddd;
   font-weight: bold;
+}
+
+.songs {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .items {
