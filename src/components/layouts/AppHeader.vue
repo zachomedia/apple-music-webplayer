@@ -29,7 +29,7 @@ AppHeader<template>
           </template>
           <b-dropdown-item :to="{ name: 'settings' }" :exact="true">Settings</b-dropdown-item>
           <b-dropdown-divider v-if="isAuthorized"  />
-          <b-dropdown-item v-if="isAuthorized" @click="authorize()">Sign out</b-dropdown-item>
+          <b-dropdown-item v-if="isAuthorized" @click="unauthorize()">Sign out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-nav>
     </nav>
