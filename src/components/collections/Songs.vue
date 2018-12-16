@@ -163,6 +163,8 @@ $art-size: 40px;
     }
 
     .track-number, .duration { flex: 0; padding: 0 10px; }
+    .track-number { min-width: 40px; text-align: center; }
+
     .title-artist, .album {
       padding: 0 8px;
       flex: 1;

@@ -2,32 +2,25 @@
   <div class="recent">
     <h1 class="sr-only">Recent</h1>
 
-    <h2 class="h4">Recently played</h2>
+    <h2 class="h5">Heavy rotation</h2>
+    <song-collection-list :collection="heavyRotation" />
+    <loader v-if="loadingPlayed" class="loading" />
+
+    <h2 class="h5">Recently played</h2>
     <song-collection-list :collection="played" />
     <loader v-if="loadingPlayed" class="loading" />
 
-    <hr />
-
-    <h2 class="h4">Recently added</h2>
+    <h2 class="h5">Recently added</h2>
     <song-collection-list :collection="added" />
     <loader v-if="loadingPlayed" class="loading" />
   </div>
 </template>
 
 <script>
-// import { mapState } from 'vuex';
-
 import Loader from '../components/utils/Loader';
 import SongCollectionList from '../components/collections/SongCollectionList';
 
 import mergeWith from 'lodash.mergewith';
-
-const tabs = {
-  1: 'added',
-  0: 'played',
-  added: 1,
-  played: 0
-};
 
 export default {
   name: 'Recent',
@@ -38,30 +31,16 @@ export default {
   data () {
     return {
       loadingAdded: true,
-      loadingPlayed: false,
+      loadingPlayed: true,
+      loadingHeavyRotation: true,
       added: [],
       played: [],
-      tabIndex: parseInt(tabs[this.$route.query.view], 10) || 0
+      heavyRotation: []
     };
-  },
-  computed: {
-    loading () {
-      return this.loadingAdded || this.loadingPlayed;
-    }
   },
   watch: {
     '$route': function () {
-      this.tabIndex = parseInt(tabs[this.$route.query.view], 10) || 0;
-    },
-    tabIndex: function () {
-      var route = {
-        name: this.$route.name,
-        params: this.$route.params,
-        query: {
-          view: tabs[this.tabIndex]
-        }
-      };
-      this.$router.push(route);
+      this.fetch();
     }
   },
   methods: {
@@ -110,9 +89,30 @@ export default {
 
       this.loadingPlayed = false;
     },
+    async fetchHeavyRotation () {
+      // Load MusicKit
+      const instance = window.MusicKit.getInstance();
+
+      // Select the appropriate API based on the route's meta information
+      const musicKitAPI = instance.api;
+
+      // Load the collection
+      this.heavyRotation = [];
+      this.loadingHeavyRotation = true;
+
+      try {
+        var res = await musicKitAPI.historyHeavyRotation();
+        this.heavyRotation = this.heavyRotation.concat(res);
+      } catch (err) {
+        console.error(err);
+      }
+
+      this.loadingHeavyRotation = false;
+    },
     fetch () {
       this.fetchAdded();
       this.fetchPlayed();
+      this.fetchHeavyRotation();
     }
   },
   created () {
@@ -128,5 +128,10 @@ export default {
 
 hr {
   background-color: #444;
+}
+
+h2 {
+  color: #ddd;
+  font-weight: bold;
 }
 </style>

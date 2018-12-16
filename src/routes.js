@@ -1,22 +1,37 @@
 import Library from './views/Library';
-import Index from './views/Index';
+import TopCharts from './views/TopCharts';
+import ForYou from './views/ForYou';
 import SongCollection from './views/SongCollection';
 import SongCollectionList from './views/SongCollectionList';
 import Artist from './views/Artist';
 import Artists from './views/Artists';
 import Recent from './views/Recent';
-import Station from './views/Station';
+import Search from './views/Search';
+import Settings from './views/Settings';
+import NotFound from './views/NotFound';
 
 export default [
   {
-    name: 'index',
+    name: 'top-charts',
     path: '/',
-    component: Index
+    component: TopCharts
+  },
+  {
+    name: 'for-you',
+    path: '/for-you',
+    component: ForYou,
+    props: {
+      title: 'For you'
+    },
+    meta: {
+      title: 'For you',
+      isLibrary: true
+    }
   },
   {
     name: 'search',
     path: '/search',
-    component: null,
+    component: Search,
     props: {
       title: 'Search'
     },
@@ -47,7 +62,7 @@ export default [
       {
         name: 'library-search',
         path: 'search',
-        component: null,
+        component: Search,
         props: {
           title: 'Search library'
         },
@@ -159,7 +174,7 @@ export default [
   {
     name: 'stations',
     path: '/stations/:id',
-    component: Station,
+    component: SongCollection,
     meta: {
       type: 'station',
       isLibrary: false
@@ -170,13 +185,14 @@ export default [
     path: '/artists/:id',
     component: Artist,
     meta: {
+      type: 'artist',
       isLibrary: false
     }
   },
   {
     name: 'settings',
     path: '/settings',
-    component: null,
+    component: Settings,
     meta: {
       title: 'Settings',
       isLibrary: false
@@ -186,20 +202,8 @@ export default [
     }
   },
   {
-    name: 'debug',
-    path: '/debug',
-    component: null,
-    meta: {
-      title: 'Debug',
-      isLibrary: false
-    },
-    props: {
-      title: 'Debug'
-    }
-  },
-  {
     path: '*',
-    component: null,
+    component: NotFound,
     meta: {
       title: 'Not found'
     }

@@ -7,44 +7,32 @@ AppHeader<template>
 
     <nav class="nav">
       <b-nav>
-        <b-nav-item :to="{ name: 'index' }" :exact="true">For You</b-nav-item>
-        <b-nav-item :to="{ name: 'recent' }">Recent</b-nav-item>
-        <b-nav-item :to="{ name: 'search' }"  :exact="true">Search</b-nav-item>
-        <b-nav-item-dropdown text="Library" right>
+        <b-nav-item  :to="{ name: 'top-charts' }" :exact="true">Top charts</b-nav-item>
+        <b-nav-item v-if="isAuthorized" :to="{ name: 'for-you' }" :exact="true">For you</b-nav-item>
+        <b-nav-item v-if="isAuthorized" :to="{ name: 'recent' }">Recent</b-nav-item>
+        <b-nav-item :to="{ name: 'search' }">Search</b-nav-item>
+        <b-nav-item-dropdown v-if="isAuthorized"  text="Library" right>
+          <b-dropdown-item :to="{ name: 'library-search' }">Search</b-dropdown-item>
+          <b-dropdown-divider />
           <b-dropdown-item :to="{ name: 'my-songs' }" :exact="true">Songs</b-dropdown-item>
           <b-dropdown-item :to="{ name: 'my-albums' }" :exact="true">Albums</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-artists' }" v:exact="true">Artists</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-artists' }" :exact="true">Artists</b-dropdown-item>
           <b-dropdown-item :to="{ name: 'my-playlists' }" :exact="true">Playlists</b-dropdown-item>
         </b-nav-item-dropdown>
+
+        <b-nav-item v-if="!isAuthorized" @click="authorize()">
+          <span class="text-primary font-weight-bold">Sign in</span>
+        </b-nav-item>
         <b-nav-item-dropdown right text="<i class=fa-icon />" toggle-class="menu-toggle" no-caret>
           <template slot="button-content">
             <i class="fa fa-ellipsis-h" /><span class="sr-only">Other</span>
           </template>
           <b-dropdown-item :to="{ name: 'settings' }" :exact="true">Settings</b-dropdown-item>
-          <b-dropdown-divider />
-          <b-dropdown-item>Logout</b-dropdown-item>
+          <b-dropdown-divider v-if="isAuthorized"  />
+          <b-dropdown-item v-if="isAuthorized" @click="authorize()">Sign out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-nav>
     </nav>
-    <!--<b-button-group size="sm">
-      <b-button :to="{ name: 'index' }" variant="link" :exact="true">For You</b-button>
-      <b-button :to="{ name: 'recent' }" variant="link" :exact="true">Recent</b-button>
-      <b-button :to="{ name: 'search' }" variant="link" :exact="true">Search</b-button>
-      <b-dropdown right size="sm" text="Library" variant="link" toggle-class="menu-toggle" boundary='window'>
-        <b-dropdown-item :to="{ name: 'my-songs' }" variant="link" :exact="true">Songs</b-dropdown-item>
-        <b-dropdown-item :to="{ name: 'my-albums' }" variant="link" :exact="true">Albums</b-dropdown-item>
-        <b-dropdown-item :to="{ name: 'my-artists' }" variant="link" :exact="true">Artists</b-dropdown-item>
-        <b-dropdown-item :to="{ name: 'my-playlists' }" variant="link" :exact="true">Playlists</b-dropdown-item>
-      </b-dropdown>
-      <b-dropdown right size="sm" text="<i class=fa-icon />" variant="link" toggle-class="menu-toggle" no-caret>
-        <template slot="button-content">
-          <i class="fa fa-ellipsis-h" /><span class="sr-only">Other</span>
-        </template>
-        <b-dropdown-item :to="{ name: 'settings' }" variant="link" :exact="true">Settings</b-dropdown-item>
-        <b-dropdown-divider />
-        <b-dropdown-item>Logout</b-dropdown-item>
-      </b-dropdown>
-    </b-button-group>-->
   </div>
 </template>
 
@@ -54,6 +42,8 @@ import NowPlaying from '../controls/NowPlaying';
 import VolumeControl from '../controls/VolumeControl';
 import PlaybackControls from '../controls/PlaybackControls';
 import BehaviourControls from '../controls/BehaviourControls';
+
+import { mapState } from 'vuex';
 
 export default {
   name: 'AppHeader',
@@ -67,6 +57,19 @@ export default {
         [ { to: 'settings', title: 'Settings' } ]
       ]
     };
+  },
+  computed: {
+    ...mapState('musicKit', [ 'isAuthorized' ])
+  },
+  methods: {
+    authorize () {
+      let instance = window.MusicKit.getInstance();
+      instance.authorize();
+    },
+    unauthorize () {
+      let instance = window.MusicKit.getInstance();
+      instance.unauthorize();
+    }
   },
   components: {
     NowPlaying,
@@ -143,6 +146,10 @@ $nav-fg: $gray-500;
   a, a:hover, a:focus, {
     color: inherit;
     text-decoration: none;
+  }
+
+  a.primary {
+    color: $primary !important;
   }
 
   a:hover {

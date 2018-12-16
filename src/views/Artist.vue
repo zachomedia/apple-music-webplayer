@@ -67,7 +67,7 @@ export default {
 
 <style lang="scss" scoped>
 .list {
-  margin: 25px 30px;
+  margin: 25px 30px !important;
 }
 
 h2, h3, h4 {

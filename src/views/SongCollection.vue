@@ -10,36 +10,49 @@
               :src="collection.attributes.artwork | formatArtworkURL(200)"
               alt="" />
           <div>
-            <h1 class="h3">{{ collection.attributes.name }}</h1>
+            <h1 class="h3">{{ collection.attributes.name | decode }}</h1>
             <p v-if="collection.attributes.curatorName || collection.attributes.artistName"
               class="h5"
-              :style="{ color: `#${collection.attributes.artwork.textColor2}`}">
-              {{ collection.attributes.curatorName || collection.attributes.artistName }}
-              </p>
+              :style="{ color: `#${collection.attributes.artwork.textColor2}`}"
+              v-html="collection.attributes.curatorName || collection.attributes.artistName">
+            </p>
+
             <p v-if="collection.attributes.description"
               class="d-none d-md-block"
-              :style="{ color: `#${collection.attributes.artwork.textColor3}`}">
-              {{ collection.attributes.description.standard || collection.attributes.description.short }}
+              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              v-html="collection.attributes.description.standard || collection.attributes.description.short">
             </p>
+            <p v-else-if="collection.attributes.editorialNotes"
+              class="d-none d-md-block"
+              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              v-html="collection.attributes.editorialNotes.standard || collection.attributes.editorialNotes.short">
+            </p>
+
             <p v-if="collection.attributes.description"
               class="d-block d-md-none"
-              :style="{ color: `#${collection.attributes.artwork.textColor3}`}">
-              {{ collection.attributes.description.short }}
+              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              v-html="collection.attributes.description.short">
             </p>
+            <p v-else-if="collection.attributes.editorialNotes"
+              class="d-block d-md-none"
+              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              v-html="collection.attributes.editorialNotes.short">
+            </p>
+
             <p v-if="collection.attributes.lastModifiedDate"
               :style="{ color: `#${collection.attributes.artwork.textColor4}`}">
               Updated {{ collection.attributes.lastModifiedDate | moment('from') }}
             </p>
 
             <b-button-group class="mt-0 pt-0">
-              <b-button @click.prevent="playCollection()" :style="buttonStyle">Play all</b-button>
-              <b-button @click.prevent="shuffleCollection()" :style="buttonStyle">Shuffle all</b-button>
+              <b-button @click.prevent="playCollection()" :style="buttonStyle">Play<span v-if="$route.meta.type !== 'station'"> all</span></b-button>
+              <b-button v-if="$route.meta.type !== 'station'" @click.prevent="shuffleCollection()" :style="buttonStyle">Shuffle all</b-button>
             </b-button-group>
           </div>
         </div>
       </header>
 
-      <div class="tracks">
+      <div class="tracks" v-if="collection.relationships && collection.relationships.tracks">
         <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" />
       </div>
 
@@ -54,6 +67,7 @@ import Loader from '../components/utils/Loader';
 import Songs from '../components/collections/Songs';
 import { formatArtworkURL, setPageTitle, playItem, apiHeaders } from '../utils';
 import { mapActions } from 'vuex';
+import he from 'he';
 
 export default {
   name: 'SongCollection',
@@ -62,7 +76,10 @@ export default {
     Songs
   },
   filters: {
-    formatArtworkURL
+    formatArtworkURL,
+    decode (text) {
+      return typeof (text) === 'string' ? he.decode(text) : text;
+    }
   },
   data () {
     return {
@@ -107,14 +124,16 @@ export default {
         setPageTitle(collection.attributes.name);
 
         // Fetch the rest of the tracks
-        var tracks = collection.relationships.tracks.data;
-        var tracksRelationship = collection.relationships.tracks;
-        while (tracksRelationship.next) {
-          var res = await fetch('https://api.music.apple.com' + tracksRelationship.next, { headers: apiHeaders() });
-          tracksRelationship = await res.json();
-          tracks = tracks.concat(tracksRelationship.data);
+        if (collection.relationships && collection.relationships.tracks) {
+          var tracks = collection.relationships.tracks.data;
+          var tracksRelationship = collection.relationships.tracks;
+          while (tracksRelationship.next) {
+            var res = await fetch('https://api.music.apple.com' + tracksRelationship.next, { headers: apiHeaders() });
+            tracksRelationship = await res.json();
+            tracks = tracks.concat(tracksRelationship.data);
+          }
+          collection.relationships.tracks.data = tracks;
         }
-        collection.relationships.tracks.data = tracks;
 
         // Make the collection availabe to the page
         this.collection = collection;

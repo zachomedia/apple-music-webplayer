@@ -45,4 +45,9 @@ export default {
 .loading {
   margin-top: 40px;
 }
+
+h2, h3, h4 {
+  color: #ddd;
+  font-weight: bold;
+}
 </style>
