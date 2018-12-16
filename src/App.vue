@@ -11,8 +11,20 @@
       </header>
       <b-container fluid>
         <b-row>
-          <b-col lg="12" class="m-0 p-0">
+          <b-col lg="12" class="mt-3" v-if="!isAuthorized">
+            <b-alert variant="info" show>
+              <b-button variant="primary" @click="authorize()">Sign in</b-button> now for full length tracks and access to your Apple Music library.
+            </b-alert>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col lg="12" v-if="!$route.meta.isLibrary || isAuthorized" class="p-0 m-0">
             <router-view class="p-0 m-0"></router-view>
+          </b-col>
+          <b-col lg="12" v-else class="mt-4 text-center">
+            <i class="fa fa-lock lock" />
+            <h2 class="h4 font-weight-bold">Sign in required</h2>
+            <p>This page requires access to your Apple Music library.</p>
           </b-col>
         </b-row>
       </b-container>
@@ -55,19 +67,16 @@ router.beforeEach((to, from, next) => {
     next({ path: '/', replace: true });
     return;
   }
+
+  if (to.name === 'recommendations') {
+    next({ path: '/for-you', replace: true });
+    return;
+  }
+
   if (to.meta.title) {
     document.title = to.meta.title + ' | Zachary Seguin Music';
   } else {
     document.title = 'Zachary Seguin Music: an Apple Music web player';
-  }
-  try {
-    const instance = window.MusicKit.getInstance();
-    if (to.meta.isLibrary && !instance.isAuthorized) {
-      next({ path: '/', replace: true });
-      return;
-    }
-  } catch (err) {
-    // Do nothing
   }
   next();
 });
@@ -90,8 +99,15 @@ export default {
   computed: {
     ...mapState({
       isInitialized: state => state.musicKit.isInitialized,
+      isAuthorized: state => state.musicKit.isAuthorized,
       supportsEME: state => state.musicKit.supportsEME
     })
+  },
+  methods: {
+    authorize () {
+      let instance = window.MusicKit.getInstance();
+      instance.authorize();
+    }
   }
 };
 </script>
@@ -111,6 +127,11 @@ body {
 <style lang="scss" scoped>
 @import "assets/_custom.scss";
 @import "~bootswatch/dist/darkly/variables";
+
+.lock {
+  font-size: 80px;
+  margin-bottom: 10px;
+}
 
 .header {
   background: darken($body-bg, 6%);

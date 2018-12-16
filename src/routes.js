@@ -29,6 +29,12 @@ export default [
     }
   },
   {
+    // This will redirect to /for-you (see App.vue)
+    name: 'recommendations',
+    path: '/recommendations',
+    component: null,
+  },
+  {
     name: 'search',
     path: '/search',
     component: Search,

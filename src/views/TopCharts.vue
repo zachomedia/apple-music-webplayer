@@ -1,9 +1,5 @@
 <template>
   <div class="charts">
-    <b-alert v-if="!isAuthorized" variant="info" show>
-      <b-button variant="primary" @click="authorize()">Sign in</b-button> now for full length tracks and access to your Apple Music library.
-    </b-alert>
-
     <h1 class="sr-only">Top charts</h1>
     <Loader v-if="loading" class="loading" />
 
@@ -19,8 +15,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 import Loader from '../components/utils/Loader';
 import SongCollectionList from '../components/collections/SongCollectionList';
 import Songs from '../components/collections/Songs';
@@ -38,17 +32,10 @@ export default {
       charts: null
     };
   },
-  computed: {
-    ...mapState('musicKit', ['isAuthorized'])
-  },
   watch: {
     '$route': 'fetch'
   },
   methods: {
-    authorize () {
-      let instance = window.MusicKit.getInstance();
-      instance.authorize();
-    },
     async fetch () {
       let instance = window.MusicKit.getInstance();
       let api = instance.api;
