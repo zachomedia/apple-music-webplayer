@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="text-center"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></p>
-    <p class="text-center sr-only">Loading</p>
+    <p class="text-center">Loading</p>
   </div>
 </template>
 

@@ -2,16 +2,20 @@
   <div class="list">
     <h1 v-if="title" class="sr-only">{{ title }}</h1>
     <artists-list :artists="collection" />
+
+    <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
+import Loader from '../components/utils/Loader';
 import ArtistsList from '../components/collections/Artists';
 import mergeWith from 'lodash.mergewith';
 
 export default {
   name: 'Artists',
   components: {
+    Loader,
     ArtistsList
   },
   props: {
@@ -19,6 +23,7 @@ export default {
   },
   data () {
     return {
+      loading: true,
       collection: []
     };
   },
@@ -34,6 +39,7 @@ export default {
       const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
 
       // Load the collection
+      this.loading = true;
       this.collection = [];
 
       let options = {
@@ -47,6 +53,8 @@ export default {
       } catch (err) {
         console.error(err);
       }
+
+      this.loading = false;
     }
   },
   created () {
@@ -56,5 +64,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.loading {
+  margin-top: 20px;
+}
 </style>

@@ -12,7 +12,7 @@
       </div>
       <p class="text-muted text-small" :title="item.attributes.curatorName || item.attributes.artistName">{{ item.attributes.curatorName || item.attributes.artistName }}</p>
 
-      <div v-if="description" class="description" :style="{ background: `#${item.attributes.artwork.bgColor}`, color: `#${item.attributes.artwork.textColor1}` }">
+      <div v-if="description" class="description" :style="{ background: `#${item.attributes.artwork.bgColor || 'ffffff'}`, color: `#${item.attributes.artwork.textColor1 || '000000'}` }">
         <i class="fa fa-info"><span class="sr-only">Description</span></i>
       </div>
 

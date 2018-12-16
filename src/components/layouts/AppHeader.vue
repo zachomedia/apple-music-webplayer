@@ -5,27 +5,46 @@ AppHeader<template>
     <behaviour-controls class="behaviour-controls" />
     <now-playing class="now-playing" />
 
-    <nav>
-      <b-button-group size="sm">
-        <b-button :to="{ name: 'index' }" variant="link" :exact="true">For You</b-button>
-        <b-button :to="{ name: 'recent' }" variant="link" :exact="true">Recent</b-button>
-        <b-button :to="{ name: 'search' }" variant="link" :exact="true">Search</b-button>
-        <b-dropdown right size="sm" text="Library" variant="link" toggle-class="menu-toggle">
-          <b-dropdown-item :to="{ name: 'my-songs' }" variant="link" :exact="true">Songs</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-albums' }" variant="link" :exact="true">Albums</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-artists' }" variant="link" :exact="true">Artists</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-playlists' }" variant="link" :exact="true">Playlists</b-dropdown-item>
-        </b-dropdown>
-        <b-dropdown right size="sm" text="<i class=fa-icon />" variant="link" toggle-class="menu-toggle" no-caret>
+    <nav class="nav">
+      <b-nav>
+        <b-nav-item :to="{ name: 'index' }" :exact="true">For You</b-nav-item>
+        <b-nav-item :to="{ name: 'recent' }">Recent</b-nav-item>
+        <b-nav-item :to="{ name: 'search' }"  :exact="true">Search</b-nav-item>
+        <b-nav-item-dropdown text="Library" right>
+          <b-dropdown-item :to="{ name: 'my-songs' }" :exact="true">Songs</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-albums' }" :exact="true">Albums</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-artists' }" v:exact="true">Artists</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-playlists' }" :exact="true">Playlists</b-dropdown-item>
+        </b-nav-item-dropdown>
+        <b-nav-item-dropdown right text="<i class=fa-icon />" toggle-class="menu-toggle" no-caret>
           <template slot="button-content">
             <i class="fa fa-ellipsis-h" /><span class="sr-only">Other</span>
           </template>
-          <b-dropdown-item :to="{ name: 'settings' }" variant="link" :exact="true">Settings</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'settings' }" :exact="true">Settings</b-dropdown-item>
           <b-dropdown-divider />
           <b-dropdown-item>Logout</b-dropdown-item>
-        </b-dropdown>
-      </b-button-group>
+        </b-nav-item-dropdown>
+      </b-nav>
     </nav>
+    <!--<b-button-group size="sm">
+      <b-button :to="{ name: 'index' }" variant="link" :exact="true">For You</b-button>
+      <b-button :to="{ name: 'recent' }" variant="link" :exact="true">Recent</b-button>
+      <b-button :to="{ name: 'search' }" variant="link" :exact="true">Search</b-button>
+      <b-dropdown right size="sm" text="Library" variant="link" toggle-class="menu-toggle" boundary='window'>
+        <b-dropdown-item :to="{ name: 'my-songs' }" variant="link" :exact="true">Songs</b-dropdown-item>
+        <b-dropdown-item :to="{ name: 'my-albums' }" variant="link" :exact="true">Albums</b-dropdown-item>
+        <b-dropdown-item :to="{ name: 'my-artists' }" variant="link" :exact="true">Artists</b-dropdown-item>
+        <b-dropdown-item :to="{ name: 'my-playlists' }" variant="link" :exact="true">Playlists</b-dropdown-item>
+      </b-dropdown>
+      <b-dropdown right size="sm" text="<i class=fa-icon />" variant="link" toggle-class="menu-toggle" no-caret>
+        <template slot="button-content">
+          <i class="fa fa-ellipsis-h" /><span class="sr-only">Other</span>
+        </template>
+        <b-dropdown-item :to="{ name: 'settings' }" variant="link" :exact="true">Settings</b-dropdown-item>
+        <b-dropdown-divider />
+        <b-dropdown-item>Logout</b-dropdown-item>
+      </b-dropdown>
+    </b-button-group>-->
   </div>
 </template>
 
@@ -111,12 +130,15 @@ $nav-fg: $gray-500;
   padding: 0;
 }
 
-nav {
+.nav /deep/ {
   min-width: 100%;
   text-align: center;
   background: $nav-bg;
   color: $nav-fg;
-  padding: 2px 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  font-size: 0.9rem;
 
   a, a:hover, a:focus, {
     color: inherit;

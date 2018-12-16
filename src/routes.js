@@ -1,15 +1,17 @@
 import Library from './views/Library';
-import ForYou from './views/ForYou';
+import Index from './views/Index';
 import SongCollection from './views/SongCollection';
 import SongCollectionList from './views/SongCollectionList';
 import Artist from './views/Artist';
 import Artists from './views/Artists';
+import Recent from './views/Recent';
+import Station from './views/Station';
 
 export default [
   {
     name: 'index',
     path: '/',
-    component: ForYou
+    component: Index
   },
   {
     name: 'search',
@@ -25,7 +27,7 @@ export default [
   {
     name: 'recent',
     path: '/recent',
-    component: null,
+    component: Recent,
     props: {
       title: 'Recent'
     },
@@ -59,11 +61,11 @@ export default [
         path: 'songs',
         component: SongCollectionList,
         props: {
-          title: 'My songs'
+          title: 'Your songs'
         },
         meta: {
           type: 'songs',
-          title: 'My songs',
+          title: 'Your songs',
           isLibrary: true
         }
       },
@@ -72,11 +74,11 @@ export default [
         path: 'albums',
         component: SongCollectionList,
         props: {
-          title: 'My albums'
+          title: 'Your albums'
         },
         meta: {
           type: 'albums',
-          title: 'My albums',
+          title: 'Your albums',
           isLibrary: true
         }
       },
@@ -94,10 +96,10 @@ export default [
         path: 'playlists',
         component: SongCollectionList,
         props: {
-          title: 'My playlists'
+          title: 'Your playlists'
         },
         meta: {
-          title: 'My playlists',
+          title: 'Your playlists',
           type: 'playlists',
           isLibrary: true
         }
@@ -116,11 +118,11 @@ export default [
         path: 'artists',
         component: Artists,
         props: {
-          title: 'My artists'
+          title: 'Your artists'
         },
         meta: {
           type: 'artists',
-          title: 'My artists',
+          title: 'Your artists',
           isLibrary: true
         }
       },
@@ -157,7 +159,7 @@ export default [
   {
     name: 'stations',
     path: '/stations/:id',
-    component: null,
+    component: Station,
     meta: {
       type: 'station',
       isLibrary: false

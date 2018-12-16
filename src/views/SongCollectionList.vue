@@ -9,10 +9,13 @@
         :key="item.id"
         :item="item" />
     </div>
+
+    <loader v-if="loading" />
   </div>
 </template>
 
 <script>
+import Loader from '../components/utils/Loader';
 import Songs from '../components/collections/Songs';
 import SongCollectionItem from '../components/collections/SongCollectionItem';
 import mergeWith from 'lodash.mergewith';
@@ -20,6 +23,7 @@ import mergeWith from 'lodash.mergewith';
 export default {
   name: 'SongCollectionList',
   components: {
+    Loader,
     Songs,
     SongCollectionItem
   },
@@ -28,6 +32,7 @@ export default {
   },
   data () {
     return {
+      loading: true,
       collection: null
     };
   },
@@ -44,6 +49,7 @@ export default {
 
       // Load the collection
       this.collection = [];
+      this.loading = true;
 
       let options = {
         limit: 100
@@ -56,6 +62,8 @@ export default {
       } catch (err) {
         console.error(err);
       }
+
+      this.loading = false;
     }
   },
   created () {

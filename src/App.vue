@@ -49,6 +49,29 @@ const router = new VueRouter({
   routes
 });
 
+router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0);
+  if (to.name === 'library') {
+    next({ path: '/', replace: true });
+    return;
+  }
+  if (to.meta.title) {
+    document.title = to.meta.title + ' | Zachary Seguin Music';
+  } else {
+    document.title = 'Zachary Seguin Music: an Apple Music web player';
+  }
+  try {
+    const instance = window.MusicKit.getInstance();
+    if (to.meta.isLibrary && !instance.isAuthorized) {
+      next({ path: '/', replace: true });
+      return;
+    }
+  } catch (err) {
+    // Do nothing
+  }
+  next();
+});
+
 export default {
   name: 'app',
   router,

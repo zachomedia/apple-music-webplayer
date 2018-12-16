@@ -42,17 +42,23 @@
       <div class="tracks">
         <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" />
       </div>
+
     </div>
+
+    <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
+import Loader from '../components/utils/Loader';
 import Songs from '../components/collections/Songs';
 import { formatArtworkURL, setPageTitle, playItem, apiHeaders } from '../utils';
 import { mapActions } from 'vuex';
+
 export default {
   name: 'SongCollection',
   components: {
+    Loader,
     Songs
   },
   filters: {
@@ -93,6 +99,8 @@ export default {
       // Select the appropriate API based on the route's meta information
       const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
 
+      this.loading = true;
+
       // Load the collection
       try {
         var collection = await musicKitAPI[this.$route.meta.type](this.$route.params.id);
@@ -113,6 +121,8 @@ export default {
       } catch (err) {
         console.error(err);
       }
+
+      this.loading = false;
     }
   },
   created () {
@@ -156,5 +166,9 @@ header {
   padding: 20px;
   margin: 0 auto;
   max-width: 1200px;
+}
+
+.loading {
+  margin-top: 20px;
 }
 </style>
