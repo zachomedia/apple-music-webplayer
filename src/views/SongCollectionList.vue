@@ -1,7 +1,7 @@
 <template>
   <div class="list">
     <h1 v-if="title" class="sr-only">{{ title }}</h1>
-    <songs :songs="collection" v-if="$route.meta.type === 'songs'" class="songs" />
+    <songs :songs="collection" v-if="$route.meta.type === 'songs'" class="songs" :loading="loading" />
     <div class="items" v-else>
       <song-collection-item
         class="item"
@@ -41,12 +41,6 @@ export default {
   },
   methods: {
     async fetch () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
-
       // Load the collection
       this.collection = [];
       this.loading = true;
@@ -56,7 +50,7 @@ export default {
       };
       try {
         for (var offset = 0, res = null; res === null || res.length !== 0; offset += options.limit) {
-          res = await musicKitAPI[this.$route.meta.type](this.$route.params.id, mergeWith(options, { offset: offset }));
+          res = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, mergeWith(options, { offset: offset }));
           this.collection = this.collection.concat(res);
         }
       } catch (err) {

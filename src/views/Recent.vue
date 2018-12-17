@@ -45,12 +45,6 @@ export default {
   },
   methods: {
     async fetchAdded () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = instance.api.library;
-
       // Load the collection
       this.added = [];
       this.loadingAdded = true;
@@ -60,7 +54,7 @@ export default {
       };
       try {
         for (var offset = 0, res = null; (res === null || res.length !== 0); offset += options.limit) {
-          res = await musicKitAPI.collection('recently-added', null, mergeWith(options, { offset: offset }));
+          res = await this.$store.getters['musicKit/recentlyAdded'](mergeWith(options, { offset: offset }));
           this.added = this.added.concat(res);
         }
       } catch (err) {
@@ -70,18 +64,12 @@ export default {
       this.loadingAdded = false;
     },
     async fetchPlayed () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = instance.api;
-
       // Load the collection
       this.played = [];
       this.loadingPlayed = true;
 
       try {
-        var res = await musicKitAPI.recentPlayed();
+        var res = await this.$store.getters['musicKit/recentlyPlayed'];
         this.played = this.played.concat(res);
       } catch (err) {
         console.error(err);
@@ -90,18 +78,12 @@ export default {
       this.loadingPlayed = false;
     },
     async fetchHeavyRotation () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = instance.api;
-
       // Load the collection
       this.heavyRotation = [];
       this.loadingHeavyRotation = true;
 
       try {
-        var res = await musicKitAPI.historyHeavyRotation();
+        var res = await this.$store.getters['musicKit/heavyRotation'];
         this.heavyRotation = this.heavyRotation.concat(res);
       } catch (err) {
         console.error(err);

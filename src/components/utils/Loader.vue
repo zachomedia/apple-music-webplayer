@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="text-center"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></p>
-    <p class="text-center">Loading</p>
+    <p class="text-center pb-0 mb-0">Loading</p>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-i {
+.fa {
   font-size: 3rem;
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <p class="text-muted">{{ songs.length }} {{ songs.length | pluralize('song') }} &mdash; {{ duration | humanize }}</p>
+    <p class="text-muted">
+      <i class="fa fa-spinner fa-spin loading" aria-hidden="true" v-if="loading" /> {{ songs.length }} {{ songs.length | pluralize('song') }} &mdash; {{ duration | humanize }}
+    </p>
 
     <div class="songs">
       <div class="song" v-for="song in songs" :key="song.id" @click="play(song)">
@@ -49,7 +51,8 @@ export default {
   name: 'Songs',
   props: {
     songs: Array,
-    isAlbum: Boolean
+    isAlbum: Boolean,
+    loading: Boolean
   },
   data () {
     return {
@@ -215,5 +218,9 @@ $art-size: 40px;
     color: #007bff;
     font-size: 20px;
   }
+}
+
+.loading {
+  color: white;
 }
 </style>

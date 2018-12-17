@@ -133,8 +133,6 @@ export default {
       this.fetch();
     },
     async fetch () {
-      const instance = window.MusicKit.getInstance();
-
       // Don't search, if we don't have a query
       this.hasQuery = this.$route.query.q !== undefined && this.$route.query.q.length > 0;
 
@@ -156,9 +154,8 @@ export default {
       if (this.$route.meta.isLibrary) {
         types = types.map(i => 'library-' + i);
       }
-      let api = this.$route.meta.isLibrary ? instance.api.library : instance.api;
       try {
-        let res = await api.search(this.$route.query.q, {
+        let res = await this.$store.getters['musicKit/search'](this.$route.meta.isLibrary, this.$route.query.q, {
           types,
           limit: 20
         });

@@ -13,7 +13,6 @@
 
 <script>
 import SongCollectionItem from '../components/collections/SongCollectionItem';
-import { apiHeaders } from '../utils';
 
 export default {
   name: 'Artist',
@@ -34,24 +33,17 @@ export default {
   },
   methods: {
     async fetch () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
-
       // Load the collection
       this.artist = null;
       this.albums = [];
       try {
-        this.artist = await musicKitAPI[this.$route.meta.type](this.$route.params.id, { include: 'albums' });
+        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
         this.albums = this.artist.relationships.albums.data;
 
         // Load additional albums, if there are any
         var albumsRelationship = this.artist.relationships.albums;
         while (albumsRelationship.next) {
-          var res = await fetch('https://api.music.apple.com' + albumsRelationship.next, { headers: apiHeaders() });
-          albumsRelationship = await res.json();
+          albumsRelationship = await this.$store.getters['musicKit/fetch'](albumsRelationship.next);
           this.albums = this.albums.concat(albumsRelationship.data);
         }
       } catch (err) {

@@ -53,7 +53,7 @@
       </header>
 
       <div class="tracks" v-if="collection.relationships && collection.relationships.tracks">
-        <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" />
+        <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" :loading="loading" />
       </div>
 
     </div>
@@ -65,7 +65,7 @@
 <script>
 import Loader from '../components/utils/Loader';
 import Songs from '../components/collections/Songs';
-import { formatArtworkURL, setPageTitle, playItem, apiHeaders } from '../utils';
+import { formatArtworkURL, setPageTitle, playItem } from '../utils';
 import { mapActions } from 'vuex';
 import he from 'he';
 
@@ -110,33 +110,21 @@ export default {
       playItem(this.collection);
     },
     async fetch () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
-
       this.loading = true;
 
       // Load the collection
       try {
-        var collection = await musicKitAPI[this.$route.meta.type](this.$route.params.id);
-        setPageTitle(collection.attributes.name);
+        this.collection = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id);
+        setPageTitle(this.collection.attributes.name);
 
         // Fetch the rest of the tracks
-        if (collection.relationships && collection.relationships.tracks) {
-          var tracks = collection.relationships.tracks.data;
-          var tracksRelationship = collection.relationships.tracks;
+        if (this.collection.relationships && this.collection.relationships.tracks) {
+          var tracksRelationship = this.collection.relationships.tracks;
           while (tracksRelationship.next) {
-            var res = await fetch('https://api.music.apple.com' + tracksRelationship.next, { headers: apiHeaders() });
-            tracksRelationship = await res.json();
-            tracks = tracks.concat(tracksRelationship.data);
+            tracksRelationship = await this.$store.getters['musicKit/fetch'](tracksRelationship.next);
+            this.collection.relationships.tracks.data = this.collection.relationships.tracks.data.concat(tracksRelationship.data);
           }
-          collection.relationships.tracks.data = tracks;
         }
-
-        // Make the collection availabe to the page
-        this.collection = collection;
       } catch (err) {
         console.error(err);
       }
@@ -188,6 +176,6 @@ header {
 }
 
 .loading {
-  margin-top: 20px;
+  margin: 20px;
 }
 </style>

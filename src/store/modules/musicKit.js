@@ -22,9 +22,62 @@ const state = {
   volume: null
 };
 
+/**
+ * Return the appropriate API object.
+ */
+let getApi = (library) => {
+  let instance = window.MusicKit.getInstance();
+  return library ? instance.api.library : instance.api;
+};
+
+/**
+ * Returns headers for a fetch request to the Apple Music API.
+ */
+export function apiHeaders () {
+  return new Headers({
+    Authorization: 'Bearer ' + window.MusicKit.getInstance().developerToken,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'Music-User-Token': '' + window.MusicKit.getInstance().musicUserToken
+  });
+}
+
 const getters = {
   recommendations (state) {
-    return window.MusicKit.getInstance().api.recommendations();
+    return getApi(false).recommendations();
+  },
+  recentlyAdded (state) {
+    return options => {
+      return getApi(true).collection('recently-added', null, options);
+    };
+  },
+  recentlyPlayed (state) {
+    return getApi(false).recentPlayed();
+  },
+  heavyRotation (state) {
+    return getApi(false).historyHeavyRotation();
+  },
+
+  // Data fetching
+  get (state) {
+    return (library, type, id, options) => {
+      return getApi(library)[type](id, options);
+    };
+  },
+  collection (state) {
+    return (library, type, id, options) => {
+      return getApi(library).api.collection(type, id, options);
+    };
+  },
+  fetch (state) {
+    return path => {
+      return fetch(`https://api.music.apple.com${path}`, { headers: apiHeaders() }).then(r => r.json());
+    };
+  },
+  search (state) {
+    return (library, query, options) => {
+      return getApi(library).search(query, options);
+    };
   }
 };
 

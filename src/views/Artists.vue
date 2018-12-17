@@ -32,12 +32,6 @@ export default {
   },
   methods: {
     async fetch () {
-      // Load MusicKit
-      const instance = window.MusicKit.getInstance();
-
-      // Select the appropriate API based on the route's meta information
-      const musicKitAPI = this.$route.meta.isLibrary ? instance.api.library : instance.api;
-
       // Load the collection
       this.loading = true;
       this.collection = [];
@@ -47,7 +41,7 @@ export default {
       };
       try {
         for (var offset = 0, res = null; res === null || res.length !== 0; offset += options.limit) {
-          res = await musicKitAPI.artists(null, mergeWith(options, { offset: offset }));
+          res = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, 'artists', null, mergeWith(options, { offset: offset }));
           this.collection = this.collection.concat(res);
         }
       } catch (err) {

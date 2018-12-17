@@ -37,17 +37,15 @@ export default {
   },
   methods: {
     async fetch () {
-      let instance = window.MusicKit.getInstance();
-      let api = instance.api;
-
       this.loading = true;
       this.charts = null;
 
       try {
-        this.charts = await api.charts(null, {
+        this.charts = await this.$store.getters['musicKit/get'](false, 'charts', null, {
           types: [ 'songs', 'albums', 'playlists' ],
           limit: 10
         });
+
         this.loading = false;
       } catch (err) {
         console.error(err);

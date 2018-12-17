@@ -24,7 +24,7 @@ export default {
         [window.MusicKit.PlaybackBitrate.HIGH]: 'High (256 kbps)',
         [window.MusicKit.PlaybackBitrate.STANDARD]: 'Standard (64 kbps)'
       }
-    }
+    };
   },
   computed: {
     ...mapState('musicKit', ['bitrate'])
