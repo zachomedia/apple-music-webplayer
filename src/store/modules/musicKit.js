@@ -12,6 +12,7 @@ const state = {
   isAuthorized: false,
 
   // Now playing information
+  bitrate: 0,
   playbackState: 0,
   bufferedProgress: 0,
   shuffleMode: 0,
@@ -44,6 +45,9 @@ const mutations = {
   },
 
   // Now playing
+  bitrate (state, bitrate) {
+    state.bitrate = bitrate;
+  },
   playbackState (state, playbackState) {
     state.playbackState = playbackState;
   },
@@ -97,6 +101,9 @@ const actions = {
 
     // Update volume status
     commit('volume', instance.player.volume);
+
+    // Update bitrate
+    commit('bitrate', instance.bitrate);
 
     // Update shuffle mode
     commit('shuffleMode', instance.player.shuffleMode);
@@ -159,6 +166,13 @@ const actions = {
         commit('supportsEME', instance.player.canSupportDRM);
       }
     });
+
+    commit('addEventListener', {
+      event: window.MusicKit.Events.playbackBitrateDidChange,
+      func: (evt) => {
+        commit('bitrate', instance.bitrate);
+      }
+    });
   },
   toggleShuffleMode ({ commit, state }) {
     let instance = window.MusicKit.getInstance();
@@ -180,6 +194,11 @@ const actions = {
     let instance = window.MusicKit.getInstance();
     instance.player.repeatMode = mode;
     commit('repeatMode', instance.player.repeatMode);
+  },
+  setBitrate ({ commit }, bitrate) {
+    let instance = window.MusicKit.getInstance();
+    instance.bitrate = bitrate;
+    commit('bitrate', instance.bitrate);
   }
 };
 
