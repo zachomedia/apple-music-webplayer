@@ -6,7 +6,7 @@ let localStorage = window.localStorage ? window.localStorage : {
 };
 
 const state = {
-  showPlaybackNotifications: JSON.parse(localStorage.getItem('queueAllSongs') || 'true'),
+  showPlaybackNotifications: JSON.parse(localStorage.getItem('showPlaybackNotifications') || 'true'),
   queueAllSongs: JSON.parse(localStorage.getItem('queueAllSongs') || 'true')
 };
 
