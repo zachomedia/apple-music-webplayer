@@ -74,8 +74,13 @@ export default {
     },
     hideTooltip () {
       this.$refs.progressTooltip.style.opacity = 0;
-      this.$refs.progressTooltip.style.left = '2px';
-      this.$refs.progressTooltip.style.right = 'auto';
+
+      setTimeout(() => {
+        if (this.$refs.progressTooltip && this.$refs.progressTooltip.style.opacity === '0') {
+          this.$refs.progressTooltip.style.left = '2px';
+          this.$refs.progressTooltip.style.right = 'auto';
+        }
+      }, 1000);
     },
     getHoverTime (event) {
       var hoverLeftOffset = (event.pageX - this.$refs.songProgress.$el.offsetParent.offsetLeft);
