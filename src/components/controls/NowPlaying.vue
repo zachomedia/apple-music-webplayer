@@ -81,9 +81,9 @@ export default {
       this.hoverTooltipTime = this.playbackTime.currentPlaybackDuration * percentage;
       var newLeft = event.pageX - this.$refs.songProgress.$el.offsetParent.offsetLeft - (this.$refs.progressTooltip.offsetWidth / 2);
       // do not allow the tooltip to go off the screen, maximum of 10px past progress bar
-      if (newLeft > (this.$refs.songProgress.$el.offsetWidth - this.$refs.progressTooltip.offsetWidth + 10)) {
+      if (newLeft > (this.$refs.songProgress.$el.offsetWidth - this.$refs.progressTooltip.offsetWidth)) {
         this.$refs.progressTooltip.style.left = 'auto';
-        this.$refs.progressTooltip.style.right = '-10px';
+        this.$refs.progressTooltip.style.right = '2px';
       } else {
         this.$refs.progressTooltip.style.left = newLeft + 'px';
         this.$refs.progressTooltip.style.right = 'auto';
