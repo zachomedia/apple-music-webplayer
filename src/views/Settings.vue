@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     ...mapActions('musicKit', ['setBitrate']),
-    ...mapActions('preferences', ['setBitrate', 'setShowPlaybackNotifications', 'setQueueAllSongs'])
+    ...mapActions('preferences', ['setShowPlaybackNotifications', 'setQueueAllSongs'])
   },
   created () {
     this.localBitrate = this.bitrate;
