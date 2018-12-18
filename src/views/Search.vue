@@ -23,6 +23,7 @@
       <b-button type="submit" class="d-none">Search</b-button>
     </b-form>
 
+    <error-message v-if="error" :error="error" />
     <Loader v-if="loading" class="loading" />
 
     <div class="results" v-if="results">
@@ -51,6 +52,7 @@
 import { mapState } from 'vuex';
 
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import SongCollectionList from '../components/collections/SongCollectionList';
 import Songs from '../components/collections/Songs';
 import Artists from '../components/collections/Artists';
@@ -70,12 +72,14 @@ export default {
   name: 'Search',
   components: {
     Loader,
+    ErrorMessage,
     SongCollectionList,
     Songs,
     Artists
   },
   data () {
     return {
+      error: null,
       searchParams: {
         query: this.$route.query.q || '',
         library: this.$route.meta.isLibrary || false
@@ -147,8 +151,9 @@ export default {
         return;
       }
 
-      this.lastQuery = this.$route.query.q;
       this.loading = true;
+      this.lastQuery = this.$route.query.q;
+      this.error = null;
       this.results = null;
       let types = [ 'songs', 'albums', 'artists', 'playlists' ];
       if (this.$route.meta.isLibrary) {
@@ -168,10 +173,12 @@ export default {
         }
 
         this.results = res;
-        this.loading = false;
       } catch (err) {
         console.error(err);
+        this.error = err;
       }
+
+      this.loading = false;
     }
   },
   created () {

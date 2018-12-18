@@ -58,12 +58,16 @@
 
     </div>
 
+    <!-- Show error message if we failed to load -->
+    <error-message v-if="error" :error="error" :show="!collection" />
+
     <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import Songs from '../components/collections/Songs';
 import { formatArtworkURL, setPageTitle, playItem } from '../utils';
 import { mapActions } from 'vuex';
@@ -73,7 +77,8 @@ export default {
   name: 'SongCollection',
   components: {
     Loader,
-    Songs
+    Songs,
+    ErrorMessage
   },
   filters: {
     formatArtworkURL,
@@ -83,6 +88,7 @@ export default {
   },
   data () {
     return {
+      error: null,
       loading: true,
       collection: null
     };
@@ -111,6 +117,7 @@ export default {
     },
     async fetch () {
       this.loading = true;
+      this.error = null;
 
       // Load the collection
       try {
@@ -127,6 +134,7 @@ export default {
         }
       } catch (err) {
         console.error(err);
+        this.error = err;
       }
 
       this.loading = false;

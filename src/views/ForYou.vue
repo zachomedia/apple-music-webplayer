@@ -4,22 +4,26 @@
 
     <recommendations :recommendations="recommendations" />
 
+    <error-message v-if="error" :error="error" :show="!recommendations" />
     <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import Recommendations from '../components/recommendations/Recommendations';
 
 export default {
   name: 'ForYou',
   components: {
     Loader,
+    ErrorMessage,
     Recommendations
   },
   data () {
     return {
+      error: null,
       loading: true,
       recommendations: []
     };
@@ -27,10 +31,13 @@ export default {
   methods: {
     async fetch () {
       this.loading = true;
+      this.error = null;
+
       try {
         this.recommendations = await this.$store.getters['musicKit/recommendations'];
       } catch (err) {
         console.error(err);
+        this.error = err;
       }
       this.loading = false;
     }

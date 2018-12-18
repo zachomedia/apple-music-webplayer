@@ -3,12 +3,14 @@
     <h1 v-if="title" class="sr-only">{{ title }}</h1>
     <artists-list :artists="collection" />
 
+    <error-message v-if="error" :error="error" :show="!collection || collection.length == 0" />
     <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import ArtistsList from '../components/collections/Artists';
 import mergeWith from 'lodash.mergewith';
 
@@ -16,6 +18,7 @@ export default {
   name: 'Artists',
   components: {
     Loader,
+    ErrorMessage,
     ArtistsList
   },
   props: {
@@ -23,6 +26,7 @@ export default {
   },
   data () {
     return {
+      error: null,
       loading: true,
       collection: []
     };
@@ -34,6 +38,7 @@ export default {
     async fetch () {
       // Load the collection
       this.loading = true;
+      this.error = null;
       this.collection = [];
 
       let options = {
@@ -46,6 +51,7 @@ export default {
         }
       } catch (err) {
         console.error(err);
+        this.error = err;
       }
 
       this.loading = false;

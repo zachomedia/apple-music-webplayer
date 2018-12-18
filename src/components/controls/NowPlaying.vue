@@ -9,7 +9,7 @@
           src="../../assets/icon.svg" />
 
       <div class="track-info" v-if="nowPlayingItem">
-        <p class="name h5 mb-1">{{ nowPlayingItem.attributes.name }}</p>
+        <p class="name h5 mb-1">{{ nowPlayingItem.attributes.name }} <content-rating :rating="nowPlayingItem.attributes.contentRating" /></p>
         <p class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</p>
       </div>
       <div class="track-info" v-else>
@@ -42,10 +42,15 @@
 <script>
 import { mapState } from 'vuex';
 
-import { formatSeconds, formatArtworkURL } from '../../utils';
+import { formatSeconds, formatArtworkURL, errorMessage } from '../../utils';
+
+import ContentRating from '../utils/ContentRating';
 
 export default {
   name: 'NowPlaying',
+  components: {
+    ContentRating
+  },
   filters: {
     formatSeconds,
     formatArtworkURL
@@ -56,11 +61,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      nowPlayingItem: state => state.musicKit.nowPlayingItem,
-      playbackTime: state => state.musicKit.playbackTime,
-      bufferedProgress: state => state.musicKit.bufferedProgress
-    })
+    ...mapState('musicKit', ['nowPlayingItem', 'playbackTime', 'bufferedProgress'])
   },
   methods: {
     showTooltip () {
@@ -83,14 +84,17 @@ export default {
         this.$refs.progressTooltip.style.right = 'auto';
       }
     },
-    seekToTime: function (event) {
-      const instance = window.MusicKit.getInstance();
-
+    async seekToTime (event) {
       var clickLeftOffset = (event.pageX - event.target.offsetParent.offsetLeft);
       var fullWidth = this.$refs.songProgress.$el.offsetWidth;
       var percentage = (clickLeftOffset / fullWidth);
 
-      instance.player.seekToTime(this.playbackTime.currentPlaybackDuration * percentage);
+      try {
+        await this.$store.dispatch('musicKit/seek', this.playbackTime.currentPlaybackDuration * percentage);
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     }
   }
 };

@@ -4,20 +4,24 @@
 
     <h2 class="h5">Heavy rotation</h2>
     <song-collection-list :collection="heavyRotation" />
-    <loader v-if="loadingPlayed" class="loading" />
+    <error-message v-if="heavyRotationError" :error="heavyRotationError" />
+    <loader v-if="loadingheavyRotation" class="loading" />
 
     <h2 class="h5">Recently played</h2>
     <song-collection-list :collection="played" />
+    <error-message v-if="playedError" :error="playedError" />
     <loader v-if="loadingPlayed" class="loading" />
 
     <h2 class="h5">Recently added</h2>
     <song-collection-list :collection="added" />
-    <loader v-if="loadingPlayed" class="loading" />
+    <error-message v-if="addedError" :error="addedError" />
+    <loader v-if="loadingAdded" class="loading" />
   </div>
 </template>
 
 <script>
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import SongCollectionList from '../components/collections/SongCollectionList';
 
 import mergeWith from 'lodash.mergewith';
@@ -26,10 +30,14 @@ export default {
   name: 'Recent',
   components: {
     Loader,
+    ErrorMessage,
     SongCollectionList
   },
   data () {
     return {
+      addedError: null,
+      playedError: null,
+      heavyRotationError: null,
       loadingAdded: true,
       loadingPlayed: true,
       loadingHeavyRotation: true,
@@ -48,6 +56,7 @@ export default {
       // Load the collection
       this.added = [];
       this.loadingAdded = true;
+      this.addedError = null;
 
       let options = {
         limit: 10
@@ -59,6 +68,7 @@ export default {
         }
       } catch (err) {
         console.error(err);
+        this.addedError = err;
       }
 
       this.loadingAdded = false;
@@ -67,12 +77,14 @@ export default {
       // Load the collection
       this.played = [];
       this.loadingPlayed = true;
+      this.playedError = null;
 
       try {
         var res = await this.$store.getters['musicKit/recentlyPlayed'];
         this.played = this.played.concat(res);
       } catch (err) {
         console.error(err);
+        this.playedError = err;
       }
 
       this.loadingPlayed = false;
@@ -81,12 +93,14 @@ export default {
       // Load the collection
       this.heavyRotation = [];
       this.loadingHeavyRotation = true;
+      this.heavyRotationError = null;
 
       try {
         var res = await this.$store.getters['musicKit/heavyRotation'];
         this.heavyRotation = this.heavyRotation.concat(res);
       } catch (err) {
         console.error(err);
+        this.heavyRotationError = err;
       }
 
       this.loadingHeavyRotation = false;

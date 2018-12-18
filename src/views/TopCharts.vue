@@ -1,7 +1,6 @@
 <template>
   <div class="charts">
     <h1 class="sr-only">Top charts</h1>
-    <Loader v-if="loading" class="loading" />
 
     <h2 v-if="charts && charts.playlists && charts.playlists[0]" class="h5">{{ charts.playlists[0].name }}</h2>
     <song-collection-list v-if="charts && charts.playlists && charts.playlists[0]" :collection="charts.playlists[0].data" />
@@ -11,11 +10,15 @@
 
     <h2 v-if="charts && charts.songs && charts.songs[0]" class="h5">{{ charts.songs[0].name }}</h2>
     <songs v-if="charts && charts.songs && charts.songs[0]" :songs="charts.songs[0].data" />
+
+    <error-message v-if="error" :error="error" />
+    <loader v-if="loading" class="loading" />
   </div>
 </template>
 
 <script>
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import SongCollectionList from '../components/collections/SongCollectionList';
 import Songs from '../components/collections/Songs';
 
@@ -23,11 +26,13 @@ export default {
   name: 'TopCharts',
   components: {
     Loader,
+    ErrorMessage,
     SongCollectionList,
     Songs
   },
   data () {
     return {
+      error: null,
       loading: true,
       charts: null
     };
@@ -38,6 +43,7 @@ export default {
   methods: {
     async fetch () {
       this.loading = true;
+      this.error = null;
       this.charts = null;
 
       try {
@@ -49,6 +55,7 @@ export default {
         this.loading = false;
       } catch (err) {
         console.error(err);
+        this.error = err;
       }
     }
   },

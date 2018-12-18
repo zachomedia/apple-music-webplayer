@@ -4,11 +4,25 @@
       <header class="header sticky-top">
         <app-header />
 
-        <!-- Add warning about EME, if not supported -->
-        <b-alert variant="warning" :show="!supportsEME && showEMEAlert" dismissible @dismissed="showEMEAlert=false">
-          To play music, please install or enable <strong>Encrypted Media Extensions</strong> in your browser.
-        </b-alert>
+        <!-- Show any other alerts -->
+        <div class="alerts" v-if="alerts.length > 0">
+          <b-alert v-for="alert in alerts"
+                  :key="alert.id"
+                  :variant="alert.variant || 'info'"
+                  class="alert"
+                  :show="true"
+                  dismissible
+                  @dismissed="remove(alert.id)">
+            <span class="font-weight-bold" v-if="alert.title">{{ alert.title }}: </span>
+            {{ alert.message }}
+          </b-alert>
+        </div>
       </header>
+      <!-- Add warning about EME, if not supported -->
+      <b-alert variant="warning" :show="!supportsEME && showEMEAlert" dismissible @dismissed="showEMEAlert=false">
+        To play music, please install or enable <strong>Encrypted Media Extensions</strong> in your browser.
+      </b-alert>
+
       <b-container fluid>
         <b-row>
           <b-col lg="12" class="m-0 p-0" v-if="!isAuthorized">
@@ -50,7 +64,7 @@ import Loader from './components/utils/Loader';
 import AppHeader from './components/layouts/AppHeader';
 
 // Import state
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 // Import utils
 import { formatSeconds } from './utils';
@@ -97,13 +111,11 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      isInitialized: state => state.musicKit.isInitialized,
-      isAuthorized: state => state.musicKit.isAuthorized,
-      supportsEME: state => state.musicKit.supportsEME
-    })
+    ...mapState('musicKit', [ 'isInitialized', 'isAuthorized', 'supportsEME' ]),
+    ...mapState('alerts', [ 'alerts' ])
   },
   methods: {
+    ...mapActions('alerts', [ 'remove' ]),
     authorize () {
       let instance = window.MusicKit.getInstance();
       instance.authorize();
@@ -121,6 +133,14 @@ export default {
 body {
   background: $body-bg;
   color: $body-color;
+}
+
+.br-0 {
+  border-radius: 0;
+}
+
+.text-small {
+  font-size: 0.8rem;
 }
 </style>
 
@@ -172,5 +192,15 @@ body {
 
 .no-border {
   border-radius: 0;
+}
+
+.alerts {
+  min-width: 100%;
+  background: $body-bg;
+
+  .alert {
+    border-radius: 0;
+    margin: 0;
+  }
 }
 </style>

@@ -8,22 +8,34 @@
         :key="item.id"
         :item="item" />
     </div>
+
+    <!-- Show error message if we failed to load -->
+    <error-message v-if="error" :error="error" :show="!artist || albums.length === 0" />
+
+    <!-- Show loader -->
+    <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
 import SongCollectionItem from '../components/collections/SongCollectionItem';
+import ErrorMessage from '../components/utils/ErrorMessage';
+import Loader from '../components/utils/Loader';
 
 export default {
   name: 'Artist',
   components: {
-    SongCollectionItem
+    SongCollectionItem,
+    ErrorMessage,
+    Loader
   },
   props: {
     title: String
   },
   data () {
     return {
+      loading: true,
+      error: null,
       artist: null,
       albums: []
     };
@@ -34,8 +46,11 @@ export default {
   methods: {
     async fetch () {
       // Load the collection
+      this.loading = true;
       this.artist = null;
       this.albums = [];
+      this.error = null;
+
       try {
         this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
         this.albums = this.artist.relationships.albums.data;
@@ -47,8 +62,10 @@ export default {
           this.albums = this.albums.concat(albumsRelationship.data);
         }
       } catch (err) {
-        console.error(err);
+        this.error = err;
       }
+
+      this.loading = false;
     }
   },
   created () {
@@ -75,5 +92,9 @@ h2, h3, h4 {
     margin: 10px 0;
     margin-right: 25px;
   }
+}
+
+.loading {
+  margin-top: 20px;
 }
 </style>

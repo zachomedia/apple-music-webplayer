@@ -133,7 +133,7 @@ const mutations = {
 };
 
 const actions = {
-  init ({ commit }) {
+  init ({ commit, dispatch }) {
     let app = privateConfig.app || {};
     let instance = window.MusicKit.configure({
       developerToken: privateConfig.developerToken,
@@ -226,6 +226,13 @@ const actions = {
         commit('bitrate', instance.bitrate);
       }
     });
+
+    commit('addEventListener', {
+      event: window.MusicKit.Events.mediaPlaybackError,
+      func: (evt) => {
+        console.debug('PLAYBACK_ERROR', evt, dispatch);
+      }
+    });
   },
   toggleShuffleMode ({ commit, state }) {
     let instance = window.MusicKit.getInstance();
@@ -240,7 +247,7 @@ const actions = {
   toggleRepeatMode ({ commit }) {
     // Repeat modes: 0 - off, 1 - one, 2 - all
     let instance = window.MusicKit.getInstance();
-    instance.player.repeatMode = instance.player.repeatMode === 2 ? 0 : instance.player.repeatMode + 1;
+    instance.player.repeatMode = instance.player.repeatMode === 0 ? 2 : instance.player.repeatMode - 1;
     commit('repeatMode', instance.player.repeatMode);
   },
   repeat ({ commit }, mode = 2) {
@@ -252,6 +259,27 @@ const actions = {
     let instance = window.MusicKit.getInstance();
     instance.bitrate = bitrate;
     commit('bitrate', instance.bitrate);
+  },
+
+  play (_) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.play();
+  },
+  pause (_) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.pause();
+  },
+  previous (_) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.skipToPreviousItem();
+  },
+  next (_) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.skipToNextItem();
+  },
+  seek (_, time) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.seekToTime(time);
   }
 };
 

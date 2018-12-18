@@ -133,6 +133,11 @@ $nav-fg: $gray-500;
   padding: 0;
 }
 
+.notifications {
+  min-width: 100%;
+  background: transparent;
+}
+
 .nav /deep/ {
   min-width: 100%;
   text-align: center;

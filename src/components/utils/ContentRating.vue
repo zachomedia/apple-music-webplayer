@@ -21,12 +21,12 @@ export default {
   color: black;
   font-weight: bold;
   border-radius: 2px;
-  font-size: 9px;
-  font-weight: bold;
-  padding: 2px 4px;
-  line-height: 10px;
+  font-size: 0.6rem;
+  font-weight: bold !important;
+  line-height: 0.725rem;
   text-align: center;
   margin: 0 4px;
-  width: 10px;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 </style>

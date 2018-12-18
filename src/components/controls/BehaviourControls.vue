@@ -40,10 +40,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      shuffleMode: state => state.musicKit.shuffleMode,
-      repeatMode: state => state.musicKit.repeatMode
-    })
+    ...mapState('musicKit', [ 'shuffleMode', 'repeatMode' ])
   },
   methods: {
     ...mapActions('musicKit', [ 'toggleShuffleMode', 'toggleRepeatMode' ])

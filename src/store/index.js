@@ -4,13 +4,15 @@ import Vuex from 'vuex';
 
 // Import store
 import musicKit from './modules/musicKit';
+import alerts from './modules/alerts';
 
 // Initialize Vue extensions
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    musicKit
+    musicKit,
+    alerts
   },
   strict: true
 });

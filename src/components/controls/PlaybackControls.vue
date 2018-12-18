@@ -22,6 +22,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { errorMessage } from '../../utils';
 
 export default {
   name: 'PlaybackControls',
@@ -31,26 +32,40 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      playbackState: state => state.musicKit.playbackState
-    })
+    ...mapState('musicKit', [ 'playbackState' ])
   },
   methods: {
-    play () {
-      const instance = window.MusicKit.getInstance();
-      instance.player.play();
+    async play () {
+      try {
+        await this.$store.dispatch('musicKit/play');
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     },
-    pause () {
-      const instance = window.MusicKit.getInstance();
-      instance.player.pause();
+    async pause () {
+      try {
+        await this.$store.dispatch('musicKit/pause');
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     },
-    prev () {
-      const instance = window.MusicKit.getInstance();
-      instance.player.skipToPreviousItem();
+    async prev () {
+      try {
+        await this.$store.dispatch('musicKit/previous');
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     },
-    next () {
-      const instance = window.MusicKit.getInstance();
-      instance.player.skipToNextItem();
+    async next () {
+      try {
+        await this.$store.dispatch('musicKit/next');
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     }
   }
 };

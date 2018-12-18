@@ -10,12 +10,14 @@
         :item="item" />
     </div>
 
+    <error-message v-if="error" :error="error" :show="collection && collection.length > 0" />
     <loader v-if="loading" />
   </div>
 </template>
 
 <script>
 import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
 import Songs from '../components/collections/Songs';
 import SongCollectionItem from '../components/collections/SongCollectionItem';
 import mergeWith from 'lodash.mergewith';
@@ -24,6 +26,7 @@ export default {
   name: 'SongCollectionList',
   components: {
     Loader,
+    ErrorMessage,
     Songs,
     SongCollectionItem
   },
@@ -32,6 +35,7 @@ export default {
   },
   data () {
     return {
+      error: null,
       loading: true,
       collection: null
     };
@@ -42,6 +46,7 @@ export default {
   methods: {
     async fetch () {
       // Load the collection
+      this.error = null;
       this.collection = [];
       this.loading = true;
 
@@ -50,11 +55,12 @@ export default {
       };
       try {
         for (var offset = 0, res = null; res === null || res.length !== 0; offset += options.limit) {
-          res = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, mergeWith(options, { offset: offset }));
+          res = await this.$store.getters['musicKit/get' + (offset > 0 ? '1' : '')](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, mergeWith(options, { offset: offset }));
           this.collection = this.collection.concat(res);
         }
       } catch (err) {
         console.error(err);
+        this.error = err;
       }
 
       this.loading = false;
