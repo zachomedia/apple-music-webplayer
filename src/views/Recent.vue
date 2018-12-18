@@ -5,7 +5,7 @@
     <h2 class="h5">Heavy rotation</h2>
     <song-collection-list :collection="heavyRotation" />
     <error-message v-if="heavyRotationError" :error="heavyRotationError" />
-    <loader v-if="loadingheavyRotation" class="loading" />
+    <loader v-if="loadingHeavyRotation" class="loading" />
 
     <h2 class="h5">Recently played</h2>
     <song-collection-list :collection="played" />

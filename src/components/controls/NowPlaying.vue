@@ -9,7 +9,10 @@
           src="../../assets/icon.svg" />
 
       <div class="track-info" v-if="nowPlayingItem">
-        <p class="name h5 mb-1">{{ nowPlayingItem.attributes.name }} <content-rating :rating="nowPlayingItem.attributes.contentRating" /></p>
+        <div class="columns">
+          <p class="column name h5 mb-1">{{ nowPlayingItem.attributes.name }} <content-rating :rating="nowPlayingItem.attributes.contentRating" /></p>
+          <song-actions class="column" :song="nowPlayingItem" />
+        </div>
         <p class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</p>
       </div>
       <div class="track-info" v-else>
@@ -45,11 +48,13 @@ import { mapState } from 'vuex';
 import { formatSeconds, formatArtworkURL, errorMessage } from '../../utils';
 
 import ContentRating from '../utils/ContentRating';
+import SongActions from './SongActions';
 
 export default {
   name: 'NowPlaying',
   components: {
-    ContentRating
+    ContentRating,
+    SongActions
   },
   filters: {
     formatSeconds,
@@ -108,7 +113,6 @@ p {
 
 .now-playing {
   position: relative;
-  overflow: hidden;
   font-size: 0.8rem;
 }
 
@@ -158,5 +162,9 @@ p {
   opacity: 0;
   -webkit-transition: opacity 0.2s;
   transition: opacity 0.2s;
+}
+
+.columns {
+  display: flex;
 }
 </style>

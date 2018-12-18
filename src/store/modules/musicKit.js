@@ -280,6 +280,58 @@ const actions = {
   seek (_, time) {
     let instance = window.MusicKit.getInstance();
     return instance.player.seekToTime(time);
+  },
+  playNext (_, queue) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.queue.prepend(queue);
+  },
+  playLater (_, queue) {
+    let instance = window.MusicKit.getInstance();
+    return instance.player.queue.append(queue);
+  },
+
+  // Ratings
+  rate (_, { song, rating }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let res = await fetch(`https://api.music.apple.com/v1/me/ratings/songs/${song.id}`, {
+          method: 'PUT',
+          headers: apiHeaders(),
+          body: JSON.stringify({
+            type: 'rating',
+            attributes: {
+              value: rating
+            }
+          })
+        });
+
+        if (res.status === 200) {
+          resolve(true);
+        } else {
+          reject(window.MusicKit.MKError(window.MusicKit.MKError.SERVER_ERROR));
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+  love ({ dispatch }, song) {
+    return dispatch('rate', {
+      song: song,
+      rating: 1
+    });
+  },
+  dislike ({ dispatch }, song) {
+    return dispatch('rate', {
+      song: song,
+      rating: -1
+    });
+  },
+
+  // Library
+  addToLibrary (_, items) {
+    let api = getApi(false);
+    return api.addToLibrary(items);
   }
 };
 

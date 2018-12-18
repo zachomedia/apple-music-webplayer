@@ -259,3 +259,13 @@ export function errorMessage (error) {
 
   return errors[error.name] ? errors[error.name] : errors.generic;
 }
+
+export function trackToMediaItem (track) {
+  return {
+    attributes: track.attributes,
+    id: track.id,
+    container: {
+      id: track.id
+    }
+  };
+}

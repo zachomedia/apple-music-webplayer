@@ -47,6 +47,7 @@
             <b-button-group class="mt-0 pt-0">
               <b-button @click.prevent="playCollection()" :style="buttonStyle">Play<span v-if="$route.meta.type !== 'station'"> all</span></b-button>
               <b-button v-if="$route.meta.type !== 'station'" @click.prevent="shuffleCollection()" :style="buttonStyle">Shuffle all</b-button>
+              <b-button v-if="isAuthorized && !$route.meta.isLibrary" @click.prevent="addToLibrary()" :style="buttonStyle">Add to library</b-button>
             </b-button-group>
           </div>
         </div>
@@ -69,8 +70,8 @@
 import Loader from '../components/utils/Loader';
 import ErrorMessage from '../components/utils/ErrorMessage';
 import Songs from '../components/collections/Songs';
-import { formatArtworkURL, setPageTitle, playItem } from '../utils';
-import { mapActions } from 'vuex';
+import { formatArtworkURL, setPageTitle, playItem, errorMessage } from '../utils';
+import { mapActions, mapState } from 'vuex';
 import he from 'he';
 
 export default {
@@ -94,6 +95,7 @@ export default {
     };
   },
   computed: {
+    ...mapState('musicKit', ['isAuthorized']),
     buttonStyle () {
       return {
         background: `#${this.collection.attributes.artwork.textColor1}`,
@@ -114,6 +116,20 @@ export default {
     shuffleCollection () {
       this.shuffle(true);
       playItem(this.collection);
+    },
+    async addToLibrary () {
+      try {
+        await this.$store.dispatch('musicKit/addToLibrary', { [this.collection.type]: [ this.collection.id ] });
+
+        this.$store.dispatch('alerts/add', {
+          variant: 'success',
+          title: 'Added to library',
+          message: `Successfully added "${this.collection.attributes.name}" to your library.`
+        });
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     },
     async fetch () {
       this.loading = true;

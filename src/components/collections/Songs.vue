@@ -36,6 +36,7 @@
         <div class="duration">
           {{ song.attributes.durationInMillis | formatMillis }}
         </div>
+        <song-actions :song="song" show-queue />
       </div>
     </div>
   </div>
@@ -44,7 +45,9 @@
 <script>
 import ContentRating from '../utils/ContentRating';
 import LazyImg from '../utils/LazyImg';
-import { formatArtworkURL, formatMillis, humanize } from '../../utils';
+import SongActions from '../controls/SongActions';
+
+import { formatArtworkURL, formatMillis, humanize, trackToMediaItem } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -75,7 +78,8 @@ export default {
   },
   components: {
     ContentRating,
-    LazyImg
+    LazyImg,
+    SongActions
   },
   filters: {
     formatArtworkURL,
@@ -84,15 +88,6 @@ export default {
   },
   methods: {
     ...mapActions('musicKit', ['shuffle']),
-    trackToMediaItem (track) {
-      return {
-        attributes: track.attributes,
-        id: track.id,
-        container: {
-          id: track.id
-        }
-      };
-    },
     async play (item) {
       const instance = window.MusicKit.getInstance();
       let indx = this.songs.indexOf(item);
@@ -103,7 +98,7 @@ export default {
         this.shuffle(false);
 
         await instance.setQueue({
-          items: this.songs.map(i => this.trackToMediaItem(i)),
+          items: this.songs.map(i => trackToMediaItem(i)),
           startPosition: indx
         });
 
