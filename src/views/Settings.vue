@@ -4,10 +4,13 @@
     <p>Settings are stored in your local browser and will not persist across browsers and/or devices.</p>
 
     <b-card header="Playback">
-      <label>
-        Bitrate
+      <b-form-group label="Bitrate" class="ml-3">
         <b-form-radio-group v-model="localBitrate" :options="bitrateOptions" />
-      </label>
+      </b-form-group>
+
+      <b-form-checkbox v-model="localShowPlaybackNotifications">Show playback notifications</b-form-checkbox>
+      <br />
+      <b-form-checkbox v-model="localQueueAllSongs">Queue all songs when selecting a song</b-form-checkbox>
     </b-card>
   </div>
 </template>
@@ -20,6 +23,8 @@ export default {
   data () {
     return {
       localBitrate: this.bitrate,
+      localShowPlaybackNotifications: this.showPlaybackNotifications,
+      localQueueAllSongs: this.queueAllSongs,
       bitrateOptions: {
         [window.MusicKit.PlaybackBitrate.HIGH]: 'High (256 kbps)',
         [window.MusicKit.PlaybackBitrate.STANDARD]: 'Standard (64 kbps)'
@@ -27,7 +32,8 @@ export default {
     };
   },
   computed: {
-    ...mapState('musicKit', ['bitrate'])
+    ...mapState('musicKit', ['bitrate']),
+    ...mapState('preferences', ['showPlaybackNotifications', 'queueAllSongs'])
   },
   watch: {
     bitrate () {
@@ -35,13 +41,28 @@ export default {
     },
     localBitrate () {
       this.setBitrate(parseInt(this.localBitrate, 10));
+    },
+    showPlaybackNotifications () {
+      this.localShowPlaybackNotifications = this.showPlaybackNotifications;
+    },
+    localShowPlaybackNotifications () {
+      this.setShowPlaybackNotifications(this.localShowPlaybackNotifications);
+    },
+    queueAllSongs () {
+      this.localQueueAllSongs = this.queueAllSongs;
+    },
+    localQueueAllSongs () {
+      this.setQueueAllSongs(this.localQueueAllSongs);
     }
   },
   methods: {
-    ...mapActions('musicKit', ['setBitrate'])
+    ...mapActions('musicKit', ['setBitrate']),
+    ...mapActions('preferences', ['setBitrate', 'setShowPlaybackNotifications', 'setQueueAllSongs'])
   },
   created () {
     this.localBitrate = this.bitrate;
+    this.localShowPlaybackNotifications = this.showPlaybackNotifications;
+    this.localQueueAllSongs = this.queueAllSongs;
   }
 };
 </script>

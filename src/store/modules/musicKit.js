@@ -143,8 +143,7 @@ const actions = {
       }
     });
 
-    // Initialize the instance
-    commit('init');
+    let localStorage = window.localStorage;
 
     // Check for EME
     commit('supportsEME', instance.player.canSupportDRM);
@@ -155,14 +154,31 @@ const actions = {
     // Update volume status
     commit('volume', instance.player.volume);
 
+    if (localStorage && localStorage.getItem('volume')) {
+      dispatch('setVolume', JSON.parse(localStorage.getItem('volume') || '1'));
+    }
+
     // Update bitrate
     commit('bitrate', instance.bitrate);
+
+    if (localStorage && localStorage.getItem('bitrate')) {
+      dispatch('setBitrate', window.MusicKit.PlaybackBitrate[localStorage.getItem('bitrate') || 'HIGH']);
+    }
 
     // Update shuffle mode
     commit('shuffleMode', instance.player.shuffleMode);
 
+    if (localStorage && localStorage.getItem('shuffle')) {
+      console.debug('wtf', localStorage.getItem('shuffle'));
+      dispatch('shuffle', JSON.parse(localStorage.getItem('shuffle') || 'false'));
+    }
+
     // Update shuffle mode
     commit('repeatMode', instance.player.repeatMode);
+
+    if (localStorage && localStorage.getItem('repeat')) {
+      dispatch('repeat', JSON.parse(localStorage.getItem('repeat') || '0'));
+    }
 
     // Update playback state
     commit('playbackState', instance.playbackState);
@@ -233,15 +249,25 @@ const actions = {
         console.debug('PLAYBACK_ERROR', evt, dispatch);
       }
     });
+
+    // Initialize the instance
+    commit('init');
   },
   toggleShuffleMode ({ commit, state }) {
     let instance = window.MusicKit.getInstance();
     instance.player.shuffle = state.shuffleMode === 0 ? 1 : 0;
     commit('shuffleMode', instance.player.shuffleMode);
+
+    if (window.localStorage) {
+      window.localStorage.setItem('shuffle', JSON.stringify(state.shuffleMode === 1));
+    }
   },
   shuffle ({ commit }, shuffle = true) {
     let instance = window.MusicKit.getInstance();
     instance.player.shuffle = shuffle;
+    if (window.localStorage) {
+      window.localStorage.setItem('shuffle', JSON.stringify(shuffle));
+    }
     commit('shuffleMode', instance.player.shuffleMode);
   },
   toggleRepeatMode ({ commit }) {
@@ -249,16 +275,25 @@ const actions = {
     let instance = window.MusicKit.getInstance();
     instance.player.repeatMode = instance.player.repeatMode === 0 ? 2 : instance.player.repeatMode - 1;
     commit('repeatMode', instance.player.repeatMode);
+    if (window.localStorage) {
+      window.localStorage.setItem('repeat', JSON.stringify(instance.player.repeatMode));
+    }
   },
   repeat ({ commit }, mode = 2) {
     let instance = window.MusicKit.getInstance();
     instance.player.repeatMode = mode;
     commit('repeatMode', instance.player.repeatMode);
+    if (window.localStorage) {
+      window.localStorage.setItem('repeat', JSON.stringify(mode));
+    }
   },
   setBitrate ({ commit }, bitrate) {
     let instance = window.MusicKit.getInstance();
     instance.bitrate = bitrate;
     commit('bitrate', instance.bitrate);
+    if (window.localStorage) {
+      window.localStorage.setItem('bitrate', window.MusicKit.PlaybackBitrate[bitrate]);
+    }
   },
 
   play (_) {
@@ -288,6 +323,20 @@ const actions = {
   playLater (_, queue) {
     let instance = window.MusicKit.getInstance();
     return instance.player.queue.append(queue);
+  },
+  setQueue (_, queue) {
+    let instance = window.MusicKit.getInstance();
+    return instance.setQueue(queue);
+  },
+  setVolume (_, volume) {
+    volume = parseFloat(volume);
+
+    let instance = window.MusicKit.getInstance();
+    instance.player.volume = volume;
+
+    if (window.localStorage) {
+      window.localStorage.setItem('volume', JSON.stringify(volume));
+    }
   },
 
   // Ratings

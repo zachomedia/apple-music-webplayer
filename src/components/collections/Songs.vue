@@ -5,7 +5,7 @@
     </p>
 
     <div class="songs">
-      <div class="song" v-for="song in songs" :key="song.id" @click="play(song)">
+      <div class="song" v-for="song in songs" :key="song.id" @click="playSong(song)">
         <div class="artwork" v-if="!isAlbum">
           <lazy-img v-if="song.attributes && song.attributes.artwork"
              :src="song.attributes.artwork | formatArtworkURL(40)" />
@@ -47,7 +47,7 @@ import ContentRating from '../utils/ContentRating';
 import LazyImg from '../utils/LazyImg';
 import SongActions from '../controls/SongActions';
 
-import { formatArtworkURL, formatMillis, humanize, trackToMediaItem } from '../../utils';
+import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -65,6 +65,7 @@ export default {
   },
   computed: {
     ...mapState('musicKit', ['nowPlayingItem', 'shuffleMode']),
+    ...mapState('preferences', ['queueAllSongs']),
     duration () {
       return this.songs.reduce((total, song) => total + ((song.attributes || {}).durationInMillis || 0), 0);
     },
@@ -87,9 +88,8 @@ export default {
     humanize
   },
   methods: {
-    ...mapActions('musicKit', ['shuffle']),
-    async play (item) {
-      const instance = window.MusicKit.getInstance();
+    ...mapActions('musicKit', ['shuffle', 'setQueue', 'play']),
+    async playSong (item) {
       let indx = this.songs.indexOf(item);
 
       try {
@@ -97,18 +97,22 @@ export default {
         let prevShuffleMode = this.shuffleMode === 1;
         this.shuffle(false);
 
-        await instance.setQueue({
-          items: this.songs.map(i => trackToMediaItem(i)),
-          startPosition: indx
-        });
+        // Queue one or all, based on user preference.
+        console.debug('item', item);
+        var queue = {
+          items: this.queueAllSongs ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)],
+          startPosition: this.queueAllSongs ? indx : 0
+        };
+        await this.setQueue(queue);
 
         // Start playback
-        instance.player.play();
+        await this.play();
 
         // Restore shuffle mode
         this.shuffle(prevShuffleMode);
       } catch (err) {
         console.error(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
     isPlaying (item) {

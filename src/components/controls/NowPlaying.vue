@@ -20,7 +20,7 @@
         <p class="artist text-muted">Select any item to play.</p>
       </div>
 
-      <div class="time" v-if="nowPlayingItem">
+      <div class="time" v-if="playbackTime">
         <p class="text-muted">{{ playbackTime.currentPlaybackTime | formatSeconds }} / {{ playbackTime.currentPlaybackDuration | formatSeconds }}</p>
       </div>
     </div>

@@ -67,7 +67,7 @@ import AppHeader from './components/layouts/AppHeader';
 import { mapState, mapActions } from 'vuex';
 
 // Import utils
-import { formatSeconds } from './utils';
+import { formatSeconds, formatMillis, formatArtworkURL } from './utils';
 
 import routes from './routes';
 const router = new VueRouter({
@@ -107,12 +107,57 @@ export default {
   },
   data () {
     return {
-      showEMEAlert: true
+      showEMEAlert: true,
+      notification: false,
+      notificationTimeout: null
     };
   },
   computed: {
-    ...mapState('musicKit', [ 'isInitialized', 'isAuthorized', 'supportsEME' ]),
-    ...mapState('alerts', [ 'alerts' ])
+    ...mapState('musicKit', [ 'isInitialized', 'isAuthorized', 'supportsEME', 'nowPlayingItem' ]),
+    ...mapState('alerts', [ 'alerts' ]),
+    ...mapState('preferences', [ 'showPlaybackNotifications' ])
+  },
+  watch: {
+    nowPlayingItem () {
+      console.debug('showing notification', this.nowPlayingItem);
+
+      // Don't continue if the user chose not to receive notifications.
+      // Or the browser doesn't support notifications.
+      // Or the item is empty.
+      if (!this.showPlaybackNotifications || !('Notification' in window) || !this.nowPlayingItem) {
+        return;
+      }
+
+      // Request permissions
+      window.Notification.requestPermission();
+
+      // Stop if we don't have permission.
+      if (window.Notification.permission !== 'granted') {
+        return;
+      }
+
+      // Close previous notification, if there is one.
+      if (this.notification) {
+        this.notification.close();
+      }
+
+      this.notification = new window.Notification(this.nowPlayingItem.attributes.name, {
+        tag: 'currentMediaItem',
+        body: `${this.nowPlayingItem.attributes.artistName} (${formatMillis(this.nowPlayingItem.attributes.durationInMillis)})`,
+        icon: this.nowPlayingItem.attributes.artwork ? formatArtworkURL(this.nowPlayingItem.attributes.artwork) : null
+      });
+
+      this.notification.onclose = evt => {
+        this.notification = null;
+        clearTimeout(this.notificationTimeout);
+      };
+
+      this.notificationTimeout = setTimeout(evt => {
+        if (this.notification) {
+          this.notification.close();
+        }
+      }, this.nowPlayingItem.durationInMillis);
+    }
   },
   methods: {
     ...mapActions('alerts', [ 'remove' ]),

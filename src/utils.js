@@ -261,6 +261,10 @@ export function errorMessage (error) {
 }
 
 export function trackToMediaItem (track) {
+  if (!track) {
+    return track;
+  }
+
   return {
     attributes: track.attributes,
     id: track.id,

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'VolumeControl',
@@ -22,12 +22,14 @@ export default {
   },
   watch: {
     volume (val) {
-      const instance = window.MusicKit.getInstance();
-      instance.player.volume = val;
+      this.setVolume(this.volume);
     },
     mkVolume (val) {
       this.volume = val;
     }
+  },
+  methods: {
+    ...mapActions('musicKit', ['setVolume'])
   },
   created () {
     this.volume = this.mkVolume;
