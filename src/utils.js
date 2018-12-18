@@ -129,8 +129,6 @@ export function setPageTitle (title) {
 }
 
 export function errorMessage (error) {
-  console.debug(error.name, error);
-
   let mkError = window.MusicKit.MKError;
   let errors = {
     generic: {

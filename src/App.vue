@@ -119,8 +119,6 @@ export default {
   },
   watch: {
     nowPlayingItem () {
-      console.debug('showing notification', this.nowPlayingItem);
-
       // Don't continue if the user chose not to receive notifications.
       // Or the browser doesn't support notifications.
       // Or the item is empty.

@@ -169,7 +169,6 @@ const actions = {
     commit('shuffleMode', instance.player.shuffleMode);
 
     if (localStorage && localStorage.getItem('shuffle')) {
-      console.debug('wtf', localStorage.getItem('shuffle'));
       dispatch('shuffle', JSON.parse(localStorage.getItem('shuffle') || 'false'));
     }
 

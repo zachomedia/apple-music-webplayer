@@ -98,7 +98,6 @@ export default {
         this.shuffle(false);
 
         // Queue one or all, based on user preference.
-        console.debug('item', item);
         var queue = {
           items: this.queueAllSongs ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)],
           startPosition: this.queueAllSongs ? indx : 0

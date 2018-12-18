@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     refresh () {
-      console.debug('refresh', this.error.name, this.error, this.e);
       if (!this.show) {
         let notification = this.e;
         this.$store.dispatch('alerts/add', notification);
