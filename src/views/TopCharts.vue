@@ -9,7 +9,7 @@
     <song-collection-list v-if="charts && charts.albums && charts.albums[0]" :collection="charts.albums[0].data" />
 
     <h2 v-if="charts && charts.songs && charts.songs[0]" class="h5">{{ charts.songs[0].name }}</h2>
-    <songs v-if="charts && charts.songs && charts.songs[0]" :songs="charts.songs[0].data" />
+    <songs v-if="charts && charts.songs && charts.songs[0]" :songs="charts.songs[0].data" class="songs" />
 
     <error-message v-if="error" :error="error" />
     <loader v-if="loading" class="loading" />
@@ -76,5 +76,10 @@ export default {
 h2 {
   color: #ddd;
   font-weight: bold;
+}
+
+.songs {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 </style>
