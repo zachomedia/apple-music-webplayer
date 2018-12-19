@@ -1,4 +1,5 @@
 import privateConfig from '../../private';
+import { errorMessage } from '../../utils';
 
 import clonedeep from 'lodash.clonedeep';
 
@@ -245,7 +246,13 @@ const actions = {
     commit('addEventListener', {
       event: window.MusicKit.Events.mediaPlaybackError,
       func: (evt) => {
-        console.debug('PLAYBACK_ERROR', evt, dispatch);
+        console.error('PLAYBACK_ERROR', evt);
+
+        // Notify the user of the error.
+        dispatch('alerts/add', errorMessage({ name: window.MusicKit.MKError.PLAYBACK_ERROR }), { root: true });
+
+        // "Handle" the error by moving to the next song
+        dispatch('next');
       }
     });
 
