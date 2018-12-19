@@ -1,55 +1,43 @@
-
 <template>
-  <div class="splash">
-    <p class="mb-4 logo">
-      <a href="https://zacharyseguin.ca" target="_blank"><img src="../assets/logo.svg" width="100%" alt="Zachary Seguin" /></a><span>music</span>
-    </p>
+  <div>
+    <ForYou v-if="isAuthorized" />
+    <div v-else class="warning">
+      <h1 class="sr-only">Zachary Seguin Music: an Apple Music web player</h1>
 
-    <h2 class="h5">Hello!</h2>
-    <p>This is a web player for <a href="https://applemusic.com" target="_blank">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs" target="_blank">MusicKit JS</a>.</p>
-    <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer" target="_blank">development</a>.</p>
+      <p class="h3">Hello!</p>
+      <p>This is a web player for <a href="https://applemusic.com" target="_blank">Apple Music</a>,
+      built using <a href="https://developer.apple.com/documentation/musickitjs">MusicKit JS</a>.</p>
 
-    <div class="border p-2 mb-4 border-warning rounded bg-warning">
-      <h2 class="h5 text-uppercase">Notice</h2>
-      <p class="mb-0">This system is built on an API that is currently in beta. The application may stop working at any time.</p>
+      <b-alert show variant="warning">
+        <p class="h4 text-uppercase">Notice</p>
+        <p>This application is build using an API that is currently in beta.</p>
+      </b-alert>
     </div>
-
-    <p>If you encounter any issues, have any feedback or feature requests,
-      please <a href="https://github.com/zachomedia/apple-music-webplayer/issues" target="_blank">submit an issue on GitHub</a>
-      or send an email to <a href="mailto:contact@zacharyseguin.ca" target="_blank">contact@zacharyseguin.ca</a>.</p>
-
-    <p class="text-muted">
-      Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries
-    </p>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
+import ForYou from './ForYou';
+
 export default {
-  name: 'Index'
+  name: 'Index',
+  components: {
+    ForYou
+  },
+  computed: {
+    ...mapState('musicKit', ['isAuthorized'])
+  }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-p span {
-  color: #007bff;
-  float: right;
-  display: block;
-  margin-top: -15px;
+<style lang="scss" scoped>
+.loading {
+  margin-top: 40px;
 }
 
-.splash {
-  padding: 0 10px;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.splash .logo {
-  max-width: 350px;
-  margin: 0 auto;
-  background: #f3f3f3;
-  padding: 15px;
-  border-radius: 4px;
+.warning {
+  padding: 40px;
 }
 </style>

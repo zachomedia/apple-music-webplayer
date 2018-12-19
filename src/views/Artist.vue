@@ -1,77 +1,100 @@
-
 <template>
-  <div>
-    <h1 v-if="artist">{{ artist.attributes.name }}</h1>
+  <div class="list">
+    <h1 v-if="artist && artist.attributes" class="h3">{{ artist.attributes.name }}</h1>
+    <div class="items">
+      <song-collection-item
+        class="item"
+        v-for="item in albums"
+        :key="item.id"
+        :item="item" />
+    </div>
 
-    <SongCollectionsList :items="artist.relationships.albums.data" showCount countLabel="album" v-if="artist" />
-    <Loading message="Loading..." v-if="loading" />
+    <!-- Show error message if we failed to load -->
+    <error-message v-if="error" :error="error" :show="!artist || albums.length === 0" />
+
+    <!-- Show loader -->
+    <loader class="loading" v-if="loading" />
   </div>
 </template>
 
 <script>
-import Raven from 'raven-js';
-import EventBus from '../event-bus';
-import SongCollectionsList from '../components/SongCollectionList.vue';
-import Loading from '../components/Loading.vue';
+import SongCollectionItem from '../components/collections/SongCollectionItem';
+import ErrorMessage from '../components/utils/ErrorMessage';
+import Loader from '../components/utils/Loader';
 
 export default {
   name: 'Artist',
   components: {
-    SongCollectionsList,
-    Loading
+    SongCollectionItem,
+    ErrorMessage,
+    Loader
   },
   props: {
     title: String
   },
-  data: function () {
-    let musicKit = window.MusicKit.getInstance();
-
+  data () {
     return {
-      musicKit: musicKit,
-      artist: null
+      loading: true,
+      error: null,
+      artist: null,
+      albums: []
     };
   },
   watch: {
     '$route': 'fetch'
   },
   methods: {
-    fetch: function (offset) {
-      if (this.abort) {
-        return;
-      }
-
+    async fetch () {
+      // Load the collection
       this.loading = true;
+      this.artist = null;
+      this.albums = [];
+      this.error = null;
 
-      if (!offset) {
-        offset = 0;
+      try {
+        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
+        this.albums = this.artist.relationships.albums.data;
+
+        // Load additional albums, if there are any
+        var albumsRelationship = this.artist.relationships.albums;
+        while (albumsRelationship.next) {
+          albumsRelationship = await this.$store.getters['musicKit/fetch'](albumsRelationship.next);
+          this.albums = this.albums.concat(albumsRelationship.data);
+        }
+      } catch (err) {
+        this.error = err;
       }
 
-      let api = this.$route.meta.isLibrary ? this.musicKit.api.library : this.musicKit.api;
-
-      api.artist(this.$route.params.id, {
-        include: 'albums'
-      }).then(r => {
-        this.artist = r;
-
-        document.title = this.artist.attributes.name + ' | Zachary Seguin Music';
-
-        this.loading = false;
-        // TODO: Load > 100 albums
-      }, err => {
-        Raven.captureException(err);
-
-        EventBus.$emit('alert', {
-          type: 'danger',
-          message: `An unexpected error occurred.`
-        });
-      });
+      this.loading = false;
     }
   },
-  created: function () {
+  created () {
     this.fetch();
-  },
-  destroyed: function () {
-    this.abort = true;
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.list {
+  margin: 25px 30px !important;
+}
+
+h2, h3, h4 {
+  color: #ddd;
+  font-weight: bold;
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+
+  .item {
+    margin: 10px 0;
+    margin-right: 25px;
+  }
+}
+
+.loading {
+  margin-top: 20px;
+}
+</style>

@@ -1,11 +1,11 @@
 {
   "name": "music",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Apple Music web player.",
   "author": "Zachary Seguin",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js --host 0.0.0.0",
     "serve": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js"
@@ -18,6 +18,7 @@
     "convert-source-map": "^1.6.0",
     "font-awesome": "^4.7.0",
     "glob": "^7.1.3",
+    "he": "^1.2.0",
     "intersection-observer": "^0.5.1",
     "lodash": "^4.17.11",
     "loose-envify": "^1.4.0",
@@ -27,8 +28,10 @@
     "vue": "^2.5.17",
     "vue-functional-data-merge": "^2.0.7",
     "vue-localstorage": "^0.6.2",
+    "vue-moment": "^4.0.0",
     "vue-router": "^3.0.1",
     "vue2-filters": "^0.3.0",
+    "vuex": "^3.0.1",
     "webpack-sources": "^1.3.0"
   },
   "devDependencies": {

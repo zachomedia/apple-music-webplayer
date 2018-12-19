@@ -1,11 +1,6 @@
+// Import Vue + extensions
 import Vue from 'vue';
-
-import Raven from 'raven-js';
-import RavenVue from 'raven-js/plugins/vue';
-
 import App from './App.vue';
-
-import BootstrapVue from 'bootstrap-vue';
 
 // Load Font Awesome
 import 'font-awesome/css/font-awesome.css';
@@ -13,16 +8,29 @@ import 'font-awesome/css/font-awesome.css';
 // Vue.js 2 filters
 import Vue2Filters from 'vue2-filters';
 
-// Local storage
-import VueLocalStorage from 'vue-localstorage';
+// Vue Moment
+import VueMoment from 'vue-moment';
+
+// Bootstrap
+import BootstrapVue from 'bootstrap-vue';
 
 // Vue router
 import VueRouter from 'vue-router';
 
-// Private configuration
+// Load Vuex store
+import store from './store';
+
+// Raven
+import Raven from 'raven-js';
+import RavenVue from 'raven-js/plugins/vue';
+
+// Private config
 import privateConfig from './private';
 
-Vue.config.productionTip = false;
+Vue.use(Vue2Filters);
+Vue.use(VueMoment);
+Vue.use(BootstrapVue);
+Vue.use(VueRouter);
 
 // Configure Sentry
 if (privateConfig.sentry) {
@@ -32,12 +40,16 @@ if (privateConfig.sentry) {
     .install();
 }
 
-// Load Bootstrap
-Vue.use(BootstrapVue);
-Vue.use(Vue2Filters);
-Vue.use(VueLocalStorage);
-Vue.use(VueRouter);
+// Handle init
+if (window.MusicKit) {
+  store.dispatch('musicKit/init');
+} else {
+  document.addEventListener('musickitloaded', () => {
+    store.dispatch('musicKit/init');
+  });
+}
 
 new Vue({
+  store,
   render: h => h(App)
 }).$mount('#app');

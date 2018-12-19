@@ -1,46 +1,143 @@
-
 <template>
-  <div>
-    <h1 v-if="title">{{ title }}</h1>
+  <div class="search">
+    <h1 class="sr-only">Search</h1>
 
-    <SearchBox class="mb-2" />
-    <SearchResults :results="results" v-if="results" />
-    <Loading message="Searching" v-if="loading" />
+    <b-form v-on:submit.prevent="search()">
+      <b-form-input id="q"
+                    ref="searchInput"
+                    type="text"
+                    v-model="searchParams.query"
+                    class="search-box"
+                    :class="{ 'is-authorized': isAuthorized }"
+                    placeholder="Search" />
+      <b-form-radio-group v-model="searchParams.library"
+                          v-on:input="searchScopeChange()"
+                          buttons button-variant="outline-primary"
+                          class="mb-1 btn-group-sm split search-scope"
+                          :class="{ 'is-authorized': isAuthorized }"
+                          v-if="isAuthorized">
+        <b-form-radio :value="false">Apple Music</b-form-radio>
+        <b-form-radio :value="true">Library</b-form-radio>
+      </b-form-radio-group>
+
+      <b-button type="submit" class="d-none">Search</b-button>
+    </b-form>
+
+    <error-message v-if="error" :error="error" />
+    <Loader v-if="loading" class="loading" />
+
+    <div class="results" v-if="results">
+      <p v-if="Object.keys(results).length === 0">No results</p>
+      <b-card no-body v-else>
+        <b-tabs card v-model="tabIndex">
+          <b-tab title="Songs" :disabled="!(results.songs && results.songs.data.length > 0)">
+            <songs :songs="results.songs.data" v-if="results.songs && results.songs.data.length > 0" />
+          </b-tab>
+          <b-tab title="Albums" :disabled="!(results.albums && results.albums.data.length > 0)">
+            <song-collection-list :collection="results.albums.data" showCount countLabel="album" v-if="results.albums && results.albums.data.length > 0" />
+          </b-tab>
+          <b-tab title="Artists" :disabled="!(results.artists && results.artists.data.length > 0)">
+            <artists :artists="results.artists.data" v-if="results.artists && results.artists.data.length > 0" />
+          </b-tab>
+          <b-tab title="Playlists" :disabled="!(results.playlists && results.playlists.data.length > 0)">
+            <song-collection-list :collection="results.playlists.data" v-if="results.playlists && results.playlists.data.length > 0" />
+          </b-tab>
+        </b-tabs>
+      </b-card>
+    </div>
   </div>
 </template>
 
 <script>
 import Raven from 'raven-js';
-import EventBus from '../event-bus';
-import SearchBox from '../components/SearchBox.vue';
-import SearchResults from '../components/SearchResults.vue';
-import Loading from '../components/Loading.vue';
+import { mapState } from 'vuex';
+
+import Loader from '../components/utils/Loader';
+import ErrorMessage from '../components/utils/ErrorMessage';
+import SongCollectionList from '../components/collections/SongCollectionList';
+import Songs from '../components/collections/Songs';
+import Artists from '../components/collections/Artists';
+
+const tabs = {
+  0: 'songs',
+  1: 'albums',
+  2: 'artists',
+  3: 'playlists',
+  'songs': 0,
+  'albums': 1,
+  'artists': 2,
+  'playlists': 3
+};
 
 export default {
   name: 'Search',
-  props: {
-    title: String
-  },
   components: {
-    SearchBox,
-    SearchResults,
-    Loading
+    Loader,
+    ErrorMessage,
+    SongCollectionList,
+    Songs,
+    Artists
   },
-  data: function () {
-    let musicKit = window.MusicKit.getInstance();
-
+  data () {
     return {
-      musicKit: musicKit,
+      error: null,
+      searchParams: {
+        query: this.$route.query.q || '',
+        library: this.$route.meta.isLibrary || false
+      },
+      results: null,
+      lastQuery: null,
       loading: false,
-      hasQuery: false,
-      results: null
+      tabIndex: parseInt(tabs[this.$route.query.type], 10) || 0
     };
   },
+  computed: {
+    ...mapState('musicKit', ['isAuthorized'])
+  },
   watch: {
-    '$route': 'search'
+    '$route' () {
+      this.searchParams.query = this.$route.query.q || '';
+      this.searchParams.library = this.$route.meta.isLibrary || false;
+      this.tabIndex = parseInt(tabs[this.$route.query.type], 10) || 0;
+
+      this.fetch();
+    },
+    tabIndex () {
+      this.$router.push({
+        name: this.searchParams.library ? 'library-search' : 'search',
+        query: {
+          q: this.searchParams.query,
+          type: tabs[this.tabIndex]
+        }
+      });
+    }
   },
   methods: {
-    search: function () {
+    searchScopeChange () {
+      this.$refs.searchInput.focus();
+      if (this.searchParams.query) {
+        this.search();
+      } else {
+        this.$router.push({
+          name: this.searchParams.library ? 'library-search' : 'search',
+          query: {
+            type: tabs[this.tabIndex]
+          }
+        });
+      }
+    },
+    search () {
+      this.$router.push({
+        name: this.searchParams.library ? 'library-search' : 'search',
+        query: {
+          q: this.searchParams.query,
+          type: tabs[this.tabIndex]
+        }
+      });
+
+      this.fetch();
+    },
+    async fetch () {
       // Don't search, if we don't have a query
       this.hasQuery = this.$route.query.q !== undefined && this.$route.query.q.length > 0;
 
@@ -54,43 +151,68 @@ export default {
       if (this.lastQuery && this.lastQuery === this.$route.query.q) {
         return;
       }
-      this.lastQuery = this.$route.query.q;
 
       this.loading = true;
+      this.lastQuery = this.$route.query.q;
+      this.error = null;
       this.results = null;
-
       let types = [ 'songs', 'albums', 'artists', 'playlists' ];
       if (this.$route.meta.isLibrary) {
         types = types.map(i => 'library-' + i);
       }
+      try {
+        let res = await this.$store.getters['musicKit/search'](this.$route.meta.isLibrary, this.$route.query.q, {
+          types,
+          limit: 20
+        });
 
-      let api = this.$route.meta.isLibrary ? this.musicKit.api.library : this.musicKit.api;
-
-      api.search(this.$route.query.q, {
-        types,
-        limit: 20
-      }).then(r => {
-        for (var key in r) {
+        for (var key in res) {
           if (key.startsWith('library-')) {
-            r[key.replace('library-', '')] = r[key];
-            delete (r[key]);
+            res[key.replace('library-', '')] = res[key];
+            delete (res[key]);
           }
         }
 
-        this.results = r;
-        this.loading = false;
-      }, err => {
+        this.results = res;
+      } catch (err) {
+        console.error(err);
         Raven.captureException(err);
+        this.error = err;
+      }
 
-        EventBus.$emit('alert', {
-          type: 'danger',
-          message: `An unexpected error occurred.`
-        });
-      });
+      this.loading = false;
     }
   },
-  created: function () {
-    this.search();
+  created () {
+    this.fetch();
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.search {
+  margin: 20px !important;
+}
+
+.search-scope {
+  display: flex;
+
+  label {
+    width: 100%;
+  }
+}
+
+.is-authorized.search-scope /deep/ .btn {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.is-authorized.search-box {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.loading {
+  margin: 20px 0;
+}
+</style>

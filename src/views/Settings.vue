@@ -1,64 +1,76 @@
-
 <template>
-  <div>
-    <h1 v-if="title">{{ title }}</h1>
+  <div class="settings">
+    <h1 class="h4">Settings</h1>
+    <p>Settings are stored in your local browser and will not persist across browsers and/or devices.</p>
 
-    <p class="text-muted">Settings are stored in your local browser and will not persist across browsers and/or devices.</p>
-
-    <b-form-group label="Theme">
-      <b-form-select v-model="theme" :options="themes" />
-    </b-form-group>
-
-    <b-form-group label="Playback">
+    <b-card header="Playback">
       <b-form-group label="Bitrate" class="ml-3">
-        <p class="text-muted mb-1">Changing the bitrate will cause the page to reload.</p>
-        <b-form-select v-model="bitrate" :options="bitrates" />
+        <b-form-radio-group v-model="localBitrate" :options="bitrateOptions" />
       </b-form-group>
-      <b-form-checkbox v-model="showPlaybackNotifications">Show notifications when the song changes</b-form-checkbox>
-      <b-form-checkbox v-model="queueAllSongs">Queue all songs in the current view when selecting a song</b-form-checkbox>
-    </b-form-group>
+
+      <b-form-checkbox v-model="localShowPlaybackNotifications">Show playback notifications</b-form-checkbox>
+      <br />
+      <b-form-checkbox v-model="localQueueAllSongs">Queue all songs when selecting a song</b-form-checkbox>
+    </b-card>
   </div>
 </template>
 
 <script>
-import EventBus from '../event-bus';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'Settings',
-  props: {
-    title: String
-  },
-  watch: {
-    theme () {
-      this.$localStorage.set('theme', this.theme);
-      EventBus.$emit('theme');
-    },
-    showPlaybackNotifications () {
-      this.$localStorage.set('showPlaybackNotifications', this.showPlaybackNotifications);
-    },
-    queueAllSongs () {
-      this.$localStorage.set('queueAllSongs', this.queueAllSongs);
-    },
-    bitrate () {
-      this.$localStorage.set('bitrate', this.bitrate);
-      window.location.reload();
-    }
-  },
   data () {
     return {
-      theme: this.$localStorage.get('theme'),
-      showPlaybackNotifications: this.$localStorage.get('showPlaybackNotifications'),
-      queueAllSongs: this.$localStorage.get('queueAllSongs'),
-      themes: {
-        'light': 'Light',
-        'dark': 'Dark'
-      },
-      bitrates: {
-        'STANDARD': 'Standard (64 kbps)',
-        'HIGH': 'High (256 kbps)'
-      },
-      bitrate: this.$localStorage.get('bitrate')
+      localBitrate: this.bitrate,
+      localShowPlaybackNotifications: this.showPlaybackNotifications,
+      localQueueAllSongs: this.queueAllSongs,
+      bitrateOptions: {
+        [window.MusicKit.PlaybackBitrate.HIGH]: 'High (256 kbps)',
+        [window.MusicKit.PlaybackBitrate.STANDARD]: 'Standard (64 kbps)'
+      }
     };
+  },
+  computed: {
+    ...mapState('musicKit', ['bitrate']),
+    ...mapState('preferences', ['showPlaybackNotifications', 'queueAllSongs'])
+  },
+  watch: {
+    bitrate () {
+      this.localBitrate = this.bitrate;
+    },
+    localBitrate () {
+      this.setBitrate(parseInt(this.localBitrate, 10));
+    },
+    showPlaybackNotifications () {
+      this.localShowPlaybackNotifications = this.showPlaybackNotifications;
+    },
+    localShowPlaybackNotifications () {
+      this.setShowPlaybackNotifications(this.localShowPlaybackNotifications);
+    },
+    queueAllSongs () {
+      this.localQueueAllSongs = this.queueAllSongs;
+    },
+    localQueueAllSongs () {
+      this.setQueueAllSongs(this.localQueueAllSongs);
+    }
+  },
+  methods: {
+    ...mapActions('musicKit', ['setBitrate']),
+    ...mapActions('preferences', ['setShowPlaybackNotifications', 'setQueueAllSongs'])
+  },
+  created () {
+    this.localBitrate = this.bitrate;
+    this.localShowPlaybackNotifications = this.showPlaybackNotifications;
+    this.localQueueAllSongs = this.queueAllSongs;
   }
 };
 </script>
+
+<style scoped>
+.settings {
+  margin: 20px auto !important;
+  padding: 0 20px !important;
+  max-width: 800px;
+}
+</style>
