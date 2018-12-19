@@ -9,7 +9,7 @@ let localStorage = window.localStorage ? window.localStorage : {
 
 function getItem (item) {
   try {
-    return JSON.stringify(localStorage.getItem(item));
+    return JSON.parse(localStorage.getItem(item));
   } catch (err) {
     console.error(err);
     Raven.captureException(err);

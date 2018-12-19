@@ -53,7 +53,7 @@ export default {
 
 <style lang="scss" scoped>
 .loading {
-  margin-top: 40px;
+  margin: 40px;
 }
 
 h2, h3, h4 {
