@@ -154,12 +154,14 @@ const mutations = {
 
 const actions = {
   init ({ commit, state, dispatch }) {
+    Raven.setTagsContext({ musicKitVersion: window.MusicKit.version });
+
     let app = privateConfig.app || {};
     let instance = window.MusicKit.configure({
       developerToken: privateConfig.developerToken,
       app: {
         name: app.name || 'Music',
-        build: app.version || '0.0.1',
+        build: app.version || '2.0.0',
         icon: app.icon
       }
     });
