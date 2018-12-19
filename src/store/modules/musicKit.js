@@ -309,7 +309,7 @@ const actions = {
         Raven.captureException(evt);
 
         // Notify the user of the error.
-        dispatch('alerts/add', errorMessage({ name: window.MusicKit.MKError.PLAYBACK_ERROR }), { root: true });
+        dispatch('alerts/add', errorMessage({ name: window.MusicKit.MKError.MEDIA_PLAYBACK }), { root: true });
 
         // "Handle" the error by moving to the next song
         dispatch('next');

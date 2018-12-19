@@ -9,6 +9,8 @@
         <div class="artwork" v-if="!isAlbum">
           <lazy-img v-if="song.attributes && song.attributes.artwork"
              :src="song.attributes.artwork | formatArtworkURL(40)" />
+          <div class="placeholder" v-if="!song.attributes || !song.attributes.artwork" />
+
           <div class="playing-indicator" v-if="isPlaying(song)">
             <i class="fa fa-volume-up"></i>
           </div>
@@ -171,7 +173,7 @@ $art-size: 40px;
     border-bottom: 1px solid $table-border-color;
     align-items: center;
 
-    .artwork {
+    .artwork, .placeholder {
       flex: 0;
       margin: 0 10px;
       width: $art-size;
