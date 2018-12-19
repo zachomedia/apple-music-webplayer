@@ -53,13 +53,13 @@ export default {
           types: [ 'songs', 'albums', 'playlists' ],
           limit: 10
         });
-
-        this.loading = false;
       } catch (err) {
         console.error(err);
         Raven.captureException(err);
         this.error = err;
       }
+
+      this.loading = false;
     }
   },
   created () {
