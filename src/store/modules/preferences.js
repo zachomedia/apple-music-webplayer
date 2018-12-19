@@ -1,3 +1,5 @@
+import Raven from 'raven-js';
+
 // Initial state
 let localStorage = window.localStorage ? window.localStorage : {
   getItem (item) {
@@ -10,6 +12,7 @@ function getItem (item) {
     return JSON.stringify(localStorage.getItem(item));
   } catch (err) {
     console.error(err);
+    Raven.captureException(err);
   }
 
   return null;

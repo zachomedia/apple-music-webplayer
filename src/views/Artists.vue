@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
+
 import Loader from '../components/utils/Loader';
 import ErrorMessage from '../components/utils/ErrorMessage';
 import ArtistsList from '../components/collections/Artists';
@@ -51,6 +53,7 @@ export default {
         }
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.error = err;
       }
 

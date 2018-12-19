@@ -47,6 +47,7 @@ import ContentRating from '../utils/ContentRating';
 import LazyImg from '../utils/LazyImg';
 import SongActions from '../controls/SongActions';
 
+import Raven from 'raven-js';
 import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
@@ -129,6 +130,7 @@ export default {
         }
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },

@@ -23,6 +23,7 @@
 <script>
 import { mapState } from 'vuex';
 import { errorMessage } from '../../utils';
+import Raven from 'raven-js';
 
 export default {
   name: 'PlaybackControls',
@@ -40,6 +41,7 @@ export default {
         await this.$store.dispatch('musicKit/play');
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -48,6 +50,7 @@ export default {
         await this.$store.dispatch('musicKit/pause');
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -56,6 +59,7 @@ export default {
         await this.$store.dispatch('musicKit/previous');
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -64,6 +68,7 @@ export default {
         await this.$store.dispatch('musicKit/next');
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     }

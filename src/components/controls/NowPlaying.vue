@@ -65,7 +65,7 @@
 
 <script>
 import { mapState } from 'vuex';
-
+import Raven from 'raven-js';
 import { formatSeconds, formatArtworkURL, errorMessage } from '../../utils';
 
 import ContentRating from '../utils/ContentRating';
@@ -133,6 +133,7 @@ export default {
         await this.$store.dispatch('musicKit/seek', this.playbackTime.currentPlaybackDuration * percentage);
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     }

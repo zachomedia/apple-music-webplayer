@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
+
 import Loader from '../components/utils/Loader';
 import ErrorMessage from '../components/utils/ErrorMessage';
 import SongCollectionList from '../components/collections/SongCollectionList';
@@ -68,6 +70,7 @@ export default {
         }
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.addedError = err;
       }
 
@@ -84,6 +87,7 @@ export default {
         this.played = this.played.concat(res);
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.playedError = err;
       }
 
@@ -100,6 +104,7 @@ export default {
         this.heavyRotation = this.heavyRotation.concat(res);
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.heavyRotationError = err;
       }
 

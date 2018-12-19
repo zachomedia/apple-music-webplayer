@@ -1,4 +1,5 @@
 import privateConfig from '../../private';
+import Raven from 'raven-js';
 import { errorMessage } from '../../utils';
 
 import clonedeep from 'lodash.clonedeep';
@@ -179,6 +180,7 @@ const actions = {
         dispatch('setVolume', JSON.parse(localStorage.getItem('volume') || '1'));
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
       }
     }
 
@@ -190,6 +192,7 @@ const actions = {
         dispatch('setBitrate', window.MusicKit.PlaybackBitrate[localStorage.getItem('bitrate') || 'HIGH']);
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
       }
     }
 
@@ -201,6 +204,7 @@ const actions = {
         dispatch('shuffle', JSON.parse(localStorage.getItem('shuffle') || 'false'));
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
       }
     }
 
@@ -212,6 +216,7 @@ const actions = {
         dispatch('repeat', JSON.parse(localStorage.getItem('repeat') || '0'));
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
       }
     }
 
@@ -301,6 +306,7 @@ const actions = {
       event: window.MusicKit.Events.mediaPlaybackError,
       func: (evt) => {
         console.error('PLAYBACK_ERROR', evt);
+        Raven.captureException(evt);
 
         // Notify the user of the error.
         dispatch('alerts/add', errorMessage({ name: window.MusicKit.MKError.PLAYBACK_ERROR }), { root: true });

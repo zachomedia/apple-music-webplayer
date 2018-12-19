@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
 import { mapState } from 'vuex';
 
 import Loader from '../components/utils/Loader';
@@ -175,6 +176,7 @@ export default {
         this.results = res;
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.error = err;
       }
 

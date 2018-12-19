@@ -18,6 +18,7 @@
 <script>
 import { mapState } from 'vuex';
 import { errorMessage, trackToMediaItem } from '../../utils';
+import Raven from 'raven-js';
 
 export default {
   name: 'SongActions',
@@ -43,6 +44,7 @@ export default {
         });
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -67,6 +69,7 @@ export default {
         await this.$store.dispatch('musicKit/playNext', { items: [ trackToMediaItem(this.song) ] });
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -75,6 +78,7 @@ export default {
         await this.$store.dispatch('musicKit/playLater', { items: [ trackToMediaItem(this.song) ] });
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -89,6 +93,7 @@ export default {
         });
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     },
@@ -103,6 +108,7 @@ export default {
         });
       } catch (err) {
         console.error(err);
+        Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
     }
