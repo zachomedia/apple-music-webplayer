@@ -20,10 +20,25 @@ import VueRouter from 'vue-router';
 // Load Vuex store
 import store from './store';
 
+// Raven
+import Raven from 'raven-js';
+import RavenVue from 'raven-js/plugins/vue';
+
+// Private config
+import privateConfig from './private';
+
 Vue.use(Vue2Filters);
 Vue.use(VueMoment);
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);
+
+// Configure Sentry
+if (privateConfig.sentry) {
+  Raven
+    .config(privateConfig.sentry)
+    .addPlugin(RavenVue, Vue)
+    .install();
+}
 
 // Handle init
 if (window.MusicKit) {
