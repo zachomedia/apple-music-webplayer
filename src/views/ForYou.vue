@@ -59,5 +59,6 @@ export default {
 h2, h3, h4 {
   color: #ddd;
   font-weight: bold;
+  text-align: center;
 }
 </style>

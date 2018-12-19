@@ -77,9 +77,4 @@ h2 {
   color: #ddd;
   font-weight: bold;
 }
-
-.songs {
-  max-width: 1200px;
-  margin: 0 auto;
-}
 </style>
