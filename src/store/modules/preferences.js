@@ -5,9 +5,19 @@ let localStorage = window.localStorage ? window.localStorage : {
   }
 };
 
+function getItem (item) {
+  try {
+    return JSON.stringify(localStorage.getItem(item));
+  } catch (err) {
+    console.error(err);
+  }
+
+  return null;
+}
+
 const state = {
-  showPlaybackNotifications: JSON.parse(localStorage.getItem('showPlaybackNotifications') || 'true'),
-  queueAllSongs: JSON.parse(localStorage.getItem('queueAllSongs') || 'true')
+  showPlaybackNotifications: getItem('showPlaybackNotifications') || true,
+  queueAllSongs: getItem('queueAllSongs') || true
 };
 
 const mutations = {

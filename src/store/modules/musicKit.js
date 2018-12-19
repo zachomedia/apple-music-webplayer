@@ -158,7 +158,8 @@ const actions = {
       developerToken: privateConfig.developerToken,
       app: {
         name: app.name || 'Music',
-        build: app.version || '0.0.1'
+        build: app.version || '0.0.1',
+        icon: app.icon
       }
     });
 
@@ -174,28 +175,44 @@ const actions = {
     commit('volume', instance.player.volume);
 
     if (localStorage && localStorage.getItem('volume')) {
-      dispatch('setVolume', JSON.parse(localStorage.getItem('volume') || '1'));
+      try {
+        dispatch('setVolume', JSON.parse(localStorage.getItem('volume') || '1'));
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     // Update bitrate
     commit('bitrate', instance.bitrate);
 
     if (localStorage && localStorage.getItem('bitrate')) {
-      dispatch('setBitrate', window.MusicKit.PlaybackBitrate[localStorage.getItem('bitrate') || 'HIGH']);
+      try {
+        dispatch('setBitrate', window.MusicKit.PlaybackBitrate[localStorage.getItem('bitrate') || 'HIGH']);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     // Update shuffle mode
     commit('shuffleMode', instance.player.shuffleMode);
 
     if (localStorage && localStorage.getItem('shuffle')) {
-      dispatch('shuffle', JSON.parse(localStorage.getItem('shuffle') || 'false'));
+      try {
+        dispatch('shuffle', JSON.parse(localStorage.getItem('shuffle') || 'false'));
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     // Update shuffle mode
     commit('repeatMode', instance.player.repeatMode);
 
     if (localStorage && localStorage.getItem('repeat')) {
-      dispatch('repeat', JSON.parse(localStorage.getItem('repeat') || '0'));
+      try {
+        dispatch('repeat', JSON.parse(localStorage.getItem('repeat') || '0'));
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     // Update playback state

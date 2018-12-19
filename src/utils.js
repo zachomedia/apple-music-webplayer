@@ -1,6 +1,8 @@
 import Raven from 'raven-js';
 import Vue from 'vue';
 
+import privateConfig from './private';
+
 // TODO: Add EventBus
 var EventBus = new Vue();
 
@@ -125,7 +127,7 @@ export function rateSong (song, rating) {
 }
 
 export function setPageTitle (title) {
-  document.title = `${title} | Zachary Seguin Music`;
+  document.title = `${title} | ` + ((privateConfig.app || {}).name || 'Music');
 }
 
 export function errorMessage (error) {
