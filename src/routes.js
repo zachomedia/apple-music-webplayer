@@ -58,6 +58,18 @@ export default [
     }
   },
   {
+    name: 'recently-played',
+    path: '/recently-played',
+    component: null,
+    props: {
+      title: 'Recently Played'
+    },
+    meta: {
+      title: 'Recently Played',
+      isLibrary: true
+    }
+  },
+  {
     name: 'library',
     path: '/library',
     component: Library,
@@ -154,6 +166,14 @@ export default [
         meta: {
           type: 'artist',
           include: 'albums',
+          isLibrary: true
+        }
+      },
+      {
+        name: 'recently-added',
+        path: 'recently-added',
+        component: null,
+        meta: {
           isLibrary: true
         }
       }

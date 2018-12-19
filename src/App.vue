@@ -100,6 +100,11 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
+  if (to.name === 'recently-played' || to.name === 'recently-added') {
+    next({ path: '/recent', replace: true });
+    return;
+  }
+
   if (to.meta.title) {
     document.title = to.meta.title + ' | Zachary Seguin Music';
   } else {
