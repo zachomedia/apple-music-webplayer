@@ -171,6 +171,12 @@ export function errorMessage (error) {
       title: 'Content Unavailable',
       message: 'The requested content in unavailable.'
     },
+    [mkError.DEVICE_LIMIT]: {
+      variant: 'danger',
+      icon: 'fa-exclamation-triangle',
+      title: 'Device Limit Exceeded',
+      message: 'You\'ve reached your device limit.'
+    },
     [mkError.MEDIA_CERTIFICATE]: {
       variant: 'danger',
       icon: 'fa-exclamation-triangle',
