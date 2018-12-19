@@ -20,7 +20,12 @@ const state = {
   repeatMode: 0,
   nowPlayingItem: null,
   playbackTime: null,
-  volume: null
+  volume: null,
+
+  // Queue information
+  queue: [],
+  queuePosition: 0,
+  history: []
 };
 
 /**
@@ -124,6 +129,19 @@ const mutations = {
     state.volume = volume;
   },
 
+  // Queue
+  queue (state, queue) {
+    state.queue = queue;
+  },
+  queuePosition (state, position) {
+    state.queuePosition = position;
+  },
+  addHistoryItem (state, item) {
+    // Only keep 100 items in the history.
+    state.history.splice(0, 0, item);
+    state.history = state.history.slice(0, Math.min(state.history.length, 100));
+  },
+
   // Event listeners
   addEventListener (state, listener) {
     window.MusicKit.getInstance().addEventListener(listener.event, listener.func);
@@ -134,7 +152,7 @@ const mutations = {
 };
 
 const actions = {
-  init ({ commit, dispatch }) {
+  init ({ commit, state, dispatch }) {
     let app = privateConfig.app || {};
     let instance = window.MusicKit.configure({
       developerToken: privateConfig.developerToken,
@@ -186,6 +204,10 @@ const actions = {
     // Update bufferred status
     commit('bufferedProgress', instance.player.currentBufferedProgress);
 
+    // Update queue information
+    commit('queue', clonedeep(instance.player.queue.items));
+    commit('queuePosition', instance.player.queue.position);
+
     // Register event handlers
     commit('addEventListener', {
       event: window.MusicKit.Events.authorizationStatusDidChange,
@@ -211,6 +233,11 @@ const actions = {
     commit('addEventListener', {
       event: window.MusicKit.Events.mediaItemDidChange,
       func: (evt) => {
+        // Add the current item (if any) to the history.
+        if (state.nowPlayingItem) {
+          commit('addHistoryItem', state.nowPlayingItem);
+        }
+
         commit('nowPlayingItem', clonedeep(evt.item));
       }
     });
@@ -241,6 +268,16 @@ const actions = {
       func: (evt) => {
         commit('bitrate', instance.bitrate);
       }
+    });
+
+    commit('addEventListener', {
+      event: window.MusicKit.Events.queueItemsDidChange,
+      func: (items) => commit('queue', clonedeep(items))
+    });
+
+    commit('addEventListener', {
+      event: window.MusicKit.Events.queuePositionDidChange,
+      func: (evt) => commit('queuePosition', evt.position)
     });
 
     commit('addEventListener', {
@@ -329,6 +366,10 @@ const actions = {
   playLater (_, queue) {
     let instance = window.MusicKit.getInstance();
     return instance.player.queue.append(queue);
+  },
+  changeTo (_, position) {
+    let instance = window.MusicKit.getInstance();
+    return instance.changeToMediaAtIndex(position);
   },
   setQueue (_, queue) {
     let instance = window.MusicKit.getInstance();

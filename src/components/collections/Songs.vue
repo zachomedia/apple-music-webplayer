@@ -28,15 +28,15 @@
             <p v-if="song.attributes" class="name" :title="song.attributes.name">{{ song.attributes.name }}</p>
             <content-rating :rating="song.attributes.contentRating" class="rating" />
           </div>
-          <p v-if="showArtist && song.attributes" class="artist text-muted" :title="song.attributes.artistName">{{ song.attributes.artistName }}</p>
+          <p v-if="showArtist && song.attributes" class="artist text-muted" :title="song.attributes.artistName">{{ song.attributes.artistName }}<span v-if="combine && !isAlbum"> &mdash; {{ song.attributes.albumName }}</span></p>
         </div>
-        <div class="album text-muted d-none d-sm-block" v-if="!isAlbum">
+        <div class="album text-muted d-none d-sm-block" v-if="!isAlbum && !combine">
           {{ song.attributes.albumName }}
         </div>
         <div class="duration">
           {{ song.attributes.durationInMillis | formatMillis }}
         </div>
-        <song-actions :song="song" show-queue />
+        <song-actions :song="song" :show-queue="showQueue" />
       </div>
     </div>
   </div>
@@ -55,7 +55,21 @@ export default {
   props: {
     songs: Array,
     isAlbum: Boolean,
-    loading: Boolean
+    loading: Boolean,
+    queueAll: {
+      type: Boolean,
+      default: true
+    },
+    showQueue: {
+      type: Boolean,
+      default: true
+    },
+    isQueue: Boolean,
+    indexAdd: {
+      type: Number,
+      default: 0
+    },
+    combine: Boolean
   },
   data () {
     return {
@@ -88,27 +102,31 @@ export default {
     humanize
   },
   methods: {
-    ...mapActions('musicKit', ['shuffle', 'setQueue', 'play']),
+    ...mapActions('musicKit', ['shuffle', 'setQueue', 'play', 'changeTo']),
     async playSong (item) {
-      let indx = this.songs.indexOf(item);
+      let indx = this.songs.indexOf(item) + this.indexAdd;
 
       try {
-        // Disable shuffle, otherwise MusicKit will shuffle the first song too
-        let prevShuffleMode = this.shuffleMode === 1;
-        this.shuffle(false);
+        if (this.isQueue) {
+          this.changeTo(indx);
+        } else {
+          // Disable shuffle, otherwise MusicKit will shuffle the first song too
+          let prevShuffleMode = this.shuffleMode === 1;
+          this.shuffle(false);
 
-        // Queue one or all, based on user preference.
-        var queue = {
-          items: this.queueAllSongs ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)],
-          startPosition: this.queueAllSongs ? indx : 0
-        };
-        await this.setQueue(queue);
+          // Queue one or all, based on user preference.
+          var queue = {
+            items: this.queueAllSongs && this.queueAll ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)],
+            startPosition: this.queueAllSongs ? indx : 0
+          };
+          await this.setQueue(queue);
 
-        // Start playback
-        await this.play();
+          // Start playback
+          await this.play();
 
-        // Restore shuffle mode
-        this.shuffle(prevShuffleMode);
+          // Restore shuffle mode
+          this.shuffle(prevShuffleMode);
+        }
       } catch (err) {
         console.error(err);
         this.$store.dispatch('alerts/add', errorMessage(err));

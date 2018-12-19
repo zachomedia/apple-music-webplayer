@@ -23,6 +23,27 @@
       <div class="time" v-if="playbackTime">
         <p class="text-muted">{{ playbackTime.currentPlaybackTime | formatSeconds }} / {{ playbackTime.currentPlaybackDuration | formatSeconds }}</p>
       </div>
+
+      <div class="queue">
+        <b-button variant="link" @click="showQueue = !showQueue"><i class="fa fa-list-ul" /></b-button>
+        <b-modal v-model="showQueue" title="Queue" centered hide-footer>
+          <b-form-radio-group v-model="queueTab"
+                              buttons button-variant="outline-primary"
+                              class="mb-1 btn-group-sm split w-100">
+            <b-form-radio :value="0" class="w-50">Up Next</b-form-radio>
+            <b-form-radio :value="1" class="w-50">History</b-form-radio>
+          </b-form-radio-group>
+
+          <div v-if="queueTab === 0">
+            <songs v-if="upNext.length > 0" :index-add="queue.length - upNext.length" :songs="upNext" is-queue combine />
+            <p v-else class="text-center text-muted pt-4">Your queue is empty.</p>
+          </div>
+          <div v-if="queueTab === 1">
+            <songs v-if="history.length > 0" :songs="history" :queueAll="false" combine />
+            <p v-else class="text-center text-muted pt-4">Your history is empty.</p>
+          </div>
+        </b-modal>
+      </div>
     </div>
 
     <div ref="progressTooltip" class="progressTooltip">{{ hoverTooltipTime | formatSeconds }}</div>
@@ -49,12 +70,14 @@ import { formatSeconds, formatArtworkURL, errorMessage } from '../../utils';
 
 import ContentRating from '../utils/ContentRating';
 import SongActions from './SongActions';
+import Songs from '../collections/Songs';
 
 export default {
   name: 'NowPlaying',
   components: {
     ContentRating,
-    SongActions
+    SongActions,
+    Songs
   },
   filters: {
     formatSeconds,
@@ -62,11 +85,16 @@ export default {
   },
   data () {
     return {
+      queueTab: 0,
+      showQueue: false,
       hoverTooltipTime: '0:00'
     };
   },
   computed: {
-    ...mapState('musicKit', ['nowPlayingItem', 'playbackTime', 'bufferedProgress'])
+    ...mapState('musicKit', ['nowPlayingItem', 'playbackTime', 'bufferedProgress', 'queue', 'queuePosition', 'history']),
+    upNext () {
+      return this.queue.filter((_, indx) => indx > this.queuePosition);
+    }
   },
   methods: {
     showTooltip () {

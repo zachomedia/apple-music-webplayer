@@ -259,7 +259,7 @@ export function errorMessage (error) {
 }
 
 export function trackToMediaItem (track) {
-  if (!track) {
+  if (!track || track.constructor.name === 'MediaItem') {
     return track;
   }
 
