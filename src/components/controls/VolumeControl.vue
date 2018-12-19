@@ -122,7 +122,7 @@ input[type=range]::-ms-fill-lower {
   box-shadow: 0px 0px 1.7px darken($slider-colour, 10%), 0px 0px 0px darken($slider-colour, 5%);
 }
 input[type=range]::-ms-fill-upper {
-  background: #00bc8c;
+  background: $slider-colour;
   border: 0px solid darken($slider-colour, 5%);
   border-radius: 20.2px;
   box-shadow: 0px 0px 1.7px darken($slider-colour, 5%), 0px 0px 0px darken($slider-colour, 5%);
@@ -135,7 +135,7 @@ input[type=range]::-ms-thumb {
   border-radius: 12px;
   background: $slider-colour;
   cursor: pointer;
-  height: 2px;
+  margin-top: 1px;
 }
 input[type=range]:focus::-ms-fill-lower {
   background: $slider-colour;
