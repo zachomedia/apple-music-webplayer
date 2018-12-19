@@ -42,6 +42,19 @@
           </b-col>
         </b-row>
       </b-container>
+      <b-container tag="footer" class="text-small footer" fluid>
+        <b-row>
+          <b-col class="text-muted text-center mb-4 mt-2">
+            <p class="mb-1 pb-0">Copyright &copy; 2018 &mdash; <a href="https://zacharyseguin.ca" target="_blank">Zachary Seguin</a></p>
+            <p>Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries.</p>
+            <p>
+              If you encounter any issues, have any feedback or feature requests,
+              please <a href="https://github.com/zachomedia/apple-music-webplayer/issues" target="_blank">submit an issue on GitHub</a>
+              or send an email to <a href="mailto:contact@zacharyseguin.ca">contact@zacharyseguin.ca</a>.
+            </p>
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
     <div class="loader" v-else>
       <div>
@@ -245,5 +258,11 @@ body {
     border-radius: 0;
     margin: 0;
   }
+}
+
+.footer {
+  padding-top: 20px;
+  background: darken($body-bg, 3%);
+  border-top: 1px solid darken($body-bg, 5%);
 }
 </style>
