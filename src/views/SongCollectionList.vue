@@ -10,7 +10,7 @@
         :item="item" />
     </div>
 
-    <error-message v-if="error" :error="error" :show="collection && collection.length > 0" />
+    <error-message v-if="error" :error="error" :show="!collection || collection.length == 0" />
     <loader v-if="loading" />
   </div>
 </template>
