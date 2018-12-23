@@ -312,9 +312,6 @@ const actions = {
 
         // Notify the user of the error.
         dispatch('alerts/add', errorMessage({ name: window.MusicKit.MKError.MEDIA_PLAYBACK }), { root: true });
-
-        // "Handle" the error by moving to the next song
-        dispatch('next');
       }
     });
 
