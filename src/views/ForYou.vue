@@ -4,7 +4,7 @@
 
     <recommendations :recommendations="recommendations" />
 
-    <error-message v-if="error" :error="error" :show="!recommendations" />
+    <error-message v-if="error" :error="error" :show="!recommendations || recommendations.length === 0" />
     <loader class="loading" v-if="loading" />
   </div>
 </template>
