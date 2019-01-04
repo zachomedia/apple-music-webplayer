@@ -2,8 +2,8 @@
   <div class="collection">
     <div v-if="collection">
       <header :style="{
-        background: `#${collection.attributes.artwork.bgColor}`,
-        color: `#${collection.attributes.artwork.textColor1}`
+        background: bgColor,
+        color: textColor1
       }">
         <div class="contents">
           <img v-if="collection.attributes.artwork"
@@ -13,34 +13,34 @@
             <h1 class="h3">{{ collection.attributes.name | decode }}</h1>
             <p v-if="collection.attributes.curatorName || collection.attributes.artistName"
               class="h5"
-              :style="{ color: `#${collection.attributes.artwork.textColor2}`}"
+              :style="{ color: textColor2 }"
               v-html="collection.attributes.curatorName || collection.attributes.artistName">
             </p>
 
             <p v-if="collection.attributes.description"
               class="d-none d-md-block"
-              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              :style="{ color: textColor3 }"
               v-html="collection.attributes.description.standard || collection.attributes.description.short">
             </p>
             <p v-else-if="collection.attributes.editorialNotes"
               class="d-none d-md-block"
-              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              :style="{ color: textColor3 }"
               v-html="collection.attributes.editorialNotes.standard || collection.attributes.editorialNotes.short">
             </p>
 
             <p v-if="collection.attributes.description"
               class="d-block d-md-none"
-              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              :style="{ color: textColor3 }"
               v-html="collection.attributes.description.short">
             </p>
             <p v-else-if="collection.attributes.editorialNotes"
               class="d-block d-md-none"
-              :style="{ color: `#${collection.attributes.artwork.textColor3}`}"
+              :style="{ color: textColor3 }"
               v-html="collection.attributes.editorialNotes.short">
             </p>
 
             <p v-if="collection.attributes.lastModifiedDate"
-              :style="{ color: `#${collection.attributes.artwork.textColor4}`}">
+              :style="{ color: textColor4 }">
               Updated {{ collection.attributes.lastModifiedDate | moment('from') }}
             </p>
 
@@ -98,11 +98,61 @@ export default {
   },
   computed: {
     ...mapState('musicKit', ['isAuthorized']),
+    bgColor () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.bgColor) {
+        return `#${this.collection.attributes.artwork.bgColor}`;
+      }
+
+      return 'transparent';
+    },
+    textColor1 () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor1) {
+        return `#${this.collection.attributes.artwork.textColor1}`;
+      }
+
+      return 'white';
+    },
+    textColor2 () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor2) {
+        return `#${this.collection.attributes.artwork.textColor2}`;
+      }
+
+      return '#ccc';
+    },
+    textColor3 () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor3) {
+        return `#${this.collection.attributes.artwork.textColor3}`;
+      }
+
+      return '#ccc';
+    },
+    textColor4 () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor4) {
+        return `#${this.collection.attributes.artwork.textColor4}`;
+      }
+
+      return '#ccc';
+    },
+    textColor5 () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor5) {
+        return `#${this.collection.attributes.artwork.textColor5}`;
+      }
+
+      return '#ccc';
+    },
     buttonStyle () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor1) {
+        return {
+          background: `#${this.collection.attributes.artwork.textColor1}`,
+          color: `#${this.collection.attributes.artwork.bgColor}`,
+          'border-color': `#${this.collection.attributes.artwork.bgColor}`
+        };
+      }
+
       return {
-        background: `#${this.collection.attributes.artwork.textColor1}`,
-        color: `#${this.collection.attributes.artwork.bgColor}`,
-        'border-color': `#${this.collection.attributes.artwork.bgColor}`
+        background: 'white',
+        color: 'black',
+        'border-color': 'white'
       };
     }
   },
