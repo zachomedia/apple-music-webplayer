@@ -203,4 +203,8 @@ p {
 .columns {
   display: flex;
 }
+
+.progress-bar.bg-dark {
+  background: #303030 !important;
+}
 </style>

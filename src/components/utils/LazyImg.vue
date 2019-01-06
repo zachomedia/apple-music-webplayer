@@ -15,7 +15,7 @@ const intersectionObserver = new IntersectionObserver(function (entries) {
       img.src = '//:0';
     }
   }
-}, {rootMargin: '100%'});
+}, { rootMargin: '100%' });
 
 export default {
   name: 'LazyImg',
