@@ -33,7 +33,7 @@ const state = {
  * Return the appropriate API object.
  */
 let getApi = (library) => {
-  let instance = window.MusicKit.getInstance();
+  let instance = MusicKit.getInstance();
   return library ? instance.api.library : instance.api;
 };
 
@@ -42,10 +42,10 @@ let getApi = (library) => {
  */
 export function apiHeaders () {
   return new Headers({
-    Authorization: 'Bearer ' + window.MusicKit.getInstance().developerToken,
+    Authorization: 'Bearer ' + MusicKit.getInstance().developerToken,
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'Music-User-Token': '' + window.MusicKit.getInstance().musicUserToken
+    'Music-User-Token': '' + MusicKit.getInstance().musicUserToken
   });
 }
 
@@ -145,19 +145,19 @@ const mutations = {
 
   // Event listeners
   addEventListener (state, listener) {
-    window.MusicKit.getInstance().addEventListener(listener.event, listener.func);
+    MusicKit.getInstance().addEventListener(listener.event, listener.func);
   },
   removeEventListener (state, listener) {
-    window.MusicKit.getInstance().removeEventListener(listener.event, listener.func);
+    MusicKit.getInstance().removeEventListener(listener.event, listener.func);
   }
 };
 
 const actions = {
   init ({ commit, state, dispatch }) {
-    Raven.setTagsContext({ musicKitVersion: window.MusicKit.version });
+    Raven.setTagsContext({ musicKitVersion: MusicKit.version });
 
     let app = privateConfig.app || {};
-    let instance = window.MusicKit.configure({
+    let instance = MusicKit.configure({
       developerToken: privateConfig.developerToken,
       app: {
         name: app.name || 'Music',
@@ -191,7 +191,7 @@ const actions = {
 
     if (localStorage && localStorage.getItem('bitrate')) {
       try {
-        dispatch('setBitrate', window.MusicKit.PlaybackBitrate[localStorage.getItem('bitrate') || 'HIGH']);
+        dispatch('setBitrate', MusicKit.PlaybackBitrate[localStorage.getItem('bitrate') || 'HIGH']);
       } catch (err) {
         console.error(err);
         Raven.captureException(err);
@@ -234,28 +234,28 @@ const actions = {
 
     // Register event handlers
     commit('addEventListener', {
-      event: window.MusicKit.Events.authorizationStatusDidChange,
+      event: MusicKit.Events.authorizationStatusDidChange,
       func: (evt) => {
         commit('isAuthorized', instance.isAuthorized);
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.playbackStateDidChange,
+      event: MusicKit.Events.playbackStateDidChange,
       func: (evt) => {
         commit('playbackState', evt.state);
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.bufferedProgressDidChange,
+      event: MusicKit.Events.bufferedProgressDidChange,
       func: (evt) => {
         commit('bufferedProgress', evt.progress);
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.mediaItemDidChange,
+      event: MusicKit.Events.mediaItemDidChange,
       func: (evt) => {
         // Add the current item (if any) to the history.
         if (state.nowPlayingItem) {
@@ -267,51 +267,51 @@ const actions = {
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.playbackTimeDidChange,
+      event: MusicKit.Events.playbackTimeDidChange,
       func: (evt) => {
         commit('playbackTime', clonedeep(evt));
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.playbackVolumeDidChange,
+      event: MusicKit.Events.playbackVolumeDidChange,
       func: (evt) => {
         commit('volume', instance.player.volume);
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.primaryPlayerDidChange,
+      event: MusicKit.Events.primaryPlayerDidChange,
       func: (evt) => {
         commit('supportsEME', instance.player.canSupportDRM);
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.playbackBitrateDidChange,
+      event: MusicKit.Events.playbackBitrateDidChange,
       func: (evt) => {
         commit('bitrate', instance.bitrate);
       }
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.queueItemsDidChange,
+      event: MusicKit.Events.queueItemsDidChange,
       func: (items) => commit('queue', clonedeep(items))
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.queuePositionDidChange,
+      event: MusicKit.Events.queuePositionDidChange,
       func: (evt) => commit('queuePosition', evt.position)
     });
 
     commit('addEventListener', {
-      event: window.MusicKit.Events.mediaPlaybackError,
+      event: MusicKit.Events.mediaPlaybackError,
       func: (evt) => {
         console.error('PLAYBACK_ERROR', evt);
         Raven.captureException(evt);
 
         // Notify the user of the error.
-        dispatch('alerts/add', errorMessage({ name: window.MusicKit.MKError.MEDIA_PLAYBACK }), { root: true });
+        dispatch('alerts/add', errorMessage({ name: MusicKit.MKError.MEDIA_PLAYBACK }), { root: true });
       }
     });
 
@@ -319,7 +319,7 @@ const actions = {
     commit('init');
   },
   toggleShuffleMode ({ commit, state }) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     instance.player.shuffle = state.shuffleMode === 0 ? 1 : 0;
     commit('shuffleMode', instance.player.shuffleMode);
 
@@ -328,7 +328,7 @@ const actions = {
     }
   },
   shuffle ({ commit }, shuffle = true) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     instance.player.shuffle = shuffle;
     if (window.localStorage) {
       window.localStorage.setItem('shuffle', JSON.stringify(shuffle));
@@ -337,7 +337,7 @@ const actions = {
   },
   toggleRepeatMode ({ commit }) {
     // Repeat modes: 0 - off, 1 - one, 2 - all
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     instance.player.repeatMode = instance.player.repeatMode === 0 ? 2 : instance.player.repeatMode - 1;
     commit('repeatMode', instance.player.repeatMode);
     if (window.localStorage) {
@@ -345,7 +345,7 @@ const actions = {
     }
   },
   repeat ({ commit }, mode = 2) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     instance.player.repeatMode = mode;
     commit('repeatMode', instance.player.repeatMode);
     if (window.localStorage) {
@@ -353,54 +353,54 @@ const actions = {
     }
   },
   setBitrate ({ commit }, bitrate) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     instance.bitrate = bitrate;
     commit('bitrate', instance.bitrate);
     if (window.localStorage) {
-      window.localStorage.setItem('bitrate', window.MusicKit.PlaybackBitrate[bitrate]);
+      window.localStorage.setItem('bitrate', MusicKit.PlaybackBitrate[bitrate]);
     }
   },
 
   play (_) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.play();
   },
   pause (_) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.pause();
   },
   previous (_) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.skipToPreviousItem();
   },
   next (_) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.skipToNextItem();
   },
   seek (_, time) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.seekToTime(time);
   },
   playNext (_, queue) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.queue.prepend(queue);
   },
   playLater (_, queue) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.player.queue.append(queue);
   },
   changeTo (_, position) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.changeToMediaAtIndex(position);
   },
   setQueue (_, queue) {
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     return instance.setQueue(queue);
   },
   setVolume (_, volume) {
     volume = parseFloat(volume);
 
-    let instance = window.MusicKit.getInstance();
+    let instance = MusicKit.getInstance();
     instance.player.volume = volume;
 
     if (window.localStorage) {
@@ -426,7 +426,7 @@ const actions = {
         if (res.status === 200) {
           resolve(true);
         } else {
-          reject(window.MusicKit.MKError(window.MusicKit.MKError.SERVER_ERROR));
+          reject(MusicKit.MKError(MusicKit.MKError.SERVER_ERROR));
         }
       } catch (err) {
         reject(err);

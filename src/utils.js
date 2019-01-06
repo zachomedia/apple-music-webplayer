@@ -11,7 +11,7 @@ var EventBus = new Vue();
  * @param item A single MusicKit entity with {@code attributes.playParams}.
  */
 export function playItem (item) {
-  const musicKit = window.MusicKit.getInstance();
+  const musicKit = MusicKit.getInstance();
   const playParams = item.attributes.playParams;
   musicKit.setQueue({
     [playParams.kind]: playParams.id
@@ -28,7 +28,7 @@ export function playItem (item) {
  * milliseconds.
  */
 export function humanize (value) {
-  const duration = window.MusicKit.formattedMilliseconds(value);
+  const duration = MusicKit.formattedMilliseconds(value);
   if (duration.hours === 0 && duration.minutes === 0) {
     return 'No items';
   }
@@ -55,7 +55,7 @@ export function humanize (value) {
  * Returns a formatted media duration string for a {@code value} in seconds.
  */
 export function formatSeconds (value) {
-  return window.MusicKit.formatMediaTime(value);
+  return MusicKit.formatMediaTime(value);
 }
 
 /**
@@ -63,7 +63,7 @@ export function formatSeconds (value) {
  * milliseconds.
  */
 export function formatMillis (value) {
-  return window.MusicKit.formatMediaTime(value / 1000);
+  return MusicKit.formatMediaTime(value / 1000);
 }
 
 /**
@@ -73,7 +73,7 @@ export function formatMillis (value) {
  * @param size Size in pixels.
  */
 export function formatArtworkURL (artwork, size) {
-  return window.MusicKit.formatArtworkURL(artwork, size, size);
+  return MusicKit.formatArtworkURL(artwork, size, size);
 }
 
 /**
@@ -81,10 +81,10 @@ export function formatArtworkURL (artwork, size) {
  */
 export function apiHeaders () {
   return new Headers({
-    Authorization: 'Bearer ' + window.MusicKit.getInstance().developerToken,
+    Authorization: 'Bearer ' + MusicKit.getInstance().developerToken,
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'Music-User-Token': '' + window.MusicKit.getInstance().musicUserToken
+    'Music-User-Token': '' + MusicKit.getInstance().musicUserToken
   });
 }
 
@@ -131,7 +131,7 @@ export function setPageTitle (title) {
 }
 
 export function errorMessage (error) {
-  let mkError = window.MusicKit.MKError;
+  let mkError = MusicKit.MKError;
   let errors = {
     generic: {
       variant: 'danger',

@@ -4,6 +4,7 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const webpack = require('webpack')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -35,6 +36,10 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin()
   ],
+  externals: {
+    MusicKit: 'window.MusicKit'
+  },
+  target: 'web',
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {

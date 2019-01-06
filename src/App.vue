@@ -178,7 +178,7 @@ export default {
   methods: {
     ...mapActions('alerts', [ 'remove' ]),
     authorize () {
-      let instance = window.MusicKit.getInstance();
+      let instance = MusicKit.getInstance();
       instance.authorize();
     }
   }

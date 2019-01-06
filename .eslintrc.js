@@ -27,5 +27,8 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     // require semicolons
     'semi': ['error', 'always']
+  },
+  globals: {
+    MusicKit: false
   }
 }

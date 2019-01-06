@@ -6,7 +6,8 @@ import App from './App.vue';
 import 'font-awesome/css/font-awesome.css';
 
 // Vue.js 2 filters
-import Vue2Filters from 'vue2-filters';
+// (note use src since dist includes eval() calls, which breaks CSP)
+import Vue2Filters from 'vue2-filters/src';
 
 // Vue Moment
 import VueMoment from 'vue-moment';
@@ -41,7 +42,7 @@ if (privateConfig.sentry) {
 }
 
 // Handle init
-if (window.MusicKit) {
+if (MusicKit) {
   store.dispatch('musicKit/init');
 } else {
   document.addEventListener('musickitloaded', () => {
@@ -51,5 +52,6 @@ if (window.MusicKit) {
 
 new Vue({
   store,
-  render: h => h(App)
+  render: h => h(App),
+  mixins: [Vue2Filters.mixin]
 }).$mount('#app');

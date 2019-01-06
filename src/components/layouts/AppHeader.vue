@@ -63,11 +63,11 @@ export default {
   },
   methods: {
     authorize () {
-      let instance = window.MusicKit.getInstance();
+      let instance = MusicKit.getInstance();
       instance.authorize();
     },
     unauthorize () {
-      let instance = window.MusicKit.getInstance();
+      let instance = MusicKit.getInstance();
       instance.unauthorize();
     }
   },

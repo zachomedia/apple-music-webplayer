@@ -26,8 +26,8 @@ export default {
       localShowPlaybackNotifications: this.showPlaybackNotifications,
       localQueueAllSongs: this.queueAllSongs,
       bitrateOptions: {
-        [window.MusicKit.PlaybackBitrate.HIGH]: 'High (256 kbps)',
-        [window.MusicKit.PlaybackBitrate.STANDARD]: 'Standard (64 kbps)'
+        [MusicKit.PlaybackBitrate.HIGH]: 'High (256 kbps)',
+        [MusicKit.PlaybackBitrate.STANDARD]: 'Standard (64 kbps)'
       }
     };
   },

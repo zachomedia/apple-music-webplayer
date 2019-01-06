@@ -29,7 +29,7 @@ export default {
   name: 'PlaybackControls',
   data () {
     return {
-      states: window.MusicKit.PlaybackStates
+      states: MusicKit.PlaybackStates
     };
   },
   computed: {
