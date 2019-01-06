@@ -97,6 +97,9 @@ const webpackConfig = merge(baseWebpackConfig, {
       }),
     ],
   },
+  performance: {
+    hints: false
+  }
 })
 
 if (config.build.productionGzip) {
