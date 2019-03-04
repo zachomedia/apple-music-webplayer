@@ -7,17 +7,17 @@ AppHeader<template>
 
     <nav class="nav">
       <b-nav>
-        <b-nav-item  :to="{ name: 'top-charts' }" :exact="true">Top charts</b-nav-item>
-        <b-nav-item v-if="isAuthorized" :to="{ name: 'for-you' }" :exact="true">For you</b-nav-item>
-        <b-nav-item v-if="isAuthorized" :to="{ name: 'recent' }">Recent</b-nav-item>
-        <b-nav-item :to="{ name: 'search' }">Search</b-nav-item>
+        <b-nav-item  :to="{ name: 'top-charts' }" :exact="true" active-class="active">Top charts</b-nav-item>
+        <b-nav-item v-if="isAuthorized" :to="{ name: 'for-you' }" :exact="true" active-class="active">For you</b-nav-item>
+        <b-nav-item v-if="isAuthorized" :to="{ name: 'recent' }" active-class="active">Recent</b-nav-item>
+        <b-nav-item :to="{ name: 'search' }" active-class="active">Search</b-nav-item>
         <b-nav-item-dropdown v-if="isAuthorized"  text="Library" right>
-          <b-dropdown-item :to="{ name: 'library-search' }">Search</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'library-search' }" active-class="active">Search</b-dropdown-item>
           <b-dropdown-divider />
-          <b-dropdown-item :to="{ name: 'my-songs' }" :exact="true">Songs</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-albums' }" :exact="true">Albums</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-artists' }" :exact="true">Artists</b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'my-playlists' }" :exact="true">Playlists</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-songs' }" :exact="true" active-class="active">Songs</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-albums' }" :exact="true" active-class="active">Albums</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-artists' }" :exact="true" active-class="active">Artists</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'my-playlists' }" :exact="true" active-class="active">Playlists</b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item v-if="!isAuthorized" @click="authorize()">
@@ -27,7 +27,7 @@ AppHeader<template>
           <template slot="button-content">
             <i class="fa fa-ellipsis-h" /><span class="sr-only">Other</span>
           </template>
-          <b-dropdown-item :to="{ name: 'settings' }" :exact="true">Settings</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'settings' }" :exact="true" active-class="active">Settings</b-dropdown-item>
           <b-dropdown-divider v-if="isAuthorized"  />
           <b-dropdown-item v-if="isAuthorized" @click="unauthorize()">Sign out</b-dropdown-item>
         </b-nav-item-dropdown>
