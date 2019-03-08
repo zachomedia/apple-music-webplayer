@@ -1,10 +1,31 @@
-.noscript body {
-   background: #eee;
-   font-family: sans-serif;
+body.noscript {
+   background: #222;
+   font-family: Muli, sans-serif;
  }
 
- .noscript .splash {
-   width: 90%;
-   max-width: 400px;
-   margin: 100px auto;
- }
+.noscript .splash {
+  width: 90%;
+  max-width: 400px;
+  margin: 100px auto;
+
+  background: #eee;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.noscript .splash img {
+  width: 100%;
+}
+
+.noscript .splash p, .noscript .splash h1, .noscript .splash strong {
+  color: #222;
+}
+
+.noscript .splash hr {
+  background: #666;
+  border-color: #666;
+}
+
+.noscript .splash a {
+  color: #007bff;
+}

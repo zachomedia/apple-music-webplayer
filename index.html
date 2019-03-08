@@ -11,18 +11,22 @@
     <meta name="description" content="A web player for Apple Music, built using MusicKit JS." />
 
     <link href="https://fonts.googleapis.com/css?family=Muli:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/noscript.css" />
+    <noscript>
+      <link rel="stylesheet" href="/static/css/noscript.css" />
+    </noscript>
   </head>
-  <body>
+  <body class="noscript">
     <noscript>
       <div class="noscript splash">
-        <h2>Hello!</h2>
+        <img src="https://zacharyseguin.ca/images/logo.svg" alt="Zachary Seguin" />
+        <h1>Hello!</h1>
         <p>This is a web player for <a href="https://applemusic.com">Apple Music</a>, built using <a href="https://developer.apple.com/documentation/musickitjs">MusicKit JS</a>.</p>
         <p>The web player is currently under <a href="https://github.com/zachomedia/apple-music-webplayer">development</a>.</p>
-        <strong>This application does not work without JavaScript enabled. Please enable it to continue.</strong>
+        <hr />
+        <p><strong>This application does not work without JavaScript enabled. Please enable it to continue.</strong></p>
       </div>
     </noscript>
-    
+
     <div id="app"></div>
 
     <script src="https://js-cdn.music.apple.com/musickit/v1/musickit.js"></script>
