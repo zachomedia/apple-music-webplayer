@@ -5,7 +5,14 @@
 
     <b-card header="Playback">
       <b-form-group label="Bitrate" class="ml-3">
-        <b-form-radio-group v-model="localBitrate" :options="bitrateOptions" />
+        <div role="radiogroup">
+          <div class="custom-control custom-control-inline custom-radio" v-for="(opt, id) in bitrateOptions" :key="id">
+            <label>
+              <input type="radio" :value="id" v-model="localBitrate" />
+                {{ opt }}
+            </label>
+          </div>
+        </div>
       </b-form-group>
 
       <b-form-checkbox v-model="localShowPlaybackNotifications">Show playback notifications</b-form-checkbox>
@@ -36,23 +43,23 @@ export default {
     ...mapState('preferences', ['showPlaybackNotifications', 'queueAllSongs'])
   },
   watch: {
-    bitrate () {
-      this.localBitrate = this.bitrate;
+    bitrate (value) {
+      this.localBitrate = value;
     },
-    localBitrate () {
-      this.setBitrate(parseInt(this.localBitrate, 10));
+    localBitrate (value) {
+      this.setBitrate(parseInt(value, 10));
     },
-    showPlaybackNotifications () {
-      this.localShowPlaybackNotifications = this.showPlaybackNotifications;
+    showPlaybackNotifications (value) {
+      this.localShowPlaybackNotifications = value;
     },
-    localShowPlaybackNotifications () {
-      this.setShowPlaybackNotifications(this.localShowPlaybackNotifications);
+    localShowPlaybackNotifications (value) {
+      this.setShowPlaybackNotifications(value);
     },
-    queueAllSongs () {
-      this.localQueueAllSongs = this.queueAllSongs;
+    queueAllSongs (value) {
+      this.localQueueAllSongs = value;
     },
-    localQueueAllSongs () {
-      this.setQueueAllSongs(this.localQueueAllSongs);
+    localQueueAllSongs (value) {
+      this.setQueueAllSongs(value);
     }
   },
   methods: {
@@ -72,5 +79,9 @@ export default {
   margin: 20px auto !important;
   padding: 0 20px !important;
   max-width: 800px;
+}
+
+.custom-radio {
+  padding-left: 0;
 }
 </style>
