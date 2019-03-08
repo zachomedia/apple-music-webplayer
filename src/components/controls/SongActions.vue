@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown variant="link" size="sm" no-caret right boundary="window">
+  <b-dropdown variant="link" size="sm" no-caret right boundary="window" v-if="(isAuthorized && !isLibrary) || showQueue || (song.assets && song.assets[0] && song.assets[0].metadata)">
     <template slot="button-content">
       <i class="fa fa-ellipsis-h" /><span class="sr-only">Song actions</span>
     </template>
