@@ -23,7 +23,7 @@
         To play music, please install or enable <strong>Encrypted Media Extensions</strong> in your browser.
       </b-alert>
 
-      <b-container fluid>
+      <b-container class="content" fluid>
         <b-row>
           <b-col lg="12" class="m-0 p-0" v-if="!isAuthorized">
             <b-alert variant="info" show class="m-0 no-border">
@@ -192,7 +192,7 @@ export default {
 @import '~bootstrap-vue/dist/bootstrap-vue';
 
 body {
-  background: $body-bg;
+  background: darken($body-bg, 3%);
   color: $body-color;
 }
 
@@ -265,9 +265,12 @@ body {
   }
 }
 
+.content {
+  background: $body-bg;
+}
+
 .footer {
   padding-top: 20px;
-  background: darken($body-bg, 3%);
   border-top: 1px solid darken($body-bg, 5%);
 }
 </style>
