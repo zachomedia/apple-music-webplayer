@@ -189,7 +189,7 @@ export default {
 @import "assets/_custom.scss";
 @import "~bootswatch/dist/darkly/variables";
 @import "~bootstrap/scss/bootstrap.scss";
-@use '~bootstrap-vue/dist/bootstrap-vue';
+@import '~bootstrap-vue/dist/bootstrap-vue';
 
 body {
   background: $body-bg;
