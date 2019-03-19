@@ -17,7 +17,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { errorMessage, trackToMediaItem } from '../../utils';
+import { errorMessage, trackToMediaItem, EventBus } from '../../utils';
 import Raven from 'raven-js';
 
 export default {
@@ -86,6 +86,8 @@ export default {
       try {
         await this.$store.dispatch('musicKit/love', this.song);
 
+        EventBus.$emit('song:rated', { id: this.song.id, rating: 1 });
+
         this.$store.dispatch('alerts/add', {
           variant: 'success',
           title: 'Loved',
@@ -100,6 +102,8 @@ export default {
     async dislike () {
       try {
         await this.$store.dispatch('musicKit/dislike', this.song);
+
+        EventBus.$emit('song:rated', { id: this.song.id, rating: -1 });
 
         this.$store.dispatch('alerts/add', {
           variant: 'success',

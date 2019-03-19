@@ -4,7 +4,7 @@ import Vue from 'vue';
 import privateConfig from './private';
 
 // TODO: Add EventBus
-var EventBus = new Vue();
+export var EventBus = new Vue();
 
 /**
  * Sets the queue to a single item and starts playback.
@@ -86,6 +86,12 @@ export function apiHeaders () {
     'Content-Type': 'application/json',
     'Music-User-Token': '' + MusicKit.getInstance().musicUserToken
   });
+}
+
+export function songRating (songIds) {
+  return fetch(`https://api.music.apple.com/v1/me/ratings/songs/?ids=${songIds.join(',')}`, {
+    headers: apiHeaders()
+  }).then(res => res.json());
 }
 
 /**

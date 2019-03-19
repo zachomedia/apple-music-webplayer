@@ -6,6 +6,11 @@
 
     <div class="songs">
       <div class="song" v-for="song in songs" :key="song.id" @click="playSong(song)">
+        <div class="rating">
+          <i class="fa fa-heart text-danger" v-if="ratings[song.id] == 1" />
+          <i class="fa fa-thumbs-down text-muted" v-else-if="ratings[song.id] == -1" />
+          <span v-else>&nbsp;</span>
+        </div>
         <div class="artwork" v-if="!isAlbum">
           <lazy-img v-if="song.attributes && song.attributes.artwork"
              :src="song.attributes.artwork | formatArtworkURL(40)" />
@@ -50,7 +55,7 @@ import LazyImg from '../utils/LazyImg';
 import SongActions from '../controls/SongActions';
 
 import Raven from 'raven-js';
-import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage } from '../../utils';
+import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage, songRating, EventBus } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -77,8 +82,12 @@ export default {
   data () {
     return {
       tableClasses: [ ],
-      fields: [ ]
+      fields: [ ],
+      ratings: { }
     };
+  },
+  watch: {
+    songs: 'fetchRatings'
   },
   computed: {
     ...mapState('musicKit', ['nowPlayingItem', 'shuffleMode']),
@@ -104,8 +113,37 @@ export default {
     formatMillis,
     humanize
   },
+  created () {
+    EventBus.$on('song:rated', this.rated);
+  },
+  beforeDestroy () {
+    EventBus.$off('song:rated', this.rated);
+  },
+  mounted () {
+    this.fetchRatings();
+  },
   methods: {
     ...mapActions('musicKit', ['shuffle', 'setQueue', 'play', 'changeTo']),
+    async fetchRatings () {
+      this.ratings = {};
+      let ratings = {};
+
+      let songs = this.songs.filter(s => s.type.indexOf('library-') === -1).map(s => s.id);
+
+      // Don't continue if there are no non-library songs.
+      if (songs.length === 0) {
+        return;
+      }
+
+      const res = await songRating(songs);
+      if (res.data) {
+        res.data.forEach((r) => {
+          ratings[r.id] = r.attributes.value;
+        });
+
+        this.ratings = ratings;
+      }
+    },
     async playSong (item) {
       let indx = this.songs.indexOf(item) + this.indexAdd;
 
@@ -144,6 +182,10 @@ export default {
       return item.id === this.nowPlayingItem.id ||
         item.id === this.nowPlayingItem.container.id ||
         item.id === this.nowPlayingItem.sourceId;
+    },
+    rated (rating) {
+      this.ratings[rating.id] = rating.rating;
+      this.$forceUpdate();
     }
   }
 };
@@ -155,6 +197,7 @@ export default {
 
 $art-radius: 4px;
 $art-size: 40px;
+$rating-size: 15px;
 
 .songs {
   .song:hover {
@@ -172,6 +215,15 @@ $art-size: 40px;
     padding: 8px 0;
     border-bottom: 1px solid $table-border-color;
     align-items: center;
+
+    .rating {
+      flex: 0;
+      margin-left: 10px;
+      width: $rating-size;
+      max-width: $rating-size;
+      min-width: $rating-size;
+      height: 1rem;
+    }
 
     .artwork, .placeholder {
       flex: 0;
