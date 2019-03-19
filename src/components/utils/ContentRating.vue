@@ -15,6 +15,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$size: 1rem;
 .content-rating {
   display: inline-block;
   background: rgba(180, 180, 180, .6);
@@ -23,10 +24,11 @@ export default {
   border-radius: 2px;
   font-size: 0.6rem;
   font-weight: bold !important;
-  line-height: 0.725rem;
+  line-height: $size;
   text-align: center;
   margin: 0 4px;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: $size;
+  height: $size;
+  max-height: $size;
 }
 </style>

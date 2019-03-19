@@ -10,7 +10,8 @@
 
       <div class="track-info" v-if="nowPlayingItem">
         <div class="columns">
-          <p class="column name h5 mb-1">{{ nowPlayingItem.attributes.name }} <content-rating :rating="nowPlayingItem.attributes.contentRating" /></p>
+          <p class="column name h5 mb-1">{{ nowPlayingItem.attributes.name }}</p>
+          <content-rating :rating="nowPlayingItem.attributes.contentRating" class="content-rating" />
           <song-actions class="column" :song="nowPlayingItem" />
         </div>
         <p class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</p>
@@ -174,6 +175,10 @@ p {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.content-rating {
+  margin-top: 2px;
 }
 
 .time {
