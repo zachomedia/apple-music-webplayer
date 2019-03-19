@@ -87,10 +87,11 @@ export default {
     };
   },
   watch: {
+    isAuthorized: 'fetchRatings',
     songs: 'fetchRatings'
   },
   computed: {
-    ...mapState('musicKit', ['nowPlayingItem', 'shuffleMode']),
+    ...mapState('musicKit', ['nowPlayingItem', 'shuffleMode', 'isAuthorized']),
     ...mapState('preferences', ['queueAllSongs']),
     duration () {
       return this.songs.reduce((total, song) => total + ((song.attributes || {}).durationInMillis || 0), 0);
@@ -130,8 +131,8 @@ export default {
 
       let songs = this.songs.filter(s => s.type.indexOf('library-') === -1).map(s => s.id);
 
-      // Don't continue if there are no non-library songs.
-      if (songs.length === 0) {
+      // Don't continue if there are no non-library songs or we are not authorized.
+      if (songs.length === 0 || !this.isAuthorized) {
         return;
       }
 
