@@ -49,6 +49,17 @@
               <b-button v-if="$route.meta.type !== 'station'" @click.prevent="shuffleCollection()" :style="buttonStyle">Shuffle all</b-button>
               <b-button v-if="isAuthorized && !$route.meta.isLibrary" @click.prevent="addToLibrary()" :style="buttonStyle">Add to library</b-button>
             </b-button-group>
+
+            <b-dropdown variant="link" no-caret v-if="!$route.meta.isLibrary">
+              <template slot="button-content">
+                <i class="fa fa-share-square-o" :style="buttonLinkStyle"  />
+              </template>
+
+              <b-dropdown-item @click.prevent="open(collection.attributes.url)">View on iTunes</b-dropdown-item>
+              <b-dropdown-divider />
+              <b-dropdown-item @click.prevent="copyLink()">Copy link</b-dropdown-item>
+              <b-dropdown-item @click.prevent="copyITunesLink()">Copy iTunes link</b-dropdown-item>
+            </b-dropdown>
           </div>
         </div>
       </header>
@@ -154,6 +165,17 @@ export default {
         color: 'black',
         'border-color': 'white'
       };
+    },
+    buttonLinkStyle () {
+      if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor1) {
+        return {
+          color: `#${this.collection.attributes.artwork.textColor1}`
+        };
+      }
+
+      return {
+        color: 'white'
+      };
     }
   },
   watch: {
@@ -208,6 +230,39 @@ export default {
       }
 
       this.loading = false;
+    },
+    open (url) {
+      window.open(url);
+    },
+    async copy (text) {
+      let clipboard = navigator.clipboard;
+      if (clipboard) {
+        try {
+          await clipboard.writeText(text);
+
+          this.$store.dispatch('alerts/add', {
+            variant: 'success',
+            message: 'Successfully copied'
+          });
+        } catch (err) {
+          console.error(err);
+          Raven.captureException(err);
+
+          this.$store.dispatch('alerts/add', {
+            variant: 'danger',
+            message: 'Error copying to clipboard'
+          });
+        }
+      }
+    },
+    async copyLink () {
+      await this.copy(window.location.origin + this.$router.resolve({
+        name: this.collection.type,
+        params: { id: this.collection.id }
+      }).href);
+    },
+    async copyITunesLink () {
+      await this.copy(this.collection.attributes.url);
     }
   },
   created () {
