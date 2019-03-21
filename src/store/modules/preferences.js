@@ -7,9 +7,14 @@ let localStorage = window.localStorage ? window.localStorage : {
   }
 };
 
-function getItem (item) {
+function getItem (item, def) {
   try {
-    return JSON.parse(localStorage.getItem(item));
+    const value = JSON.parse(localStorage.getItem(item));
+    if (value === undefined || value === null) {
+      return def;
+    }
+
+    return value;
   } catch (err) {
     console.error(err);
     Raven.captureException(err);
@@ -19,8 +24,8 @@ function getItem (item) {
 }
 
 const state = {
-  showPlaybackNotifications: getItem('showPlaybackNotifications') || true,
-  queueAllSongs: getItem('queueAllSongs') || true
+  showPlaybackNotifications: getItem('showPlaybackNotifications', true),
+  queueAllSongs: getItem('queueAllSongs', true)
 };
 
 const mutations = {
