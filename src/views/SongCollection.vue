@@ -235,25 +235,29 @@ export default {
       window.open(url);
     },
     async copy (text) {
-      let clipboard = navigator.clipboard;
-      if (clipboard) {
-        try {
-          await clipboard.writeText(text);
-
-          this.$store.dispatch('alerts/add', {
-            variant: 'success',
-            message: 'Successfully copied'
-          });
-        } catch (err) {
-          console.error(err);
-          Raven.captureException(err);
-
-          this.$store.dispatch('alerts/add', {
-            variant: 'danger',
-            message: 'Error copying to clipboard'
-          });
-        }
+      // From https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected =
+        document.getSelection().rangeCount > 0
+          ? document.getSelection().getRangeAt(0)
+          : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
       }
+
+      this.$store.dispatch('alerts/add', {
+        variant: 'success',
+        message: 'Successfully copied'
+      });
     },
     async copyLink () {
       await this.copy(window.location.origin + this.$router.resolve({
