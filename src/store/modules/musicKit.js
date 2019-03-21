@@ -409,10 +409,25 @@ const actions = {
   },
 
   // Ratings
-  rate (_, { song, rating }) {
+  rate (_, { item, rating }) {
+    let types = {
+      song: 'songs',
+      playlist: 'playlists',
+      album: 'albums',
+      station: 'stations',
+      'library-songs': 'library-songs',
+      'library-playlists': 'library-playlists',
+      'library-albums': 'library-albums',
+      'library-stations': 'library-stations'
+    };
+
+    if (!(item.type in types)) {
+      return;
+    }
+
     return new Promise(async (resolve, reject) => {
       try {
-        let res = await fetch(`https://api.music.apple.com/v1/me/ratings/songs/${song.id}`, {
+        let res = await fetch(`https://api.music.apple.com/v1/me/ratings/${types[item.type]}/${item.id}`, {
           method: 'PUT',
           headers: apiHeaders(),
           body: JSON.stringify({
@@ -433,15 +448,15 @@ const actions = {
       }
     });
   },
-  love ({ dispatch }, song) {
+  love ({ dispatch }, item) {
     return dispatch('rate', {
-      song: song,
+      item: item,
       rating: 1
     });
   },
-  dislike ({ dispatch }, song) {
+  dislike ({ dispatch }, item) {
     return dispatch('rate', {
-      song: song,
+      item: item,
       rating: -1
     });
   },

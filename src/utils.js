@@ -88,48 +88,10 @@ export function apiHeaders () {
   });
 }
 
-export function songRating (songIds) {
-  return fetch(`https://api.music.apple.com/v1/me/ratings/songs/?ids=${songIds.join(',')}`, {
+export function rating (type, songIds) {
+  return fetch(`https://api.music.apple.com/v1/me/ratings/${type}/?ids=${songIds.join(',')}`, {
     headers: apiHeaders()
   }).then(res => res.json());
-}
-
-/**
- * Sets the user's rating for a song.
- *
- * @param song MusicKit {@code Song} object
- * @param rating Rating (-1: dislike, 1: like)
- */
-export function rateSong (song, rating) {
-  fetch(`https://api.music.apple.com/v1/me/ratings/songs/${song.id}`, {
-    method: 'PUT',
-    headers: apiHeaders(),
-    body: JSON.stringify({
-      type: 'rating',
-      attributes: {
-        value: rating
-      }
-    })
-  }).then(res => {
-    if (res.status === 200) {
-      EventBus.$emit('alert', {
-        type: 'success',
-        message: `Successfully saved rating for "${song.attributes.name}".`
-      });
-    } else {
-      EventBus.$emit('alert', {
-        type: 'danger',
-        message: `Unable to save rating for "${song.attributes.name}".`
-      });
-    }
-  }, err => {
-    Raven.captureException(err);
-
-    EventBus.$emit('alert', {
-      type: 'danger',
-      message: `An error occurred while trying to save rating for "${song.attributes.name}".`
-    });
-  });
 }
 
 export function setPageTitle (title) {

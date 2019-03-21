@@ -55,7 +55,7 @@ import LazyImg from '../utils/LazyImg';
 import SongActions from '../controls/SongActions';
 
 import Raven from 'raven-js';
-import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage, songRating, EventBus } from '../../utils';
+import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage, rating, EventBus } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -127,23 +127,30 @@ export default {
     ...mapActions('musicKit', ['shuffle', 'setQueue', 'play', 'changeTo']),
     async fetchRatings () {
       this.ratings = {};
-      let ratings = {};
 
-      let songs = this.songs.filter(s => s.type.indexOf('library-') === -1).map(s => s.id);
+      let songs = {};
+      this.songs.forEach(s => {
+        if (!(s.type in songs)) {
+          songs[s.type] = [];
+        }
+        songs[s.type].push(s.id);
+      });
 
       // Don't continue if there are no non-library songs or we are not authorized.
       if (songs.length === 0 || !this.isAuthorized) {
         return;
       }
 
-      const res = await songRating(songs);
-      if (res.data) {
-        res.data.forEach((r) => {
-          ratings[r.id] = r.attributes.value;
-        });
-
-        this.ratings = ratings;
+      for (var type in songs) {
+        const res = await rating(type, songs[type]);
+        if (res.data) {
+          res.data.forEach((r) => {
+            this.ratings[r.id] = r.attributes.value;
+          });
+        }
       }
+
+      this.$forceUpdate();
     },
     async playSong (item) {
       let indx = this.songs.indexOf(item) + this.indexAdd;

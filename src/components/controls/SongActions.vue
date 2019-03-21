@@ -9,9 +9,9 @@
     <b-dropdown-divider v-if="(isAuthorized && !isLibrary) || (song.assets && song.assets[0] && song.assets[0].metadata)" />
     <b-dropdown-item-button v-if="showQueue" @click.stop="playNext()">Play next</b-dropdown-item-button>
     <b-dropdown-item-button v-if="showQueue" @click.stop="playLater()">Play later</b-dropdown-item-button>
-    <b-dropdown-divider  v-if="showQueue && isAuthorized && !isLibrary" />
-    <b-dropdown-item-button @click.stop="love()" v-if="isAuthorized && !isLibrary">Love</b-dropdown-item-button>
-    <b-dropdown-item-button @click.stop="dislike()" v-if="isAuthorized && !isLibrary">Dislike</b-dropdown-item-button>
+    <b-dropdown-divider  v-if="showQueue && isAuthorized" />
+    <b-dropdown-item-button @click.stop="love()" v-if="isAuthorized">Love</b-dropdown-item-button>
+    <b-dropdown-item-button @click.stop="dislike()" v-if="isAuthorized">Dislike</b-dropdown-item-button>
   </b-dropdown>
 </template>
 
