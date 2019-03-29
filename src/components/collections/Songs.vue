@@ -126,31 +126,42 @@ export default {
   methods: {
     ...mapActions('musicKit', ['shuffle', 'setQueue', 'play', 'changeTo']),
     async fetchRatings () {
-      this.ratings = {};
+      try {
+        this.ratings = {};
 
-      let songs = {};
-      this.songs.forEach(s => {
-        if (!(s.type in songs)) {
-          songs[s.type] = [];
+        let songs = {};
+        this.songs.forEach(s => {
+          if (!(s.type in songs)) {
+            songs[s.type] = [];
+          }
+          songs[s.type].push(s.id);
+        });
+
+        // Don't continue if there are no non-library songs or we are not authorized.
+        if (songs.length === 0 || !this.isAuthorized) {
+          return;
         }
-        songs[s.type].push(s.id);
-      });
 
-      // Don't continue if there are no non-library songs or we are not authorized.
-      if (songs.length === 0 || !this.isAuthorized) {
-        return;
-      }
-
-      for (var type in songs) {
-        const res = await rating(type, songs[type]);
-        if (res.data) {
-          res.data.forEach((r) => {
-            this.ratings[r.id] = r.attributes.value;
-          });
+        for (var type in songs) {
+          const res = await rating(type, songs[type]);
+          if (res.data) {
+            res.data.forEach((r) => {
+              this.ratings[r.id] = r.attributes.value;
+            });
+          }
         }
-      }
 
-      this.$forceUpdate();
+        this.$forceUpdate();
+      } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
+        this.$store.dispatch('alerts/add', {
+          variant: 'danger',
+          icon: 'fa-exclamation-triangle',
+          title: 'Fetch Ratings Error',
+          message: 'Unable to fetch your song ratings.'
+        });
+      }
     },
     async playSong (item) {
       let indx = this.songs.indexOf(item) + this.indexAdd;

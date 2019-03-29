@@ -89,7 +89,22 @@ export function apiHeaders () {
 }
 
 export function rating (type, songIds) {
-  return fetch(`https://api.music.apple.com/v1/me/ratings/${type}/?ids=${songIds.join(',')}`, {
+  let types = {
+    song: 'songs',
+    songs: 'songs',
+    playlist: 'playlists',
+    playlists: 'playlists',
+    album: 'albums',
+    albums: 'albums',
+    station: 'stations',
+    stations: 'stations',
+    'library-songs': 'library-songs',
+    'library-playlists': 'library-playlists',
+    'library-albums': 'library-albums',
+    'library-stations': 'library-stations'
+  };
+
+  return fetch(`https://api.music.apple.com/v1/me/ratings/${types[type]}/?ids=${songIds.join(',')}`, {
     headers: apiHeaders()
   }).then(res => res.json());
 }
