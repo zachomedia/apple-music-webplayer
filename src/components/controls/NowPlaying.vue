@@ -50,8 +50,8 @@
     <div ref="progressTooltip" class="progressTooltip">{{ hoverTooltipTime | formatSeconds }}</div>
     <b-progress ref="songProgress"
       variant="success"
-      class="songProgress"
-      height="4px"
+      class="songProgress br-0"
+      height="6px"
       v-if="playbackTime"
       @click.native="seekToTime($event)"
       @mousemove.native="getHoverTime($event)"
@@ -60,7 +60,7 @@
       <b-progress-bar variant="danger" :value="playbackTime.currentPlaybackTime / playbackTime.currentPlaybackDuration * 100" />
       <b-progress-bar variant="dark" :value="bufferedProgress - playbackTime.currentPlaybackTime / playbackTime.currentPlaybackDuration * 100" />
     </b-progress>
-    <b-progress v-else height="4px" :value="0" />
+    <b-progress v-else height="6px" class="br-0" :value="0" />
   </div>
 </template>
 

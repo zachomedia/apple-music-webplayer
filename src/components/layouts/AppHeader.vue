@@ -148,6 +148,11 @@ $nav-fg: $gray-500;
   justify-content: center;
   font-size: 0.9rem;
 
+  .nav-link {
+    padding: 0;
+    margin: 0.5rem;
+  }
+
   a, a:hover, a:focus, {
     color: inherit;
     text-decoration: none;
