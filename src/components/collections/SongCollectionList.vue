@@ -25,17 +25,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list {
-  margin: 25px 30px;
-}
-
 .items {
   display: flex;
   flex-wrap: wrap;
 
   .item {
-    margin: 10px 0;
-    margin-right: 25px;
+    margin: 20px 0;
+    margin-right: 15px;
   }
 }
 </style>
