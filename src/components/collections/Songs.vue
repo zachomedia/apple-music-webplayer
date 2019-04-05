@@ -176,10 +176,14 @@ export default {
 
           // Queue one or all, based on user preference.
           var queue = {
-            items: this.queueAllSongs && this.queueAll ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)],
-            startPosition: this.queueAllSongs ? indx : 0
+            items: this.queueAllSongs && this.queueAll ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)]
+            // startPosition: this.queueAllSongs ? indx : 0
           };
+
           await this.setQueue(queue);
+
+          // Temp: having issues with startPosition
+          await this.changeTo(indx);
 
           // Start playback
           await this.play();
