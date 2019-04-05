@@ -183,7 +183,7 @@ export default {
           await this.setQueue(queue);
 
           // Temp: having issues with startPosition
-          await this.changeTo(indx);
+          await this.changeTo(this.queueAllSongs ? indx : 0);
 
           // Start playback
           await this.play();
