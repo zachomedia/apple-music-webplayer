@@ -40,8 +40,11 @@
             <p v-else class="text-center text-muted pt-4">Your queue is empty.</p>
           </div>
           <div v-if="queueTab === 1">
-            <songs v-if="history.length > 0" :songs="history" :queueAll="false" combine />
-            <p v-else class="text-center text-muted pt-4">Your history is empty.</p>
+            <!-- <songs v-if="history.length > 0" :songs="history" :queueAll="false" combine />
+            <p v-else class="text-center text-muted pt-4">Your history is empty.</p> -->
+            <b-alert variant="warning" show class="mt-4">
+              <p>Sorry, history is temporarily unavailable.</p>
+            </b-alert>
           </div>
         </b-modal>
       </div>

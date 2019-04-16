@@ -139,8 +139,12 @@ const mutations = {
   },
   addHistoryItem (state, item) {
     // Only keep 100 items in the history.
+
+    /*
+    Temporarily disable.
     state.history.splice(0, 0, item);
     state.history = state.history.slice(0, Math.min(state.history.length, 100));
+    */
   },
 
   // Event listeners

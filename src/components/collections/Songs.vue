@@ -6,7 +6,7 @@
 
     <div class="songs">
       <div class="song" v-for="song in songs" :key="song.id" @click="playSong(song)">
-        <div class="rating">
+        <div class="rating" v-if="!isQueue">
           <i class="fa fa-heart text-danger" v-if="ratings[song.id] == 1" />
           <i class="fa fa-thumbs-down text-muted" v-else-if="ratings[song.id] == -1" />
           <span v-else>&nbsp;</span>
@@ -126,6 +126,11 @@ export default {
   methods: {
     ...mapActions('musicKit', ['shuffle', 'setQueue', 'play', 'changeTo']),
     async fetchRatings () {
+      // Don't run this for the queue as it resutls in errors.
+      if (this.isQueue) {
+        return;
+      }
+
       try {
         this.ratings = {};
 
