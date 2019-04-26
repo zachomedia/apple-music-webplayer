@@ -5,7 +5,7 @@
           class="artwork"
           :src="nowPlayingItem.attributes.artwork | formatArtworkURL(60)" />
       <img v-else
-          class="artwork"
+          class="artwork placeholder"
           src="../../assets/icon.svg" />
 
       <div class="track-info" v-if="nowPlayingItem">
@@ -165,6 +165,11 @@ p {
   width: 60px;
   height: 60px;
   margin-right: 20px;
+}
+
+.artwork.placeholder {
+  padding: 5px;
+  margin-right: 0;
 }
 
 .track-info {

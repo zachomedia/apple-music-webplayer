@@ -42,11 +42,14 @@
           </b-col>
         </b-row>
       </b-container>
-      <b-container tag="footer" class="text-small footer" fluid>
+      <b-container tag="footer" class="text-small footer">
         <b-row>
-          <b-col class="text-muted text-center mb-4 mt-2">
-            <p class="mb-1 pb-0">Copyright &copy; 2019 &mdash; <a href="https://zacharyseguin.ca" target="_blank">Zachary Seguin</a></p>
-            <p>Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries.</p>
+          <b-col class="text-muted text-center mb-4 mt-2" lg="5">
+            <p class="mb-3 pb-0"><a href="https://zacharyseguin.ca" target="_blank"><img src="./assets/logo.svg" alt="Zachary Seguin" class="logo" /></a></p>
+          </b-col>
+          <b-col class="text-muted text-center mb-4 mt-2" lg="7">
+            <p>Copyright &copy; 2019 &mdash; <a href="https://zacharyseguin.ca" target="_blank">Zachary Seguin</a></p>
+            <p class="p-0 m-1 trademark">Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries.</p>
             <p>
               If you encounter any issues, have any feedback or feature requests,
               please <a href="https://github.com/zachomedia/apple-music-webplayer/issues" target="_blank">submit an issue on GitHub</a>
@@ -272,5 +275,13 @@ body {
 .footer {
   padding-top: 20px;
   border-top: 1px solid darken($body-bg, 5%);
+}
+
+.trademark {
+  font-size: 0.95em;
+}
+
+.logo {
+  height: 80px;
 }
 </style>
