@@ -33,14 +33,14 @@
         <div class="title-artist">
           <div class="title">
             <p v-if="song.attributes" class="name" :title="song.attributes.name">{{ song.attributes.name }}</p>
-            <content-rating :rating="song.attributes.contentRating" class="rating" />
+            <content-rating v-if="song.attributes" :rating="song.attributes.contentRating" class="rating" />
           </div>
           <p v-if="showArtist && song.attributes" class="artist text-muted" :title="song.attributes.artistName">{{ song.attributes.artistName }}<span v-if="combine && !isAlbum"> &mdash; {{ song.attributes.albumName }}</span></p>
         </div>
-        <div class="album text-muted d-none d-sm-block" v-if="!isAlbum && !combine">
+        <div class="album text-muted d-none d-sm-block" v-if="!isAlbum && !combine && song.attributes">
           {{ song.attributes.albumName }}
         </div>
-        <div class="duration">
+        <div class="duration" v-if="song.attributes">
           {{ song.attributes.durationInMillis | formatMillis }}
         </div>
         <song-actions :song="song" :show-queue="showQueue" />
@@ -98,9 +98,9 @@ export default {
     },
     showArtist () {
       const artist =
-          this.songs.length > 0 ? this.songs[0].attributes.artistName : '';
+          this.songs.length > 0 ? (this.songs[0].attributes || {}).artistName : '';
       const allArtistsMatch =
-          this.songs.every(item => item.attributes.artistName === artist);
+          this.songs.every(item => item.attributes ? item.attributes.artistName === artist : false);
       return !(this.isAlbum && allArtistsMatch);
     }
   },
