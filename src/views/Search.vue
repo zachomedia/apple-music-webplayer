@@ -191,7 +191,7 @@ export default {
 
 <style lang="scss" scoped>
 .search {
-  margin: 20px !important;
+  margin: 60px 20px !important;
 }
 
 .search-scope {
