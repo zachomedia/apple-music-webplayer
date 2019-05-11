@@ -58,6 +58,10 @@ import Raven from 'raven-js';
 import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage, rating, EventBus } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
+import { chunk } from 'lodash';
+
+const MAX_CHUNK = 100;
+
 export default {
   name: 'Songs',
   props: {
@@ -148,11 +152,15 @@ export default {
         }
 
         for (var type in songs) {
-          const res = await rating(type, songs[type]);
-          if (res.data) {
-            res.data.forEach((r) => {
-              this.ratings[r.id] = r.attributes.value;
-            });
+          let songIDs = chunk(songs[type], MAX_CHUNK);
+
+          for (var indx in songIDs) {
+            const res = await rating(type, songIDs[indx]);
+            if (res.data) {
+              res.data.forEach((r) => {
+                this.ratings[r.id] = r.attributes.value;
+              });
+            }
           }
         }
 
