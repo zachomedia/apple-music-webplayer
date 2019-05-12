@@ -100,7 +100,6 @@ export default {
     PlaybackProgress
   },
   mounted () {
-    console.log(this.$refs.popup);
     this.$el.focus();
   }
 };
