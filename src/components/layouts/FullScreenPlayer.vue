@@ -101,6 +101,12 @@ export default {
   },
   mounted () {
     this.$el.focus();
+  },
+  destroyed () {
+    if (this.hideControlsTimeout) {
+      clearTimeout(this.hideControlsTimeout);
+      this.hideControlsTimeout = null;
+    }
   }
 };
 </script>
