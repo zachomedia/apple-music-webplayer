@@ -289,15 +289,11 @@ body {
 }
 
 .overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 10000;
-}
-
-.no-scroll {
-  overflow: hidden;
 }
 </style>

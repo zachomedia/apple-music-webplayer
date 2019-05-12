@@ -19,7 +19,7 @@
 
         <playback-progress class="track-progress position-relative w-100 mb-3" />
 
-        <div class="track-info" v-if="nowPlayingItem">
+        <div class="track-info text-center" v-if="nowPlayingItem">
           <div class="columns">
             <p class="column name h5 mb-1">{{ nowPlayingItem.attributes.name }}</p>
             <content-rating :rating="nowPlayingItem.attributes.contentRating" class="content-rating" />
@@ -114,6 +114,9 @@ export default {
 <style lang="scss" scoped>
 @import "../../assets/_custom.scss";
 @import "~bootswatch/dist/darkly/variables";
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins/_breakpoints";
 
 .close {
   position: absolute;
@@ -141,8 +144,8 @@ export default {
 
   height: 100%;
   max-height: 90%;
-  max-width: 50%;
-  width: 70%;
+  max-width: 60%;
+  width: 80%;
   margin: 0 auto;
 
   .media {
@@ -150,9 +153,10 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-grow: 2;
+    flex-grow: 0;
 
     .artwork:not(.placeholder) {
+      max-width: 100%;
       max-height: 80%;
       box-shadow: 0px 0px 5px rgba(0, 0, 0, .4);
       flex-grow: 1;
