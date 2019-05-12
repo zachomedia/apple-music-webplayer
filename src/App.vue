@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="app" v-if="isInitialized">
+    <full-screen-player class="overlay" v-if="showFullScreenPlayer" />
+    <div class="app" v-if="isInitialized" v-show="!showFullScreenPlayer">
       <header class="header sticky-top">
         <app-header />
 
@@ -78,6 +79,7 @@ import VueRouter from 'vue-router';
 // Import components
 import Loader from './components/utils/Loader';
 import AppHeader from './components/layouts/AppHeader';
+import FullScreenPlayer from './components/layouts/FullScreenPlayer';
 
 // Import state
 import { mapState, mapActions } from 'vuex';
@@ -121,7 +123,8 @@ export default {
   router,
   components: {
     Loader,
-    AppHeader
+    AppHeader,
+    FullScreenPlayer
   },
   filters: {
     formatSeconds
@@ -136,7 +139,7 @@ export default {
   computed: {
     ...mapState('musicKit', [ 'isInitialized', 'isAuthorized', 'supportsEME', 'nowPlayingItem' ]),
     ...mapState('alerts', [ 'alerts' ]),
-    ...mapState('preferences', [ 'showPlaybackNotifications' ])
+    ...mapState('preferences', [ 'showPlaybackNotifications', 'showFullScreenPlayer' ])
   },
   watch: {
     nowPlayingItem () {
@@ -283,5 +286,18 @@ body {
 
 .logo {
   height: 80px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+}
+
+.no-scroll {
+  overflow: hidden;
 }
 </style>

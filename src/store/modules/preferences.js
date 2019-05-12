@@ -25,7 +25,8 @@ function getItem (item, def) {
 
 const state = {
   showPlaybackNotifications: getItem('showPlaybackNotifications', true),
-  queueAllSongs: getItem('queueAllSongs', true)
+  queueAllSongs: getItem('queueAllSongs', true),
+  showFullScreenPlayer: true
 };
 
 const mutations = {
@@ -34,6 +35,9 @@ const mutations = {
   },
   queueAllSongs (state, queueAllSongs) {
     state.queueAllSongs = queueAllSongs;
+  },
+  showFullScreenPlayer (state, show) {
+    state.showFullScreenPlayer = show;
   }
 };
 
@@ -50,6 +54,13 @@ const actions = {
     if (window.localStorage) {
       window.localStorage.setItem('queueAllSongs', JSON.stringify(queueAllSongs));
     }
+  },
+
+  showFullScreenPlayer ({ commit }) {
+    commit('showFullScreenPlayer', true);
+  },
+  hideFullScreenPlayer ({ commit }) {
+    commit('showFullScreenPlayer', false);
   }
 };
 
