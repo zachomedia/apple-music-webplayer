@@ -26,7 +26,7 @@ function getItem (item, def) {
 const state = {
   showPlaybackNotifications: getItem('showPlaybackNotifications', true),
   queueAllSongs: getItem('queueAllSongs', true),
-  showFullScreenPlayer: true
+  showFullScreenPlayer: false
 };
 
 const mutations = {
