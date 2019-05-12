@@ -1,6 +1,6 @@
 <template>
-  <div class="player" @keyup.esc="hideFullScreenPlayer" tabindex="0">
-    <div class="close">
+  <div class="player" @keyup.esc="hideFullScreenPlayer" @mousemove="mouseMoved" tabindex="0">
+    <div class="close" v-show="showControls">
       <b-btn variant="link" class="float-right" @click.prevent="hideFullScreenPlayer"><i class="fa fa-close"><span class="sr-only">Close</span></i></b-btn>
     </div>
 
@@ -23,7 +23,7 @@
           <div class="columns">
             <p class="column name h5 mb-1">{{ nowPlayingItem.attributes.name }}</p>
             <content-rating :rating="nowPlayingItem.attributes.contentRating" class="content-rating" />
-            <song-actions class="column" :song="nowPlayingItem" />
+            <song-actions class="column" :song="nowPlayingItem" v-if="showControls" />
           </div>
           <p class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</p>
         </div>
@@ -33,11 +33,11 @@
         </div>
       </div>
 
-      <div class="controls primary-controls">
+      <div class="controls primary-controls" v-if="showControls">
         <playback-controls class="playback" />
       </div>
 
-      <div class="controls secondary-controls d-none d-sm-flex">
+      <div class="controls secondary-controls d-none d-sm-flex" v-if="showControls">
         <behaviour-controls class="behaviour" />
         <volume-control class="volume" />
       </div>
@@ -59,9 +59,16 @@ import { mapState, mapActions } from 'vuex';
 
 // Import utils
 import { formatSeconds, formatArtworkURL } from '../../utils';
+import { clearTimeout } from 'timers';
 
 export default {
   name: 'FullScreenPlayer',
+  data () {
+    return {
+      showControls: false,
+      hideControlsTimeout: null
+    };
+  },
   computed: {
     ...mapState('musicKit', [ 'nowPlayingItem', 'playbackTime' ])
   },
@@ -70,7 +77,19 @@ export default {
     formatArtworkURL
   },
   methods: {
-    ...mapActions('preferences', [ 'hideFullScreenPlayer' ])
+    ...mapActions('preferences', [ 'hideFullScreenPlayer' ]),
+    mouseMoved () {
+      if (this.hideControlsTimeout) {
+        clearTimeout(this.hideControlsTimeout);
+        this.hideControlsTimeout = null;
+      }
+
+      this.showControls = true;
+      this.hideControlsTimeout = setTimeout(() => {
+        this.showControls = false
+        this.hideControlsTimeout = null;
+      }, 5000);
+    }
   },
   components: {
     ContentRating,
