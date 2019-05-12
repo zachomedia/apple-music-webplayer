@@ -86,7 +86,7 @@ export default {
 
       this.showControls = true;
       this.hideControlsTimeout = setTimeout(() => {
-        this.showControls = false
+        this.showControls = false;
         this.hideControlsTimeout = null;
       }, 5000);
     }
