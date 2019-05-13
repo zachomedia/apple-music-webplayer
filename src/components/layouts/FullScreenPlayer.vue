@@ -5,16 +5,19 @@
     </div>
 
     <div class="player-content">
-      <div class="media">
+      <div class="artwork-wrapper">
         <img v-if="nowPlayingItem && nowPlayingItem.attributes.artwork"
-            class="artwork d-none d-sm-block"
-            :src="nowPlayingItem.attributes.artwork | formatArtworkURL(60)" />
+            class="artwork"
+            :src="nowPlayingItem.attributes.artwork | formatArtworkURL" />
         <img v-else
-            class="artwork placeholder d-none d-sm-block"
+            class="artwork placeholder"
             src="../../assets/icon.svg" />
+      </div>
 
-        <div class="time mt-3" v-if="playbackTime">
-          <p class="text-muted">{{ playbackTime.currentPlaybackTime | formatSeconds }} / {{ playbackTime.currentPlaybackDuration | formatSeconds }}</p>
+      <div class="media">
+        <div class="time mt-3 mb-2" v-if="playbackTime">
+          <p class="text-muted mb-0">{{ playbackTime.currentPlaybackTime | formatSeconds }}</p>
+          <p class="text-muted mb-0">{{ playbackTime.currentPlaybackDuration | formatSeconds }}</p>
         </div>
 
         <playback-progress class="track-progress position-relative w-100 mb-3" />
@@ -35,11 +38,11 @@
 
       <div class="controls primary-controls" v-if="showControls">
         <playback-controls class="playback" />
-      </div>
 
-      <div class="controls secondary-controls d-none d-sm-flex" v-if="showControls">
-        <behaviour-controls class="behaviour" />
-        <volume-control class="volume" />
+        <div class="columns">
+          <behaviour-controls class="behaviour" />
+          <volume-control class="volume" />
+        </div>
       </div>
     </div>
   </div>
@@ -128,77 +131,64 @@ export default {
   }
 }
 
-.player {
-  background: $body-bg;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-}
-
 .player-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-content: center;
+  align-items: center;
 
   height: 100%;
-  max-height: 90%;
-  max-width: 60%;
-  width: 80%;
-  margin: 0 auto;
+  padding: 40px;
+}
 
-  .media {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 0;
+.artwork-wrapper {
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 10px;
+  width: 100%;
+  text-align: center;
 
-    .artwork:not(.placeholder) {
-      max-width: 100%;
-      max-height: 80%;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, .4);
-      flex-grow: 1;
-      border-radius: 4px;
-    }
+  display: flex;
+  align-items: center;
 
-    .artwork.placeholder {
-      max-height: 60%;
-      width: 40%;
-    }
-
-    .track-progress {
-      position: relative;
-      height: 10px;
-    }
-  }
-
-  .controls {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 60%;
+  .artwork {
+    border-radius: 4px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    max-height: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    flex-grow: 0;
-
-    > div {
-      flex-grow: 0;
-    }
-
-    .playback {
-      margin: 10px 0;
-
-      /deep/ .btn {
-        font-size: 1.4em;
-      }
-    }
   }
+}
+
+.media {
+  .track-info {
+    padding: 20px 0;
+  }
+}
+
+.media, .controls {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .columns {
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.time {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 </style>
