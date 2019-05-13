@@ -5,7 +5,7 @@
     </div>
 
     <div class="player-content">
-      <div class="artwork-wrapper">
+      <div class="artwork-wrapper mb-2">
         <img v-if="nowPlayingItem && nowPlayingItem.attributes.artwork"
             class="artwork"
             :src="nowPlayingItem.attributes.artwork | formatArtworkURL" />
@@ -30,7 +30,7 @@
           </div>
           <p class="artist text-muted">{{ nowPlayingItem.attributes.artistName }} &mdash; {{ nowPlayingItem.attributes.albumName }}</p>
         </div>
-        <div class="track-info" v-else>
+        <div class="track-info text-center" v-else>
           <p class="name h5 mb-1">Hello!</p>
           <p class="artist text-muted">Select any item to play.</p>
         </div>
@@ -151,11 +151,14 @@ export default {
   align-items: center;
 
   .artwork {
-    border-radius: 4px;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
     max-height: 100%;
     max-width: 100%;
     margin: 0 auto;
+  }
+
+  .artwork:not(.placeholder) {
+    border-radius: 4px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
   }
 }
 
