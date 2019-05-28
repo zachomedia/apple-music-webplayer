@@ -143,6 +143,18 @@ export default {
   },
   watch: {
     nowPlayingItem () {
+      if ('mediaSession' in navigator) {
+        // eslint-disable-next-line no-undef
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: this.nowPlayingItem.attributes.name,
+          artist: this.nowPlayingItem.attributes.artistName,
+          album: this.nowPlayingItem.attributes.albumName,
+          artwork: [
+            { src: formatArtworkURL(this.nowPlayingItem.attributes.artwork) }
+          ]
+        });
+      }
+
       // Don't continue if the user chose not to receive notifications.
       // Or the browser doesn't support notifications.
       // Or the item is empty.
@@ -183,9 +195,18 @@ export default {
   },
   methods: {
     ...mapActions('alerts', [ 'remove' ]),
+    ...mapActions('musicKit', [ 'play', 'pause', 'next', 'previous' ]),
     authorize () {
       let instance = MusicKit.getInstance();
       instance.authorize();
+    }
+  },
+  mounted () {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', this.play);
+      navigator.mediaSession.setActionHandler('pause', this.pause);
+      navigator.mediaSession.setActionHandler('nexttrack', this.next);
+      navigator.mediaSession.setActionHandler('previoustrack', this.previous);
     }
   }
 };
