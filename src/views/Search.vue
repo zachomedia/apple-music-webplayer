@@ -31,16 +31,26 @@
       <b-card no-body v-else>
         <b-tabs card v-model="tabIndex">
           <b-tab title="Songs" :disabled="!(results.songs && results.songs.data.length > 0)">
-            <songs :songs="results.songs.data" v-if="results.songs && results.songs.data.length > 0" />
+            <songs :songs="results.songs.data" v-if="results.songs && results.songs.data.length > 0"
+                   :loading="loadingMore['songs']"
+                   :loadMore="results.songs.next ? loadMore.bind(this, 'songs') : undefined" />
           </b-tab>
           <b-tab title="Albums" :disabled="!(results.albums && results.albums.data.length > 0)">
-            <song-collection-list :collection="results.albums.data" showCount countLabel="album" v-if="results.albums && results.albums.data.length > 0" />
+            <song-collection-list
+              :collection="results.albums.data" showCount countLabel="album"
+              v-if="results.albums && results.albums.data.length > 0"
+                   :loading="loadingMore['albums']"
+                   :loadMore="results.albums.next ? loadMore.bind(this, 'albums') : undefined" />
           </b-tab>
           <b-tab title="Artists" :disabled="!(results.artists && results.artists.data.length > 0)">
-            <artists :artists="results.artists.data" v-if="results.artists && results.artists.data.length > 0" />
+            <artists :artists="results.artists.data" v-if="results.artists && results.artists.data.length > 0"
+                   :loading="loadingMore['artists']"
+                   :loadMore="results.artists.next ? loadMore.bind(this, 'artists') : undefined" />
           </b-tab>
           <b-tab title="Playlists" :disabled="!(results.playlists && results.playlists.data.length > 0)">
-            <song-collection-list :collection="results.playlists.data" v-if="results.playlists && results.playlists.data.length > 0" />
+            <song-collection-list :collection="results.playlists.data" v-if="results.playlists && results.playlists.data.length > 0"
+                   :loading="loadingMore['playlists']"
+                   :loadMore="results.playlists.next ? loadMore.bind(this, 'playlists') : undefined" />
           </b-tab>
         </b-tabs>
       </b-card>
@@ -88,7 +98,13 @@ export default {
       results: null,
       lastQuery: null,
       loading: false,
-      tabIndex: parseInt(tabs[this.$route.query.type], 10) || 0
+      tabIndex: parseInt(tabs[this.$route.query.type], 10) || 0,
+      loadingMore: {
+        songs: false,
+        albums: false,
+        artists: false,
+        playlists: false
+      }
     };
   },
   computed: {
@@ -137,6 +153,28 @@ export default {
 
       this.fetch();
     },
+    async loadMore (type) {
+      this.loadingMore[type] = true;
+
+      try {
+        let res = await this.$store.getters['musicKit/fetch'](this.results[type].next);
+
+        for (var key in res.results) {
+          if (key.startsWith('library-')) {
+            res.results[key.replace('library-', '')] = res.results[key];
+            delete (res.results[key]);
+          }
+        }
+
+        this.results[type].data = this.results[type].data.concat(res.results[type].data);
+        this.results[type].next = res.results[type].next;
+      } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
+      }
+
+      this.loadingMore[type] = false;
+    },
     async fetch () {
       // Don't search, if we don't have a query
       this.hasQuery = this.$route.query.q !== undefined && this.$route.query.q.length > 0;
@@ -163,7 +201,7 @@ export default {
       try {
         let res = await this.$store.getters['musicKit/search'](this.$route.meta.isLibrary, this.$route.query.q, {
           types,
-          limit: 20
+          limit: 10
         });
 
         for (var key in res) {

@@ -46,6 +46,15 @@
         <song-actions :song="song" :show-queue="showQueue" />
       </div>
     </div>
+
+    <div class="loading" v-if="loading">
+      <loader />
+    </div>
+    <div class="load-more" v-else-if="loadMore">
+      <b-btn variant="link" v-on:click="loadMore()">
+        <div class="artwork text-center"><i class="fa fa-ellipsis-h"><span class="sr-only">Load more</span></i></div>
+      </b-btn>
+    </div>
   </div>
 </template>
 
@@ -53,6 +62,7 @@
 import ContentRating from '../utils/ContentRating';
 import LazyImg from '../utils/LazyImg';
 import SongActions from '../controls/SongActions';
+import Loader from '../utils/Loader';
 
 import Raven from 'raven-js';
 import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage, rating, EventBus } from '../../utils';
@@ -81,7 +91,8 @@ export default {
       type: Number,
       default: 0
     },
-    combine: Boolean
+    combine: Boolean,
+    loadMore: Function
   },
   data () {
     return {
@@ -111,7 +122,8 @@ export default {
   components: {
     ContentRating,
     LazyImg,
-    SongActions
+    SongActions,
+    Loader
   },
   filters: {
     formatArtworkURL,
@@ -330,5 +342,19 @@ $rating-size: 15px;
 
 .loading {
   color: white;
+}
+
+.load-more {
+  text-align: center;
+  margin: 20px 0;
+  margin-right: 15px;
+
+  a, button { color: white; }
+  a:hover, button:hover { color: #aaa; }
+  text-align: center;
+
+  .artwork {
+    font-size: 40px;
+  }
 }
 </style>
