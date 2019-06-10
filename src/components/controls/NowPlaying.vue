@@ -26,7 +26,7 @@
       </div>
 
       <div class="queue">
-        <b-button variant="link" @click="showQueue = !showQueue"><i class="fa fa-list-ul" /></b-button>
+        <b-button variant="link" @click="showQueue = !showQueue"><i class="fa fa-list-ul"><span class="sr-only">Show queue</span></i></b-button>
         <b-modal v-model="showQueue" title="Queue" centered hide-footer>
           <b-form-radio-group v-model="queueTab"
                               buttons button-variant="outline-primary"
