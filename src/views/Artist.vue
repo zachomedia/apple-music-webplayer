@@ -52,10 +52,8 @@ export default {
       this.error = null;
 
       try {
-        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id);
-
-        // Load albums (used to do this in one step, but something changed...)
-        this.albums = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
+        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
+        this.albums = this.artist.relationships.albums.data;
 
         // Load additional albums, if there are any
         var albumsRelationship = this.artist.relationships.albums;
