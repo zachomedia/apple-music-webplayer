@@ -469,6 +469,28 @@ const actions = {
   addToLibrary (_, items) {
     let api = getApi(false);
     return api.addToLibrary(items);
+  },
+
+  addToPlaylist (_, { playlistId, items }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let res = await fetch(`https://api.music.apple.com/v1/me/library/playlists/${playlistId}/tracks`, {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({
+            data: items
+          })
+        });
+
+        if (res.status === 200 || res.status === 204) {
+          resolve(true);
+        } else {
+          reject(MusicKit.MKError(MusicKit.MKError.SERVER_ERROR));
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 };
 
