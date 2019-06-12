@@ -482,7 +482,36 @@ const actions = {
           })
         });
 
-        if (res.status === 200 || res.status === 204) {
+        if (res.status === 204) {
+          resolve(true);
+        } else {
+          reject(MusicKit.MKError(MusicKit.MKError.SERVER_ERROR));
+        }
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+
+  newPlaylist (_, { name, items = [] }) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let res = await fetch(`https://api.music.apple.com/v1/me/library/playlists`, {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({
+            attributes: {
+              name: name
+            },
+            relationships: {
+              tracks: {
+                data: items
+              }
+            }
+          })
+        });
+
+        if (res.status === 201) {
           resolve(true);
         } else {
           reject(MusicKit.MKError(MusicKit.MKError.SERVER_ERROR));

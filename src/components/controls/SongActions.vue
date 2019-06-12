@@ -17,12 +17,24 @@
       <b-dropdown-item-button @click.stop="dislike()" v-if="isAuthorized">Dislike</b-dropdown-item-button>
     </b-dropdown>
 
-    <b-modal v-model="showAddToPlaylist" title="Add to playlist" centered hide-footer>
+    <b-modal v-model="showAddToPlaylist" :title='`Add "${song.attributes.name}" to a playlist`' centered hide-footer>
       <error-message :error="playlistsError" v-if="playlistsError" />
       <loader v-else-if="loadingPlaylists" />
-      <b-list-group v-else>
-        <b-list-group-item href="#" v-for="playlist in writablePlaylists" :key="playlist.id" @click.stop="addToPlaylist(playlist)">{{ playlist.attributes.name }}</b-list-group-item>
-      </b-list-group>
+      <div v-else>
+        <b-list-group>
+          <b-list-group-item>
+            <b-form v-on:submit.prevent="addToNewPlaylist()">
+              <b-form-input type="text"
+                            v-model="newPlaylistName"
+                            placeholder="New playlist" />
+              <b-button type="submit" class="w-100" :disabled="newPlaylistName.trim().length < 1">Add to {{ newPlaylistName || 'new playlist' }}</b-button>
+            </b-form>
+          </b-list-group-item>
+        </b-list-group>
+        <b-list-group class="mt-2">
+          <b-list-group-item href="#" v-for="playlist in writablePlaylists" :key="playlist.id" @click.stop="addToPlaylist(playlist)">{{ playlist.attributes.name }}</b-list-group-item>
+        </b-list-group>
+      </div>
     </b-modal>
   </div>
 </template>
@@ -51,7 +63,8 @@ export default {
       showAddToPlaylist: false,
       loadingPlaylists: false,
       playlists: [],
-      playlistsError: null
+      playlistsError: null,
+      newPlaylistName: ''
     };
   },
   computed: {
@@ -99,9 +112,9 @@ export default {
       this.loadingPlaylists = false;
     },
     async addToPlaylist (playlist) {
-      try {
-        this.showAddToPlaylist = false;
+      this.showAddToPlaylist = false;
 
+      try {
         await this.$store.dispatch('musicKit/addToPlaylist', {
           playlistId: playlist.id,
           items: [
@@ -122,6 +135,35 @@ export default {
         Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
+    },
+    async addToNewPlaylist () {
+      this.showAddToPlaylist = false;
+
+      let newPlaylist = this.newPlaylistName.trim();
+
+      try {
+        await this.$store.dispatch('musicKit/newPlaylist', {
+          name: newPlaylist,
+          items: [
+            {
+              id: this.song.id,
+              type: this.song.type
+            }
+          ]
+        });
+
+        this.$store.dispatch('alerts/add', {
+          variant: 'success',
+          title: 'Added to playlist',
+          message: `Successfully added "${this.song.attributes.name}" to "${newPlaylist}".`
+        });
+      } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
+
+      this.newPlaylistName = '';
     },
     goToAlbum () {
       if (this.song.assets && this.song.assets[0].metadata) {
