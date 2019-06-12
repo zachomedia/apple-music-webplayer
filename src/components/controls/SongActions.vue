@@ -7,9 +7,9 @@
 
       <b-dropdown-item-button @click.stop="addToLibrary()" v-if="isAuthorized && !isLibrary">Add to library</b-dropdown-item-button>
       <b-dropdown-item-button @click.stop="showAddToPlaylistPopup()" v-if="isAuthorized">Add to playlist</b-dropdown-item-button>
-      <b-dropdown-divider v-if="isAuthorized || (song.assets && song.assets[0] && song.assets[0].metadata)" />
+      <b-dropdown-divider v-if="isAuthorized" />
       <b-dropdown-item-button @click.stop="goToAlbum()" v-if="song.assets && song.assets[0] && song.assets[0].metadata">Go to album</b-dropdown-item-button>
-      <b-dropdown-divider v-if="(isAuthorized && !isLibrary) || (song.assets && song.assets[0] && song.assets[0].metadata)" />
+      <b-dropdown-divider v-if="song.assets && song.assets[0] && song.assets[0].metadata" />
       <b-dropdown-item-button v-if="showQueue" @click.stop="playNext()">Play next</b-dropdown-item-button>
       <b-dropdown-item-button v-if="showQueue" @click.stop="playLater()">Play later</b-dropdown-item-button>
       <b-dropdown-divider  v-if="showQueue && isAuthorized" />
