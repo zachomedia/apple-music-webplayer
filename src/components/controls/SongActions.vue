@@ -12,9 +12,12 @@
       <b-dropdown-divider v-if="song.assets && song.assets[0] && song.assets[0].metadata" />
       <b-dropdown-item-button v-if="showQueue" @click.stop="playNext()">Play next</b-dropdown-item-button>
       <b-dropdown-item-button v-if="showQueue" @click.stop="playLater()">Play later</b-dropdown-item-button>
-      <b-dropdown-divider  v-if="showQueue && isAuthorized" />
+      <b-dropdown-divider v-if="showQueue && isAuthorized" />
       <b-dropdown-item-button @click.stop="love()" v-if="isAuthorized">Love</b-dropdown-item-button>
       <b-dropdown-item-button @click.stop="dislike()" v-if="isAuthorized">Dislike</b-dropdown-item-button>
+      <b-dropdown-divider v-if="!isLibrary && song.attributes" />
+      <b-dropdown-item-button v-if="!isLibrary && song.attributes" @click.stop="copyLink()">Copy link</b-dropdown-item-button>
+      <b-dropdown-item-button v-if="!isLibrary && song.attributes && song.attributes.url" @click.stop="copyAppleMusicLink()">Copy Apple Music link</b-dropdown-item-button>
     </b-dropdown>
 
     <b-modal v-model="showAddToPlaylist" :title='`Add "${song.attributes.name}" to a playlist`' centered hide-footer>
@@ -232,6 +235,51 @@ export default {
         Raven.captureException(err);
         this.$store.dispatch('alerts/add', errorMessage(err));
       }
+    },
+    async copy (text) {
+      // From https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      const selected =
+        document.getSelection().rangeCount > 0
+          ? document.getSelection().getRangeAt(0)
+          : false;
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      if (selected) {
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(selected);
+      }
+
+      this.$store.dispatch('alerts/add', {
+        variant: 'success',
+        message: 'Successfully copied'
+      });
+    },
+    async copyLink () {
+      // Fetch the song's alubm
+      try {
+        let songInfo = await this.$store.getters['musicKit/get'](this.song.type.startsWith('library-'), 'song', this.song.id);
+        let album = songInfo.relationships.albums.data[0];
+
+        await this.copy(window.location.origin + this.$router.resolve({
+          name: album.type,
+          params: { id: album.id },
+          query: { i: this.song.id }
+        }).href);
+      } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
+    },
+    async copyAppleMusicLink () {
+      await this.copy(this.song.attributes.url);
     }
   }
 };

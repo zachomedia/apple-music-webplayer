@@ -5,7 +5,7 @@
     </p>
 
     <div class="songs">
-      <div class="song" v-for="song in songs" :key="song.id" @click="playSong(song)">
+      <div :class="{ song: true, highlight: song.id === highlight}" v-for="song in songs" :key="song.id" @click="playSong(song)" :id="`song-${song.id}`">
         <div class="rating" v-if="!isQueue">
           <i class="fa fa-heart text-danger" v-if="ratings[song.id] == 1" />
           <i class="fa fa-thumbs-down text-muted" v-else-if="ratings[song.id] == -1" />
@@ -92,7 +92,8 @@ export default {
       default: 0
     },
     combine: Boolean,
-    loadMore: Function
+    loadMore: Function,
+    highlight: String
   },
   data () {
     return {
@@ -137,7 +138,23 @@ export default {
     EventBus.$off('song:rated', this.rated);
   },
   mounted () {
+    // Fetch ratings
     this.fetchRatings();
+
+    // Scroll highlighted song into view
+    try {
+      if (this.highlight) {
+        let el = this.$el.querySelector(`#song-${this.highlight}`);
+        if (el) {
+          el.scrollIntoView({
+            block: 'center'
+          });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      Raven.captureException(err);
+    }
   },
   methods: {
     ...mapActions('musicKit', ['shuffle', 'setQueue', 'play', 'changeTo']),
@@ -319,6 +336,14 @@ $rating-size: 15px;
         align-self: center;
         margin-left: 8px;
       }
+    }
+
+    &.highlight {
+      background: lighten($body-bg, 5%);
+    }
+
+    &.highlight:hover {
+      background: darken($body-bg, 3%);
     }
   }
 

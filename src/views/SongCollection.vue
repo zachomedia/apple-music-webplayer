@@ -58,14 +58,14 @@
               <b-dropdown-item @click.prevent="open(collection.attributes.url)">View on iTunes</b-dropdown-item>
               <b-dropdown-divider />
               <b-dropdown-item @click.prevent="copyLink()">Copy link</b-dropdown-item>
-              <b-dropdown-item @click.prevent="copyITunesLink()">Copy iTunes link</b-dropdown-item>
+              <b-dropdown-item @click.prevent="copyAppleMusicLink()">Copy Apple Music link</b-dropdown-item>
             </b-dropdown>
           </div>
         </div>
       </header>
 
       <div class="tracks" v-if="collection.relationships && collection.relationships.tracks">
-        <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" :loading="loading" />
+        <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" :loading="loading" :highlight="$route.query.i" />
       </div>
 
     </div>
@@ -265,7 +265,7 @@ export default {
         params: { id: this.collection.id }
       }).href);
     },
-    async copyITunesLink () {
+    async copyAppleMusicLink () {
       await this.copy(this.collection.attributes.url);
     }
   },
