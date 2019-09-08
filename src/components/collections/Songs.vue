@@ -107,7 +107,7 @@ export default {
       fields: [ ],
       ratings: { },
       sortOptions: {
-        null: 'None',
+        'none': 'None',
         'attributes.name|asc': 'Title (Asc)',
         'attributes.name|desc': 'Title (Desc)',
         'attributes.artistName|asc': 'Artist (Asc)',
@@ -117,7 +117,7 @@ export default {
         'attributes.durationInMillis|asc': 'Length (Asc)',
         'attributes.durationInMillis|desc': 'Length (Desc)'
       },
-      sortBy: null
+      sortBy: 'none'
     };
   },
   watch: {
@@ -138,7 +138,7 @@ export default {
       return !(this.isAlbum && allArtistsMatch);
     },
     sortedSongs () {
-      if (this.sortBy === null) {
+      if (this.sortBy === 'none') {
         return this.songs;
       }
 
