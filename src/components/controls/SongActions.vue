@@ -71,7 +71,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('musicKit', ['isAuthorized']),
+    ...mapState('musicKit', ['storefront', 'isAuthorized']),
     isLibrary () {
       return this.song.type.indexOf('library-') === 0;
     },
@@ -173,6 +173,7 @@ export default {
         this.$router.push({
           name: 'albums',
           params: {
+            storefront: this.storefront,
             id: this.song.assets[0].metadata.playlistId
           }
         });
