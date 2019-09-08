@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form class="float-right mb-2" inline>
+    <b-form class="float-right mb-2" inline v-if="!isQueue">
       <b-form-group>
         <label>Sort by <b-form-select v-model="sortBy" :options="sortOptions" /></label>
       </b-form-group>
