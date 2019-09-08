@@ -1,11 +1,17 @@
 <template>
   <div>
+    <b-form class="float-right mb-2" inline>
+      <b-form-group>
+        <label>Sort by <b-form-select v-model="sortBy" :options="sortOptions" /></label>
+      </b-form-group>
+    </b-form>
+
     <p class="text-muted">
       <i class="fa fa-spinner fa-spin loading" aria-hidden="true" v-if="loading" /> {{ songs.length }} {{ songs.length | pluralize('song') }} &mdash; {{ duration | humanize }}
     </p>
 
-    <div class="songs">
-      <div :class="{ song: true, highlight: song.id === highlight}" v-for="song in songs" :key="song.id" @click="playSong(song)" :id="`song-${song.id}`">
+    <div class="songs" style="clear: both">
+      <div :class="{ song: true, highlight: song.id === highlight}" v-for="song in sortedSongs" :key="song.id" @click="playSong(song)" :id="`song-${song.id}`">
         <div class="rating" v-if="!isQueue">
           <i class="fa fa-heart text-danger" v-if="ratings[song.id] == 1" />
           <i class="fa fa-thumbs-down text-muted" v-else-if="ratings[song.id] == -1" />
@@ -68,7 +74,7 @@ import Raven from 'raven-js';
 import { formatArtworkURL, formatMillis, humanize, trackToMediaItem, errorMessage, rating, EventBus } from '../../utils';
 import { mapState, mapActions } from 'vuex';
 
-import { chunk } from 'lodash';
+import { chunk, sortBy, get } from 'lodash';
 
 const MAX_CHUNK = 100;
 
@@ -99,7 +105,19 @@ export default {
     return {
       tableClasses: [ ],
       fields: [ ],
-      ratings: { }
+      ratings: { },
+      sortOptions: {
+        null: 'None',
+        'attributes.name|asc': 'Title (Asc)',
+        'attributes.name|desc': 'Title (Desc)',
+        'attributes.artistName|asc': 'Artist (Asc)',
+        'attributes.artistName|desc': 'Artist (Desc)',
+        'attributes.albumName|asc': 'Album (Asc)',
+        'attributes.albumName|desc': 'Album (Desc)',
+        'attributes.durationInMillis|asc': 'Length (Asc)',
+        'attributes.durationInMillis|desc': 'Length (Desc)'
+      },
+      sortBy: null
     };
   },
   watch: {
@@ -118,6 +136,23 @@ export default {
       const allArtistsMatch =
           this.songs.every(item => item.attributes ? item.attributes.artistName === artist : false);
       return !(this.isAlbum && allArtistsMatch);
+    },
+    sortedSongs () {
+      if (this.sortBy === null) {
+        return this.songs;
+      }
+
+      let sort = this.sortBy.split('|');
+      let sorted = sortBy(this.songs, [ s => {
+        var value = get(s, sort[0]);
+        if (typeof value === 'string') {
+          return value.toLowerCase();
+        }
+
+        return value;
+      }]);
+
+      return sort[1] === 'asc' ? sorted : sorted.reverse();
     }
   },
   components: {
@@ -206,7 +241,7 @@ export default {
       }
     },
     async playSong (item) {
-      let indx = this.songs.indexOf(item) + this.indexAdd;
+      let indx = this.sortedSongs.indexOf(item) + this.indexAdd;
 
       try {
         if (this.isQueue) {
@@ -218,7 +253,7 @@ export default {
 
           // Queue one or all, based on user preference.
           var queue = {
-            items: this.queueAllSongs && this.queueAll ? this.songs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)]
+            items: this.queueAllSongs && this.queueAll ? this.sortedSongs.map(i => trackToMediaItem(i)) : [trackToMediaItem(item)]
             // startPosition: this.queueAllSongs ? indx : 0
           };
 
