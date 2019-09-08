@@ -9,6 +9,7 @@ const state = {
   // State information
   isInitialized: false,
   supportsEME: false,
+  storefront: '',
 
   // Authorization information
   isAuthorized: false,
@@ -50,6 +51,10 @@ export function apiHeaders () {
 }
 
 const getters = {
+  storefront (state) {
+    return state.storefront;
+  },
+
   recommendations (state) {
     return getApi(false).recommendations();
   },
@@ -102,6 +107,9 @@ const mutations = {
   },
   supportsEME (state, supportsEME) {
     state.supportsEME = supportsEME;
+  },
+  storefront (state, storefront) {
+    state.storefront = storefront;
   },
 
   // Now playing
@@ -171,6 +179,9 @@ const actions = {
     // Check for EME
     commit('supportsEME', instance.player.canSupportDRM);
 
+    // storefront
+    commit('storefront', instance.storefrontId);
+
     // Update authorization status
     commit('isAuthorized', instance.isAuthorized);
 
@@ -234,8 +245,30 @@ const actions = {
 
     // Register event handlers
     commit('addEventListener', {
+      event: MusicKit.Events.storefrontIdentifierDidChange,
+      func: (evt) => {
+        commit('storefront', instance.storefrontId);
+      }
+    });
+
+    commit('addEventListener', {
+      event: MusicKit.Events.storefrontCountryCodeDidChange,
+      func: (evt) => {
+        commit('storefront', instance.storefrontId);
+      }
+    });
+
+    commit('addEventListener', {
       event: MusicKit.Events.authorizationStatusDidChange,
       func: (evt) => {
+        if (instance.isAuthorized) {
+          setTimeout(() => {
+            MusicKit.getInstance().me().then((me) => {
+              commit('storefront', me.storefront);
+            });
+          }, 1000);
+        }
+
         commit('isAuthorized', instance.isAuthorized);
       }
     });
@@ -317,6 +350,22 @@ const actions = {
 
     // Initialize the instance
     commit('init');
+  },
+  setStorefront ({ commit }, storefront) {
+    let instance = MusicKit.getInstance();
+    instance.storefrontId = storefront;
+    instance.storekit.storefrontCountryCode = storefront;
+    commit('storefront', storefront);
+  },
+  async resetStorefront ({ dispatch }) {
+    let instance = MusicKit.getInstance();
+    let me = await instance.me();
+
+    if (me.storefront) {
+      dispatch('setStorefront', me.storefront);
+    } else {
+      dispatch('setStorefront', 'us');
+    }
   },
   toggleShuffleMode ({ commit, state }) {
     let instance = MusicKit.getInstance();

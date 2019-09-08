@@ -87,6 +87,8 @@ import { mapState, mapActions } from 'vuex';
 // Import utils
 import { formatSeconds, formatMillis, formatArtworkURL } from './utils';
 
+import qs from 'qs';
+
 import routes from './routes';
 const router = new VueRouter({
   mode: 'history',
@@ -94,7 +96,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  // Scroll to top.
   window.scrollTo(0, 0);
+
+  // Redirects.
   if (to.name === 'library') {
     next({ path: '/', replace: true });
     return;
@@ -110,11 +115,33 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
+  if (['legacy-top-charts', 'storefront'].indexOf(to.name) >= 0) {
+    next({ path: `/${router.app.$store.getters['musicKit/storefront']}/top-charts`, replace: false });
+  }
+
+  if (['legacy-playlists', 'legacy-albums', 'legacy-stations', 'legacy-artists'].indexOf(to.name) >= 0) {
+    next({ path: `/${router.app.$store.getters['musicKit/storefront']}/${to.name.replace('legacy-', '')}/${to.params.id}`, replace: false });
+  }
+
+  if (to.name === 'legacy-search') {
+    var query = qs.stringify(to.args);
+    next({ path: `/${router.app.$store.getters['musicKit/storefront']}/search` + (query.length > 0 ? '?' + query : ''), replace: false });
+  }
+
+  // Update page title.
   if (to.meta.title) {
     document.title = to.meta.title + ' | Zachary Seguin Music';
   } else {
     document.title = 'Zachary Seguin Music: an Apple Music web player';
   }
+
+  // Update storefront
+  if (to.params.storefront) {
+    router.app.$store.dispatch('musicKit/setStorefront', to.params.storefront);
+  } else {
+    router.app.$store.dispatch('musicKit/resetStorefront');
+  }
+
   next();
 });
 

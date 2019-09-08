@@ -1,6 +1,6 @@
 <template>
   <div class="item">
-    <router-link :to="{ name: item.type, params: { id: item.id } }" v-b-popover.hover.focus.bottom="description">
+    <router-link :to="{ name: item.type, params: { storefront: storefront, id: item.id } }">
       <lazy-img v-if="item.attributes.artwork"
           :src="item.attributes.artwork | formatArtworkURL(175)"
           alt="" />
@@ -12,7 +12,7 @@
       </div>
       <p class="text-muted text-small" :title="item.attributes.curatorName || item.attributes.artistName">{{ item.attributes.curatorName || item.attributes.artistName }}</p>
 
-      <div v-if="description" class="description" :style="{ background: bgColor, color: textColor1 }">
+      <div v-if="description" class="description" :style="{ background: bgColor, color: textColor1 }" v-b-popover.hover.focus.bottom="description">
         <i class="fa fa-info"><span class="sr-only">Description</span></i>
       </div>
 
@@ -28,6 +28,8 @@ import LazyImg from '../utils/LazyImg';
 import ContentRating from '../utils/ContentRating';
 import { formatArtworkURL, playItem } from '../../utils';
 
+import { mapState } from 'vuex';
+
 export default {
   name: 'SongitemItem',
   components: {
@@ -41,6 +43,7 @@ export default {
     item: Object
   },
   computed: {
+    ...mapState('musicKit', ['storefront']),
     description () {
       let description = this.item.attributes.description || {};
       return description.short || description.standard;

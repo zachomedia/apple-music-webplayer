@@ -210,6 +210,8 @@ export default {
       this.loading = true;
       this.error = null;
 
+      console.log(MusicKit.getInstance().storefrontId, MusicKit.getInstance().api.storefrontId);
+
       // Load the collection
       try {
         this.collection = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id);

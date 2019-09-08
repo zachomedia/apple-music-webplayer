@@ -108,7 +108,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('musicKit', ['isAuthorized'])
+    ...mapState('musicKit', ['storefront', 'isAuthorized'])
   },
   watch: {
     '$route' () {
@@ -121,6 +121,9 @@ export default {
     tabIndex () {
       this.$router.push({
         name: this.searchParams.library ? 'library-search' : 'search',
+        params: {
+          storefront: this.storefront
+        },
         query: {
           q: this.searchParams.query,
           type: tabs[this.tabIndex]
@@ -136,6 +139,9 @@ export default {
       } else {
         this.$router.push({
           name: this.searchParams.library ? 'library-search' : 'search',
+          params: {
+            storefront: this.storefront
+          },
           query: {
             type: tabs[this.tabIndex]
           }
@@ -145,6 +151,9 @@ export default {
     search () {
       this.$router.push({
         name: this.searchParams.library ? 'library-search' : 'search',
+        params: {
+          storefront: this.storefront
+        },
         query: {
           q: this.searchParams.query,
           type: tabs[this.tabIndex]

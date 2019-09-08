@@ -4,7 +4,7 @@
     <div class="items">
       <song-collection-item
         class="item"
-        v-for="item in albums"
+        v-for="item in artist.relationships.albums.data"
         :key="item.id"
         :item="item" />
     </div>
@@ -52,16 +52,13 @@ export default {
       this.error = null;
 
       try {
-        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id);
-
-        // Load albums (used to do this in one step, but something changed...)
-        this.albums = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
+        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
 
         // Load additional albums, if there are any
         var albumsRelationship = this.artist.relationships.albums;
         while (albumsRelationship.next) {
           albumsRelationship = await this.$store.getters['musicKit/fetch'](albumsRelationship.next);
-          this.albums = this.albums.concat(albumsRelationship.data);
+          this.artist.relationships.albums.data = this.artist.relationships.albums.data.concat(albumsRelationship.data);
         }
       } catch (err) {
         this.error = err;

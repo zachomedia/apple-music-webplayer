@@ -2,6 +2,12 @@
   <div class="charts">
     <h1 class="sr-only">Top charts</h1>
 
+    <b-form class="text-right">
+      <b-form-group>
+        <label><span class="sr-only">Country:</span> <b-form-select v-model="selectedStorefront" :options="storefrontOptions" /></label>
+      </b-form-group>
+    </b-form>
+
     <h2 v-if="charts && charts.playlists && charts.playlists[0]" class="h5">{{ charts.playlists[0].name }}</h2>
     <song-collection-list v-if="charts && charts.playlists && charts.playlists[0]"
       :collection="charts.playlists[0].data"
@@ -33,6 +39,8 @@ import ErrorMessage from '../components/utils/ErrorMessage';
 import SongCollectionList from '../components/collections/SongCollectionList';
 import Songs from '../components/collections/Songs';
 
+import { mapState, mapActions } from 'vuex';
+
 export default {
   name: 'TopCharts',
   components: {
@@ -50,13 +58,43 @@ export default {
         playlists: false,
         albums: false,
         songs: false
-      }
+      },
+      storefronts: [],
+      selectedStorefront: null
     };
   },
+  computed: {
+    ...mapState('musicKit', ['storefront']),
+    storefrontOptions () {
+      return this.storefronts.map(s => {
+        return {
+          value: s.id,
+          text: s.attributes.name
+        };
+      });
+    }
+  },
   watch: {
-    '$route': 'fetch'
+    '$route': 'fetch',
+    storefront (newStorefront) {
+      this.selectedStorefront = newStorefront;
+    },
+    selectedStorefront: 'changeStorefront'
   },
   methods: {
+    ...mapActions('musicKit', ['setStorefront']),
+    changeStorefront (newStorefront, oldStorefront) {
+      if (oldStorefront !== null && oldStorefront !== newStorefront) {
+        this.setStorefront(newStorefront);
+
+        this.$router.push({
+          name: 'top-charts',
+          params: {
+            storefront: newStorefront
+          }
+        });
+      }
+    },
     async loadMore (type, indx) {
       let collection = this.charts[type][indx];
 
@@ -81,6 +119,7 @@ export default {
       this.charts = null;
 
       try {
+        this.storefronts = await this.$store.getters['musicKit/get'](false, 'storefronts', null);
         this.charts = await this.$store.getters['musicKit/get'](false, 'charts', null, {
           types: [ 'songs', 'albums', 'playlists' ],
           limit: 10
@@ -95,6 +134,7 @@ export default {
     }
   },
   created () {
+    this.selectedStorefront = this.storefront;
     this.fetch();
   }
 };

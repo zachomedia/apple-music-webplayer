@@ -7,7 +7,7 @@ AppHeader<template>
 
     <nav class="nav">
       <b-nav>
-        <b-nav-item  :to="{ name: 'top-charts' }" :exact="true" active-class="active">Top charts</b-nav-item>
+        <b-nav-item  :to="{ name: 'top-charts', params: { storefront: storefront } }" :exact="true" active-class="active">Top charts</b-nav-item>
         <b-nav-item v-if="isAuthorized" :to="{ name: 'for-you' }" :exact="true" active-class="active">For you</b-nav-item>
         <b-nav-item v-if="isAuthorized" :to="{ name: 'recent' }" active-class="active">Recent</b-nav-item>
         <b-nav-item :to="{ name: 'search' }" active-class="active">Search</b-nav-item>
@@ -59,7 +59,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('musicKit', [ 'isAuthorized' ])
+    ...mapState('musicKit', [ 'storefront', 'isAuthorized' ])
   },
   methods: {
     authorize () {

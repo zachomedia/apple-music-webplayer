@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="list">
-      <router-link :to="{ name: artist.type, params: { id: artist.id } }" v-for="artist in artists" :key="artist.id" class="item">
+      <router-link :to="{ name: artist.type, params: { storefront: storefront, id: artist.id } }" v-for="artist in artists" :key="artist.id" class="item">
         <span :title="artist.attributes.name">{{ artist.attributes.name }}</span>
       </router-link>
     </div>
@@ -20,8 +20,13 @@
 <script>
 import Loader from '../utils/Loader';
 
+import { mapState } from 'vuex';
+
 export default {
   name: 'Artists',
+  computed: {
+    ...mapState('musicKit', ['storefront'])
+  },
   props: {
     artists: Array,
     loading: Boolean,

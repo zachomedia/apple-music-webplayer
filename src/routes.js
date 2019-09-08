@@ -1,4 +1,5 @@
 import Library from './views/Library';
+import Storefront from './views/Storefront';
 import TopCharts from './views/TopCharts';
 import ForYou from './views/ForYou';
 import SongCollection from './views/SongCollection';
@@ -12,7 +13,7 @@ import NotFound from './views/NotFound';
 
 export default [
   {
-    name: 'top-charts',
+    name: 'legacy-top-charts',
     path: '/',
     component: TopCharts
   },
@@ -35,7 +36,7 @@ export default [
     component: null
   },
   {
-    name: 'search',
+    name: 'legacy-search',
     path: '/search',
     component: Search,
     props: {
@@ -180,7 +181,7 @@ export default [
     ]
   },
   {
-    name: 'playlists',
+    name: 'legacy-playlists',
     path: '/playlists/:id',
     component: SongCollection,
     meta: {
@@ -189,7 +190,7 @@ export default [
     }
   },
   {
-    name: 'albums',
+    name: 'legacy-albums',
     path: '/albums/:id',
     component: SongCollection,
     meta: {
@@ -198,7 +199,7 @@ export default [
     }
   },
   {
-    name: 'stations',
+    name: 'legacy-stations',
     path: '/stations/:id',
     component: SongCollection,
     meta: {
@@ -207,7 +208,7 @@ export default [
     }
   },
   {
-    name: 'artists',
+    name: 'legacy-artists',
     path: '/artists/:id',
     component: Artist,
     meta: {
@@ -226,6 +227,65 @@ export default [
     props: {
       title: 'Settings'
     }
+  },
+  {
+    name: 'storefront',
+    path: '/:storefront',
+    component: Storefront,
+    children: [
+      {
+        name: 'top-charts',
+        path: 'top-charts',
+        component: TopCharts
+      },
+      {
+        name: 'playlists',
+        path: 'playlists/:id',
+        component: SongCollection,
+        meta: {
+          type: 'playlist',
+          isLibrary: false
+        }
+      },
+      {
+        name: 'albums',
+        path: 'albums/:id',
+        component: SongCollection,
+        meta: {
+          type: 'album',
+          isLibrary: false
+        }
+      },
+      {
+        name: 'stations',
+        path: 'stations/:id',
+        component: SongCollection,
+        meta: {
+          type: 'station',
+          isLibrary: false
+        }
+      },
+      {
+        name: 'artists',
+        path: 'artists/:id',
+        component: Artist,
+        meta: {
+          type: 'artist',
+          isLibrary: false
+        }
+      },
+      {
+        name: 'search',
+        path: 'search',
+        component: Search,
+        props: {
+          title: 'Search'
+        },
+        meta: {
+          title: 'Search'
+        }
+      }
+    ]
   },
   {
     path: '*',
