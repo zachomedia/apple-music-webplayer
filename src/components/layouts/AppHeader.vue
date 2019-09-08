@@ -10,7 +10,7 @@ AppHeader<template>
         <b-nav-item  :to="{ name: 'top-charts', params: { storefront: storefront } }" :exact="true" active-class="active">Top charts</b-nav-item>
         <b-nav-item v-if="isAuthorized" :to="{ name: 'for-you' }" :exact="true" active-class="active">For you</b-nav-item>
         <b-nav-item v-if="isAuthorized" :to="{ name: 'recent' }" active-class="active">Recent</b-nav-item>
-        <b-nav-item :to="{ name: 'search' }" active-class="active">Search</b-nav-item>
+        <b-nav-item :to="{ name: 'search', params: { storefront: storefront } }" active-class="active">Search</b-nav-item>
         <b-nav-item-dropdown v-if="isAuthorized"  text="Library" right>
           <b-dropdown-item :to="{ name: 'library-search' }" active-class="active">Search</b-dropdown-item>
           <b-dropdown-divider />
