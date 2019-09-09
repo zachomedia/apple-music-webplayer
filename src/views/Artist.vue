@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import Raven from 'raven-js';
+
 import SongCollectionItem from '../components/collections/SongCollectionItem';
 import ErrorMessage from '../components/utils/ErrorMessage';
 import Loader from '../components/utils/Loader';
@@ -52,7 +54,19 @@ export default {
       this.error = null;
 
       try {
-        this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
+        var artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id, { include: 'albums' });
+
+        if (Array.isArray(artist)) {
+          console.warn('Received array instead of object. Applying artist workaround');
+          this.artist = await this.$store.getters['musicKit/get'](this.$route.meta.isLibrary, this.$route.meta.type, this.$route.params.id);
+          this.artist.relationships = {
+            albums: {
+              data: artist
+            }
+          };
+        } else {
+          this.artist = artist;
+        }
 
         // Load additional albums, if there are any
         var albumsRelationship = this.artist.relationships.albums;
@@ -61,6 +75,8 @@ export default {
           this.artist.relationships.albums.data = this.artist.relationships.albums.data.concat(albumsRelationship.data);
         }
       } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
         this.error = err;
       }
 
