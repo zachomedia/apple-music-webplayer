@@ -354,6 +354,7 @@ const actions = {
   setStorefront ({ commit }, storefront) {
     let instance = MusicKit.getInstance();
     instance.storefrontId = storefront;
+    instance.api.userStorefrontId = storefront;
     instance.storekit.storefrontCountryCode = storefront;
     commit('storefront', storefront);
   },
