@@ -16,8 +16,8 @@
 
       <div class="media">
         <div class="time mt-3 mb-2" v-if="playbackTime">
-          <p class="text-muted mb-0">{{ playbackTime.currentPlaybackTime | formatSeconds }}</p>
-          <p class="text-muted mb-0">{{ playbackTime.currentPlaybackDuration | formatSeconds }}</p>
+          <p class="text-muted mb-0">{{ (playbackTime.currentPlaybackTime || 0) | formatSeconds }}</p>
+          <p class="text-muted mb-0">{{ (playbackTime.currentPlaybackDuration || 0) | formatSeconds }}</p>
         </div>
 
         <playback-progress class="track-progress position-relative w-100 mb-3" />

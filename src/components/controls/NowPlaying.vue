@@ -22,7 +22,7 @@
       </div>
 
       <div class="time" v-if="playbackTime">
-        <p class="text-muted">{{ playbackTime.currentPlaybackTime | formatSeconds }} / {{ playbackTime.currentPlaybackDuration | formatSeconds }}</p>
+        <p class="text-muted">{{ (playbackTime.currentPlaybackTime || 0) | formatSeconds }} / {{ (playbackTime.currentPlaybackDuration || 0) | formatSeconds }}</p>
       </div>
 
       <div class="queue">
