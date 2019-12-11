@@ -529,6 +529,11 @@ const actions = {
         });
 
         if (res.status === 204) {
+          // Invalid local cache
+          let api = getApi(true);
+          api.clearCacheItems();
+
+          // Return successful
           resolve(true);
         } else {
           reject(MusicKit.MKError(MusicKit.MKError.SERVER_ERROR));
@@ -558,6 +563,11 @@ const actions = {
         });
 
         if (res.status === 201) {
+          // Invalid local cache
+          let api = getApi(true);
+          api.clearCacheItems();
+
+          // Return successful
           resolve(true);
         } else {
           reject(MusicKit.MKError(MusicKit.MKError.SERVER_ERROR));
