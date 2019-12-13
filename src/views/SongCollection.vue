@@ -47,7 +47,17 @@
             <b-button-group class="mt-0 pt-0">
               <b-button @click.prevent="playCollection()" :style="buttonStyle">Play<span v-if="$route.meta.type !== 'station'"> all</span></b-button>
               <b-button v-if="$route.meta.type !== 'station'" @click.prevent="shuffleCollection()" :style="buttonStyle">Shuffle all</b-button>
-              <b-button v-if="isAuthorized && !$route.meta.isLibrary" @click.prevent="addToLibrary()" :style="buttonStyle">Add to library</b-button>
+
+              <b-dropdown variant="link" no-caret class="no-spacing">
+                <template slot="button-content">
+                  <i class="fa fa-caret-down" :style="dropdownStyle" />
+                </template>
+
+                <b-dropdown-item v-if="isAuthorized && !$route.meta.isLibrary" @click.prevent="addToLibrary()">Add to library</b-dropdown-item>
+                <b-dropdown-divider v-if="isAuthorized && !$route.meta.isLibrary" />
+                <b-dropdown-item @click.prevent="playNext()">Play next</b-dropdown-item>
+                <b-dropdown-item @click.prevent="playLater()">Play later</b-dropdown-item>
+              </b-dropdown>
             </b-button-group>
 
             <b-dropdown variant="link" no-caret v-if="!$route.meta.isLibrary">
@@ -83,7 +93,7 @@ import Raven from 'raven-js';
 import Loader from '../components/utils/Loader';
 import ErrorMessage from '../components/utils/ErrorMessage';
 import Songs from '../components/collections/Songs';
-import { formatArtworkURL, setPageTitle, playItem, errorMessage } from '../utils';
+import { formatArtworkURL, setPageTitle, playItem, errorMessage, trackToMediaItem } from '../utils';
 import { mapActions, mapState } from 'vuex';
 import he from 'he';
 
@@ -166,6 +176,14 @@ export default {
         'border-color': 'white'
       };
     },
+    dropdownStyle () {
+      let buttonStyle = Object.assign({}, this.buttonStyle);
+      buttonStyle.display = 'block';
+      buttonStyle.borderRadius = '0 5px 5px 0';
+      buttonStyle.padding = '10px';
+      buttonStyle.textDecoration = 'none';
+      return buttonStyle;
+    },
     buttonLinkStyle () {
       if (this.collection && this.collection.attributes && this.collection.attributes.artwork && this.collection.attributes.artwork.textColor1) {
         return {
@@ -186,6 +204,24 @@ export default {
     playCollection () {
       this.shuffle(false);
       playItem(this.collection);
+    },
+    async playNext () {
+      try {
+        await this.$store.dispatch('musicKit/playNext', { items: this.collection.relationships.tracks.data.map(i => trackToMediaItem(i)) });
+      } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
+    },
+    async playLater () {
+      try {
+        await this.$store.dispatch('musicKit/playLater', { items: this.collection.relationships.tracks.data.map(i => trackToMediaItem(i)) });
+      } catch (err) {
+        console.error(err);
+        Raven.captureException(err);
+        this.$store.dispatch('alerts/add', errorMessage(err));
+      }
     },
     shuffleCollection () {
       this.shuffle(true);
@@ -314,5 +350,11 @@ header {
 
 .loading {
   margin: 20px;
+}
+
+.no-spacing /deep/ button {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
 }
 </style>
