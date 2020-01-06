@@ -61,6 +61,7 @@
 <script>
 import Raven from 'raven-js';
 import { mapState } from 'vuex';
+import URI from 'urijs';
 
 import Loader from '../components/utils/Loader';
 import ErrorMessage from '../components/utils/ErrorMessage';
@@ -164,9 +165,12 @@ export default {
     },
     async loadMore (type) {
       this.loadingMore[type] = true;
+      console.log(this.results[type].next);
 
       try {
-        let res = await this.$store.getters['musicKit/fetch'](this.results[type].next);
+        let nextURL = URI(this.results[type].next);
+        nextURL = nextURL.addSearch('limit', '25');
+        let res = await this.$store.getters['musicKit/fetch'](nextURL.toString());
 
         for (var key in res.results) {
           if (key.startsWith('library-')) {
@@ -210,7 +214,7 @@ export default {
       try {
         let res = await this.$store.getters['musicKit/search'](this.$route.meta.isLibrary, this.$route.query.q, {
           types,
-          limit: 10
+          limit: 25
         });
 
         for (var key in res) {
