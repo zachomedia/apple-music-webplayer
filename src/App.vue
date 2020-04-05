@@ -49,7 +49,7 @@
             <p class="mb-3 pb-0"><a href="https://zacharyseguin.ca" target="_blank"><img src="./assets/logo.svg" alt="Zachary Seguin" class="logo" /></a></p>
           </b-col>
           <b-col class="text-muted text-center mb-4 mt-2" lg="7">
-            <p>Copyright &copy; 2019 &mdash; <a href="https://zacharyseguin.ca" target="_blank">Zachary Seguin</a></p>
+            <p>Copyright &copy; 2020 &mdash; <a href="https://zacharyseguin.ca" target="_blank">Zachary Seguin</a></p>
             <p class="p-0 m-1 trademark">Apple and Apple Music are trademarks of Apple Inc., registered in the U.S. and other countries.</p>
             <p>
               If you encounter any issues, have any feedback or feature requests,
