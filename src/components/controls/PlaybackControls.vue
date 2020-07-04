@@ -83,4 +83,8 @@ export default {
   align-items: center;
   justify-items: center;
 }
+
+.main {
+  width: 2.5rem;
+}
 </style>
