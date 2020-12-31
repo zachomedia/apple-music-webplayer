@@ -99,6 +99,6 @@
     "not ie <= 8"
   ],
   "dependencies": {
-    "urijs": "^1.19.2"
+    "urijs": "^1.19.4"
   }
 }
