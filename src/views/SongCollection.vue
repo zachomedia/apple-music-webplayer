@@ -17,6 +17,11 @@
               v-html="collection.attributes.curatorName || collection.attributes.artistName">
             </p>
 
+            <p v-if="collection.attributes.genreNames"
+               :style="{ color: textColor2 }">
+              {{ collection.attributes.genreNames.join(', ') }}
+            </p>
+
             <p v-if="collection.attributes.description"
               class="d-none d-md-block"
               :style="{ color: textColor3 }"
@@ -37,6 +42,11 @@
               class="d-block d-md-none"
               :style="{ color: textColor3 }"
               v-html="collection.attributes.editorialNotes.short">
+            </p>
+
+            <p v-if="collection.attributes.releaseDate"
+              :style="{ color: textColor4 }">
+              Released {{ collection.attributes.releaseDate | moment('LL') }}
             </p>
 
             <p v-if="collection.attributes.lastModifiedDate"
@@ -78,6 +88,11 @@
         <songs :songs="collection.relationships.tracks.data" :isAlbum="collection.type.includes('album')" :loading="loading" :highlight="$route.query.i" />
       </div>
 
+      <footer class="tracks">
+        <p class="text-center" v-if="collection.attributes.copyright">
+          {{ collection.attributes.copyright }}
+        </p>
+      </footer>
     </div>
 
     <!-- Show error message if we failed to load -->
@@ -356,5 +371,10 @@ header {
   padding: 0;
   margin: 0;
   text-decoration: none;
+}
+
+footer {
+  color: #aaa;
+  font-size: 0.8em;
 }
 </style>
